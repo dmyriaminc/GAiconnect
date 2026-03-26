@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile | GAi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Text:opsz,wght@20..48,100..700;0..1,FILL@0..1" rel="stylesheet">
+  <style>
+    body { font-family: 'Manrope', sans-serif; }
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    .material-symbols-outlined { font-family: 'Material Symbols Text'; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    
+    @keyframes pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 197, 99, 0.6)); }
+      50% { filter: drop-shadow(0 0 20px rgba(255, 197, 99, 0.9)); }
+    }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .glow-text-primary { text-shadow: 0 0 20px rgba(255, 197, 99, 0.5); }
+    .scanline-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px);
+    }
+    .avatar-ring { position: relative; padding: 3px; background: linear-gradient(135deg, #ffc563, #ff9500); border-radius: 4px; }
+    .avatar-ring-secondary { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+    .badge { padding: 2px 8px; border-radius: 2px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .progress-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 2px; transition: width 0.3s ease; }
+    .progress-bar-fill-primary { background: linear-gradient(90deg, #ffc563, #ff9500); box-shadow: 0 0 10px rgba(255, 197, 99, 0.5); }
+    .stat-item { transition: all 0.3s ease; }
+    .stat-item:hover { transform: translateY(-2px); }
+    .portfolio-item { transition: all 0.3s ease; overflow: hidden; }
+    .portfolio-item:hover { transform: scale(1.02); box-shadow: 0 10px 40px rgba(255, 197, 99, 0.2); }
+    .service-item { transition: all 0.3s ease; }
+    .service-item:hover { background: #292524; border-color: #ffc563; }
+    .tab-btn { position: relative; transition: all 0.2s ease; }
+    .tab-btn::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #ffc563; transform: scaleX(0); transition: transform 0.3s ease; }
+    .tab-btn.active::after { transform: scaleX(1); box-shadow: 0 0 10px #ffc563; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body class="bg-neutral-950 min-h-screen">
+  <div class="scanline-overlay"></div>
+  
+  <header class="bg-black/80 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/10 h-16 flex items-center">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between w-full">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="font-headline text-2xl font-black tracking-tighter text-amber-400">GAi</span>
+      </a>
+      
+      <div class="flex items-center gap-6">
+        <a href="dashboard.html" class="text-zinc-400 hover:text-amber-400 transition-colors">
+          <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
+        </a>
+        <a href="messenger.html" class="text-zinc-400 hover:text-amber-400 transition-colors">
+          <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+        </a>
+        <div class="w-8 h-8 rounded-sm bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-400/30"></div>
+      </div>
+    </div>
+  </header>
+  
+  <main class="pt-16">
+    <div style="background: linear-gradient(180deg, #292524 0%, #0a0a0a 100%);">
+      <div class="h-48 md:h-64 bg-gradient-to-br from-amber-400/20 via-neutral-800 to-purple-500/20 relative">
+        <div class="absolute inset-0 opacity-50" style="background-image: url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffc563%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E');"></div>
+      </div>
+      
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="relative -mt-20 mb-6 flex flex-col md:flex-row md:items-end gap-6">
+          <div class="relative">
+            <div class="avatar-ring w-32 h-32 md:w-40 md:h-40">
+              <div class="w-full h-full rounded-sm bg-neutral-800 flex items-center justify-center">
+                <span class="font-headline text-5xl font-black text-amber-400 glow-text-primary">SO</span>
+              </div>
+            </div>
+            <span class="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-neutral-950"></span>
+          </div>
+          
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center gap-3 mb-2">
+              <h1 class="font-headline text-3xl md:text-4xl font-black text-white">System Operator</h1>
+              <span class="badge bg-amber-400/20 text-amber-400">Presidential</span>
+              <span class="badge bg-purple-500/20 text-purple-400">Verified</span>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-zinc-500">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs">fingerprint</span>
+                GAi001921
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs">location_on</span>
+                Paris, France
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs">calendar_month</span>
+                Joined Dec 2023
+              </span>
+            </div>
+          </div>
+          
+          <div class="flex gap-3">
+            <button class="px-5 py-2.5 bg-amber-400 text-black font-headline font-bold text-sm uppercase tracking-widest hover:bg-amber-300 transition-colors active:scale-95 rounded-sm">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">edit</span>
+                Edit Profile
+              </span>
+            </button>
+            <button class="px-5 py-2.5 border border-white/20 text-white font-headline font-bold text-sm uppercase tracking-widest hover:bg-white/5 transition-colors rounded-sm">
+              <span class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">share</span>
+                Share
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-neutral-800 border-y border-white/5">
+      <div class="max-w-6xl mx-auto px-6 py-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div class="stat-item text-center">
+            <div class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">42</div>
+            <div class="text-xs text-zinc-500 uppercase tracking-wider">Services</div>
+          </div>
+          <div class="stat-item text-center">
+            <div class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">127</div>
+            <div class="text-xs text-zinc-500 uppercase tracking-wider">Reviews</div>
+          </div>
+          <div class="stat-item text-center">
+            <div class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">4.9</div>
+            <div class="text-xs text-zinc-500 uppercase tracking-wider">Rating</div>
+          </div>
+          <div class="stat-item text-center">
+            <div class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">2.4K</div>
+            <div class="text-xs text-zinc-500 uppercase tracking-wider">Followers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="max-w-6xl mx-auto px-6 py-8">
+      <div class="flex flex-col lg:flex-row gap-8">
+        <div class="lg:w-1/3 space-y-8">
+          <div class="bg-neutral-800 p-6 rounded-sm border border-white/5">
+            <h3 class="font-headline text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4">About</h3>
+            <p class="text-zinc-400 leading-relaxed mb-4">
+              Presidential tier operator specializing in neural network architecture and quantum encryption protocols. Leading developer of the Exclusives_V4 authentication system.
+            </p>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3 text-sm">
+                <span class="material-symbols-outlined text-amber-400 text-lg">work</span>
+                <span class="text-zinc-400">Neural Architect at Hyperstructures</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="material-symbols-outlined text-purple-400 text-lg">school</span>
+                <span class="text-zinc-400">MIT Quantum Computing</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="material-symbols-outlined text-cyan-400 text-lg">language</span>
+                <span class="text-zinc-400">English, French, Mandarin</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-neutral-800 p-6 rounded-sm border border-white/5">
+            <h3 class="font-headline text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4">Expertise</h3>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1 bg-neutral-700 text-xs text-white rounded-sm">Neural Networks</span>
+              <span class="px-3 py-1 bg-neutral-700 text-xs text-white rounded-sm">Quantum Encryption</span>
+              <span class="px-3 py-1 bg-neutral-700 text-xs text-white rounded-sm">Biometrics</span>
+              <span class="px-3 py-1 bg-neutral-700 text-xs text-white rounded-sm">Blockchain</span>
+              <span class="px-3 py-1 bg-neutral-700 text-xs text-white rounded-sm">AI Systems</span>
+            </div>
+          </div>
+          
+          <div class="bg-neutral-800 p-6 rounded-sm border border-white/5">
+            <h3 class="font-headline text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4">Performance</h3>
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between text-sm mb-2">
+                  <span class="text-zinc-500">Response Rate</span>
+                  <span class="text-amber-400">98%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-bar-fill progress-bar-fill-primary" style="width: 98%;"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-sm mb-2">
+                  <span class="text-zinc-500">Satisfaction</span>
+                  <span class="text-amber-400">99%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-bar-fill progress-bar-fill-primary" style="width: 99%;"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-sm mb-2">
+                  <span class="text-zinc-500">Activity</span>
+                  <span class="text-amber-400">95%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-bar-fill progress-bar-fill-primary" style="width: 95%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="lg:w-2/3">
+          <div class="border-b border-white/5 mb-6">
+            <div class="flex gap-8">
+              <button class="tab-btn active pb-4 font-headline text-sm uppercase tracking-wider text-white" data-tab="services">Services</button>
+              <button class="tab-btn pb-4 font-headline text-sm uppercase tracking-wider text-zinc-500" data-tab="portfolio">Portfolio</button>
+              <button class="tab-btn pb-4 font-headline text-sm uppercase tracking-wider text-zinc-500" data-tab="reviews">Reviews</button>
+            </div>
+          </div>
+          
+          <div id="tab-services" class="tab-content active space-y-4">
+            <div class="service-item bg-neutral-800 p-6 rounded-sm border border-transparent transition-all">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="badge bg-amber-400/20 text-amber-400">Trading</span>
+                    <span class="badge bg-purple-500/20 text-purple-400">Verified</span>
+                  </div>
+                  <h4 class="font-headline text-xl font-bold text-white">Deep-Mind Arbitrage Protocol</h4>
+                </div>
+                <span class="font-headline text-2xl font-bold text-amber-400 glow-text-primary">2.44 GAi<span class="text-sm text-zinc-500">/hr</span></span>
+              </div>
+              <p class="text-zinc-400 text-sm mb-4">High-frequency neural trading with sub-millisecond execution across quantum markets.</p>
+              <div class="flex items-center gap-4 text-xs text-zinc-500">
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm text-amber-400">star</span> 4.9 (127 reviews)
+                </span>
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">schedule</span> Posted 2h ago
+                </span>
+              </div>
+            </div>
+            
+            <div class="service-item bg-neutral-800 p-6 rounded-sm border border-transparent transition-all">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="badge bg-cyan-400/20 text-cyan-400">AI/Neural</span>
+                  </div>
+                  <h4 class="font-headline text-xl font-bold text-white">Neural Pattern Synthesis</h4>
+                </div>
+                <span class="font-headline text-2xl font-bold text-amber-400 glow-text-primary">15.7 GAi<span class="text-sm text-zinc-500">/cycle</span></span>
+              </div>
+              <p class="text-zinc-400 text-sm mb-4">AI-driven pattern recognition that learns and adapts to user behavior in real-time.</p>
+              <div class="flex items-center gap-4 text-xs text-zinc-500">
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm text-amber-400">star</span> 4.8 (89 reviews)
+                </span>
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">schedule</span> Posted 1d ago
+                </span>
+              </div>
+            </div>
+            
+            <div class="service-item bg-neutral-800 p-6 rounded-sm border border-transparent transition-all">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="badge bg-purple-500/20 text-purple-400">Security</span>
+                    <span class="badge bg-purple-500/20 text-purple-400">Verified</span>
+                  </div>
+                  <h4 class="font-headline text-xl font-bold text-white">Quantum Encryption Layer</h4>
+                </div>
+                <span class="font-headline text-2xl font-bold text-amber-400 glow-text-primary">4.99 GAi<span class="text-sm text-zinc-500">/tx</span></span>
+              </div>
+              <p class="text-zinc-400 text-sm mb-4">Military-grade quantum-resistant encryption for all neural communications.</p>
+              <div class="flex items-center gap-4 text-xs text-zinc-500">
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm text-amber-400">star</span> 5.0 (156 reviews)
+                </span>
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">schedule</span> Posted 3d ago
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div id="tab-portfolio" class="tab-content">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div class="portfolio-item aspect-square bg-gradient-to-br from-amber-400/20 to-neutral-800 rounded-sm cursor-pointer"></div>
+              <div class="portfolio-item aspect-square bg-gradient-to-br from-purple-500/20 to-neutral-800 rounded-sm cursor-pointer"></div>
+              <div class="portfolio-item aspect-square bg-gradient-to-br from-cyan-400/20 to-neutral-800 rounded-sm cursor-pointer"></div>
+              <div class="portfolio-item aspect-square bg-gradient-to-br from-green-500/20 to-neutral-800 rounded-sm cursor-pointer"></div>
+              <div class="portfolio-item aspect-square bg-gradient-to-br from-cyan-500/20 to-neutral-800 rounded-sm cursor-pointer"></div>
+              <div class="portfolio-item aspect-square bg-gradient-to-br from-orange-500/20 to-neutral-800 rounded-sm cursor-pointer flex items-center justify-center">
+                <span class="material-symbols-outlined text-4xl text-amber-400/30">add</span>
+              </div>
+            </div>
+          </div>
+          
+          <div id="tab-reviews" class="tab-content space-y-6">
+            <div class="bg-neutral-800 p-6 rounded-sm border border-white/5">
+              <div class="flex items-start gap-4 mb-4">
+                <div class="avatar-ring">
+                  <div class="w-12 h-12 rounded-sm bg-neutral-700 flex items-center justify-center text-sm font-bold text-amber-400">XL</div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="font-bold text-white">Xenon_77</span>
+                    <span class="badge bg-purple-500/20 text-purple-400 text-[8px]">VVIP</span>
+                  </div>
+                  <div class="flex items-center gap-1 mb-2">
+                    <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+                    <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+                    <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+                    <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+                    <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+                  </div>
+                  <p class="text-zinc-400 text-sm">Exceptional neural architecture work. The quantum encryption layer is flawless. Highly recommended for any high-stakes operations.</p>
+                  <span class="text-[10px] text-zinc-500 mt-2 block">Posted 2 days ago</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-neutral-800 p-6 rounded-sm border border-white/5">
+              <div class="flex items-start gap-4 mb-4">
+                <div class="avatar-ring avatar-ring-secondary">
+                  <div class="w-12 h-12 rounded-sm bg-neutral-700 flex items-center justify-center text-sm font-bold text-purple-400">NP</div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="font-bold text-white">Nova_Protocol</span>
+                    <span class="badge bg-purple-500/20 text-purple-400 text-[8px]">VVIP</span>
+                  </div>
+                  <div class="flex items-center gap-1 mb-2">
+                    <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+                    <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+                    <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+                    <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+                    <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+                  </div>
+                  <p class="text-zinc-400 text-sm">The arbitrage protocol exceeded all expectations. Response time is incredible and the neural integration was seamless.</p>
+                  <span class="text-[10px] text-zinc-500 mt-2 block">Posted 1 week ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-black/90 backdrop-blur-2xl lg:hidden z-50 border-t border-amber-400/20">
+    <a href="dashboard.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined" aria-hidden="true">hub</span>
+      <span class="text-[10px] font-bold uppercase">Feed</span>
+    </a>
+    <a href="services.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined" aria-hidden="true">work</span>
+      <span class="text-[10px] font-bold uppercase">Services</span>
+    </a>
+    <a href="messenger.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+      <span class="text-[10px] font-bold uppercase">Chat</span>
+    </a>
+    <a href="#" class="flex flex-col items-center justify-center text-amber-400 bg-amber-400/5 rounded-xl py-1 px-4">
+      <span class="material-symbols-outlined" aria-hidden="true">person</span>
+      <span class="text-[10px] font-bold uppercase">Profile</span>
+    </a>
+  </nav>
+  
+  <script>
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const tab = btn.dataset.tab;
+        tabContents.forEach(content => {
+          content.classList.remove('active');
+          if (content.id === `tab-${tab}`) {
+            content.classList.add('active');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

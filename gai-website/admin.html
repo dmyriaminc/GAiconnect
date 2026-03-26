@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | GAi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Text:opsz,wght@20..48,100..700;0..1,FILL@0..1" rel="stylesheet">
+  <style>
+    body { font-family: 'Manrope', sans-serif; }
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    .material-symbols-outlined { font-family: 'Material Symbols Text'; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    
+    @keyframes pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 197, 99, 0.6)); }
+      50% { filter: drop-shadow(0 0 20px rgba(255, 197, 99, 0.9)); }
+    }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .glow-text-primary { text-shadow: 0 0 20px rgba(255, 197, 99, 0.5); }
+    .scanline-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px);
+    }
+    .glass-panel { background: rgba(41, 37, 36, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 197, 99, 0.2); }
+    .glass-panel-secondary { background: rgba(88, 28, 135, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(168, 85, 247, 0.2); }
+    .glass-panel-tertiary { background: rgba(8, 145, 178, 0.2); backdrop-filter: blur(20px); border: 1px solid rgba(34, 211, 238, 0.2); }
+    .badge { padding: 2px 8px; border-radius: 2px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat-card { transition: all 0.3s ease; }
+    .stat-card:hover { transform: translateY(-4px); }
+    .admin-table tr { transition: all 0.2s ease; }
+    .admin-table tr:hover { background: rgba(255, 197, 99, 0.05); }
+    .tab-btn { transition: all 0.2s ease; }
+    .tab-btn.active { background: #44403c; color: #ffc563; border-color: #ffc563; }
+    .action-btn { transition: all 0.2s ease; }
+    .action-btn:hover { transform: scale(1.1); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body class="bg-neutral-950 min-h-screen">
+  <div class="scanline-overlay"></div>
+  
+  <header class="bg-black/80 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/10 h-16 flex items-center">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between w-full">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="font-headline text-2xl font-black tracking-tighter text-amber-400">GAi</span>
+      </a>
+      
+      <div class="flex items-center gap-4">
+        <span class="badge bg-amber-400/20 text-amber-400">Admin Mode</span>
+        <a href="dashboard.html" class="text-zinc-400 hover:text-amber-400 transition-colors">
+          <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
+        </a>
+        <div class="w-8 h-8 rounded-sm bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-400/30"></div>
+      </div>
+    </div>
+  </header>
+  
+  <main class="pt-16 min-h-screen">
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="mb-8">
+        <h1 class="font-headline text-4xl font-black text-white uppercase tracking-tighter mb-2">Admin Control Center</h1>
+        <p class="text-zinc-400">Manage users, services, and system configuration</p>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+        <div class="stat-card glass-panel p-6 border-l-4 border-amber-400">
+          <div class="flex items-center justify-between mb-4">
+            <span class="material-symbols-outlined text-amber-400 text-3xl" style="font-variation-settings: 'FILL' 1;">group</span>
+            <span class="badge bg-amber-400/20 text-amber-400 text-[8px]">+12%</span>
+          </div>
+          <div class="font-headline text-3xl font-black text-white mb-1">12,847</div>
+          <div class="text-xs text-zinc-500 uppercase tracking-wider">Total Users</div>
+        </div>
+        
+        <div class="stat-card glass-panel-secondary p-6 border-l-4 border-purple-500">
+          <div class="flex items-center justify-between mb-4">
+            <span class="material-symbols-outlined text-purple-400 text-3xl" style="font-variation-settings: 'FILL' 1;">work</span>
+            <span class="badge bg-purple-500/20 text-purple-400 text-[8px]">+8%</span>
+          </div>
+          <div class="font-headline text-3xl font-black text-white mb-1">3,421</div>
+          <div class="text-xs text-zinc-500 uppercase tracking-wider">Active Services</div>
+        </div>
+        
+        <div class="stat-card glass-panel-tertiary p-6 border-l-4 border-cyan-400">
+          <div class="flex items-center justify-between mb-4">
+            <span class="material-symbols-outlined text-cyan-400 text-3xl" style="font-variation-settings: 'FILL' 1;">chat</span>
+            <span class="badge bg-cyan-400/20 text-cyan-400 text-[8px]">+24%</span>
+          </div>
+          <div class="font-headline text-3xl font-black text-white mb-1">89.2K</div>
+          <div class="text-xs text-zinc-500 uppercase tracking-wider">Messages Today</div>
+        </div>
+        
+        <div class="stat-card bg-neutral-800 p-6 border-l-4 border-green-500">
+          <div class="flex items-center justify-between mb-4">
+            <span class="material-symbols-outlined text-green-500 text-3xl" style="font-variation-settings: 'FILL' 1;">payments</span>
+            <span class="badge bg-green-500/15 text-green-500 text-[8px]">+18%</span>
+          </div>
+          <div class="font-headline text-3xl font-black text-white mb-1">$847K</div>
+          <div class="text-xs text-zinc-500 uppercase tracking-wider">Monthly Revenue</div>
+        </div>
+      </div>
+      
+      <div class="flex gap-4 mb-6 border-b border-white/5 pb-4 flex-wrap">
+        <button class="tab-btn active px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-white" data-tab="users">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">group</span> Users
+          </span>
+        </button>
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400" data-tab="services">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">work</span> Services
+          </span>
+        </button>
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400" data-tab="categories">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">category</span> Categories
+          </span>
+        </button>
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400" data-tab="settings">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">settings</span> Settings
+          </span>
+        </button>
+      </div>
+      
+      <div id="tab-users" class="tab-content active">
+        <div class="bg-neutral-800 rounded-sm overflow-hidden border border-white/5">
+          <div class="p-4 border-b border-white/5 flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-lg">search</span>
+                <input type="text" class="pl-10 pr-4 py-2 bg-neutral-900 border border-zinc-700 text-sm w-64 rounded-sm outline-none focus:border-amber-400 text-white placeholder-zinc-500" placeholder="Search users...">
+              </div>
+              <select class="bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-amber-400 text-white">
+                <option>All Plans</option>
+                <option>Free</option>
+                <option>Premium</option>
+                <option>Elite</option>
+              </select>
+            </div>
+            <button class="px-5 py-2.5 bg-amber-400 text-black font-headline font-bold text-sm uppercase tracking-widest hover:bg-amber-300 transition-colors active:scale-95 rounded-sm">
+              Add User
+            </button>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="admin-table w-full">
+              <thead>
+                <tr class="border-b border-white/5 text-left">
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">User</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Membership ID</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Plan</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Status</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Joined</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                <tr class="border-b border-white/5">
+                  <td class="p-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-sm bg-neutral-700 flex items-center justify-center text-xs font-bold text-amber-400">SO</div>
+                      <div>
+                        <p class="font-bold text-white">System Operator</p>
+                        <p class="text-xs text-zinc-500">operator@exclusives.gai</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="p-4 font-mono text-amber-400">GAi001921</td>
+                  <td class="p-4"><span class="badge bg-amber-400/20 text-amber-400">Premium</span></td>
+                  <td class="p-4"><span class="badge bg-green-500/15 text-green-500">Active</span></td>
+                  <td class="p-4 text-zinc-500">Dec 15, 2023</td>
+                  <td class="p-4">
+                    <div class="flex gap-2">
+                      <button class="action-btn p-2 text-purple-400 hover:bg-purple-400/10 rounded-sm">
+                        <span class="material-symbols-outlined text-lg">edit</span>
+                      </button>
+                      <button class="action-btn p-2 text-red-400 hover:bg-red-400/10 rounded-sm">
+                        <span class="material-symbols-outlined text-lg">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="border-b border-white/5">
+                  <td class="p-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-sm bg-neutral-700 flex items-center justify-center text-xs font-bold text-purple-400">XL</div>
+                      <div>
+                        <p class="font-bold text-white">Xenon_77</p>
+                        <p class="text-xs text-zinc-500">xenon@neural.mesh</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="p-4 font-mono text-amber-400">GAi002847</td>
+                  <td class="p-4"><span class="badge bg-purple-500/20 text-purple-400">VVIP</span></td>
+                  <td class="p-4"><span class="badge bg-green-500/15 text-green-500">Active</span></td>
+                  <td class="p-4 text-zinc-500">Nov 28, 2023</td>
+                  <td class="p-4">
+                    <div class="flex gap-2">
+                      <button class="action-btn p-2 text-purple-400 hover:bg-purple-400/10 rounded-sm">
+                        <span class="material-symbols-outlined text-lg">edit</span>
+                      </button>
+                      <button class="action-btn p-2 text-red-400 hover:bg-red-400/10 rounded-sm">
+                        <span class="material-symbols-outlined text-lg">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="border-b border-white/5">
+                  <td class="p-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-sm bg-neutral-700 flex items-center justify-center text-xs font-bold text-cyan-400">NP</div>
+                      <div>
+                        <p class="font-bold text-white">Nova_Protocol</p>
+                        <p class="text-xs text-zinc-500">nova@quantum.sys</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="p-4 font-mono text-amber-400">GAi003456</td>
+                  <td class="p-4"><span class="badge bg-cyan-400/20 text-cyan-400">VVIP</span></td>
+                  <td class="p-4"><span class="badge bg-green-500/15 text-green-500">Active</span></td>
+                  <td class="p-4 text-zinc-500">Oct 12, 2023</td>
+                  <td class="p-4">
+                    <div class="flex gap-2">
+                      <button class="action-btn p-2 text-purple-400 hover:bg-purple-400/10 rounded-sm">
+                        <span class="material-symbols-outlined text-lg">edit</span>
+                      </button>
+                      <button class="action-btn p-2 text-red-400 hover:bg-red-400/10 rounded-sm">
+                        <span class="material-symbols-outlined text-lg">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="border-b border-white/5">
+                  <td class="p-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-sm bg-neutral-700 flex items-center justify-center text-xs font-bold text-zinc-400">OR</div>
+                      <div>
+                        <p class="font-bold text-white">The_Oracle</p>
+                        <p class="text-xs text-zinc-500">oracle@vault.tech</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="p-4 font-mono text-amber-400">GAi004123</td>
+                  <td class="p-4"><span class="badge bg-amber-400/20 text-amber-400">Premium</span></td>
+                  <td class="p-4"><span class="badge bg-green-500/15 text-green-500">Active</span></td>
+                  <td class="p-4 text-zinc-500">Sep 5, 2023</td>
+                  <td class="p-4">
+                    <div class="flex gap-2">
+                      <button class="action-btn p-2 text-purple-400 hover:bg-purple-400/10 rounded-sm">
+                        <span class="material-symbols-outlined text-lg">edit</span>
+                      </button>
+                      <button class="action-btn p-2 text-red-400 hover:bg-red-400/10 rounded-sm">
+                        <span class="material-symbols-outlined text-lg">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="p-4 border-t border-white/5 flex items-center justify-between flex-wrap gap-4">
+            <span class="text-sm text-zinc-500">Showing 1-10 of 12,847 users</span>
+            <div class="flex gap-2">
+              <button class="px-4 py-2 bg-neutral-700 text-zinc-400 hover:text-white transition-colors rounded-sm">Previous</button>
+              <button class="px-4 py-2 bg-amber-400 text-black font-bold">1</button>
+              <button class="px-4 py-2 bg-neutral-700 text-zinc-400 hover:text-white transition-colors rounded-sm">2</button>
+              <button class="px-4 py-2 bg-neutral-700 text-zinc-400 hover:text-white transition-colors rounded-sm">3</button>
+              <button class="px-4 py-2 bg-neutral-700 text-zinc-400 hover:text-white transition-colors rounded-sm">Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="tab-services" class="tab-content">
+        <div class="bg-neutral-800 rounded-sm p-6 border border-white/5">
+          <p class="text-center text-zinc-500 py-12">Services management panel - Coming soon</p>
+        </div>
+      </div>
+      
+      <div id="tab-categories" class="tab-content">
+        <div class="bg-neutral-800 rounded-sm p-6 border border-white/5">
+          <p class="text-center text-zinc-500 py-12">Category management panel - Coming soon</p>
+        </div>
+      </div>
+      
+      <div id="tab-settings" class="tab-content">
+        <div class="bg-neutral-800 rounded-sm p-6 border border-white/5">
+          <p class="text-center text-zinc-500 py-12">System settings panel - Coming soon</p>
+        </div>
+      </div>
+      
+      <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-neutral-800 p-6 rounded-sm border border-white/5">
+          <h3 class="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-400">history</span>
+            Recent Activity
+          </h3>
+          <div class="space-y-4">
+            <div class="flex gap-4">
+              <div class="w-1 h-1 rounded-full bg-amber-400 mt-2 shadow-[0_0_5px_#ffc563]"></div>
+              <div>
+                <p class="text-sm text-white">New user registered: <span class="text-amber-400">CyberXpert</span></p>
+                <span class="text-[10px] text-zinc-500">2 minutes ago</span>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="w-1 h-1 rounded-full bg-purple-400 mt-2"></div>
+              <div>
+                <p class="text-sm text-white">Service approved: <span class="text-purple-400">Neural Pattern Synthesis</span></p>
+                <span class="text-[10px] text-zinc-500">15 minutes ago</span>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="w-1 h-1 rounded-full bg-cyan-400 mt-2"></div>
+              <div>
+                <p class="text-sm text-white">New subscription: <span class="text-cyan-400">Presidential Tier</span></p>
+                <span class="text-[10px] text-zinc-500">32 minutes ago</span>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="w-1 h-1 rounded-full bg-red-400 mt-2"></div>
+              <div>
+                <p class="text-sm text-white">Suspicious login attempt blocked</p>
+                <span class="text-[10px] text-zinc-500">1 hour ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-neutral-800 p-6 rounded-sm border border-white/5">
+          <h3 class="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-400">warning</span>
+            System Alerts
+          </h3>
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 p-3 bg-neutral-700 rounded-sm border-l-2 border-amber-400">
+              <span class="material-symbols-outlined text-amber-400">info</span>
+              <div>
+                <p class="text-sm text-white">Database backup completed successfully</p>
+                <span class="text-[10px] text-zinc-500">2 hours ago</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-neutral-700 rounded-sm border-l-2 border-purple-400">
+              <span class="material-symbols-outlined text-purple-400">schedule</span>
+              <div>
+                <p class="text-sm text-white">Scheduled maintenance in 24 hours</p>
+                <span class="text-[10px] text-zinc-500">5 hours ago</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-neutral-700 rounded-sm border-l-2 border-green-500">
+              <span class="material-symbols-outlined text-green-500">check_circle</span>
+              <div>
+                <p class="text-sm text-white">All systems operational</p>
+                <span class="text-[10px] text-green-400">Online</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-black/90 backdrop-blur-2xl lg:hidden z-50 border-t border-amber-400/20">
+    <a href="dashboard.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined" aria-hidden="true">hub</span>
+      <span class="text-[10px] font-bold uppercase">Feed</span>
+    </a>
+    <a href="services.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined" aria-hidden="true">work</span>
+      <span class="text-[10px] font-bold uppercase">Services</span>
+    </a>
+    <a href="admin.html" class="flex flex-col items-center justify-center text-amber-400 bg-amber-400/5 rounded-xl py-1 px-4">
+      <span class="material-symbols-outlined" aria-hidden="true">admin_panel_settings</span>
+      <span class="text-[10px] font-bold uppercase">Admin</span>
+    </a>
+    <a href="#" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+      <span class="text-[10px] font-bold uppercase">Menu</span>
+    </a>
+  </nav>
+  
+  <script>
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const tab = btn.dataset.tab;
+        tabContents.forEach(content => {
+          content.classList.remove('active');
+          if (content.id === `tab-${tab}`) {
+            content.classList.add('active');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

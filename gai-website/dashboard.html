@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | GAi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Text:opsz,wght@20..48,100..700;0..1,FILL@0..1" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Manrope', sans-serif; background: #0e0e0f; color: #ffffff; }
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    .material-symbols-outlined { font-family: 'Material Symbols Text'; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    .glass-panel { background: linear-gradient(135deg, rgba(38, 38, 39, 0.6) 0%, rgba(14, 14, 15, 0.8) 100%); backdrop-filter: blur(16px); border: 1px solid rgba(255, 197, 99, 0.1); }
+    .nav-item { transition: all 0.3s ease; }
+    .nav-item:hover { transform: translateX(4px); }
+    .nav-item.active { background: rgba(255, 197, 99, 0.1); border-left-color: #ffc563; color: #ffc563; }
+    .service-card { transition: all 0.3s ease; }
+    .service-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(255, 197, 99, 0.1); }
+    @keyframes pulse-glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .glow-text { color: #ffc563; text-shadow: 0 0 10px #ffc563, 0 0 30px #ffc563; }
+    .cyber-grid-bg { background-image: linear-gradient(to right, rgba(255, 197, 99, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 197, 99, 0.02) 1px, transparent 1px); background-size: 40px 40px; }
+    .scanline-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 100; }
+    .scanline-overlay::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.1) 2px, rgba(0, 0, 0, 0.1) 4px); }
+  </style>
+</head>
+<body class="cyber-grid-bg">
+  <div class="scanline-overlay"></div>
+  
+  <!-- Top Navigation -->
+  <header class="bg-black/80 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/10 h-16 flex items-center">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between w-full">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="font-headline text-2xl font-black tracking-tighter text-amber-400">GAi</span>
+      </a>
+      <div class="hidden md:flex items-center flex-1 max-w-xl mx-12">
+        <div class="relative w-full group">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-amber-400 transition-colors">search</span>
+          <input class="w-full bg-neutral-800 border-none focus:ring-1 focus:ring-amber-400/50 text-xs py-2 pl-10 pr-4 rounded-sm transition-all placeholder:text-zinc-600 outline-none" placeholder="Search services..." type="text">
+        </div>
+      </div>
+      <div class="flex items-center gap-6">
+        <button class="hover:text-amber-400 transition-colors active:scale-95 duration-200"><span class="material-symbols-outlined" aria-hidden="true">fingerprint</span></button>
+        <button class="hover:text-amber-400 transition-colors active:scale-95 duration-200 relative"><span class="material-symbols-outlined" aria-hidden="true">notifications_active</span><span class="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span></button>
+        <a href="profile.html" class="w-8 h-8 rounded-sm bg-gradient-to-br from-amber-400 to-amber-600 border border-amber-400/30"></a>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Side Navigation -->
+  <aside class="bg-zinc-950/90 h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col justify-between py-8 pt-24 z-40">
+    <div class="space-y-6">
+      <div class="px-6 mb-8">
+        <a href="profile.html" class="flex items-center gap-3 p-3 bg-zinc-900/50 rounded-sm border-l-2 border-amber-400 hover:bg-zinc-900 transition-colors">
+          <div class="w-10 h-10 rounded-sm bg-gradient-to-br from-amber-400/30 to-amber-600/20 border border-amber-400/30 flex items-center justify-center">
+            <span class="material-symbols-outlined text-amber-400 text-lg">person</span>
+          </div>
+          <div class="overflow-hidden">
+            <p class="font-headline font-bold text-white text-sm truncate">System Operator</p>
+            <p class="text-[10px] text-amber-400 uppercase tracking-widest">Premium</p>
+          </div>
+        </a>
+      </div>
+      <nav class="space-y-1">
+        <a href="#" class="nav-item active block px-4 py-3 flex items-center gap-4 border-l-4 border-transparent"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">hub</span><span class="font-headline font-medium text-sm">Neural Feed</span></a>
+        <a href="services.html" class="nav-item block px-4 py-3 flex items-center gap-4 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white"><span class="material-symbols-outlined" aria-hidden="true">work</span><span class="font-headline font-medium text-sm">Services</span></a>
+        <a href="messenger.html" class="nav-item block px-4 py-3 flex items-center gap-4 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white"><span class="material-symbols-outlined" aria-hidden="true">chat</span><span class="font-headline font-medium text-sm">Messages</span></a>
+        <a href="subscription.html" class="nav-item block px-4 py-3 flex items-center gap-4 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white"><span class="material-symbols-outlined" aria-hidden="true">workspace_premium</span><span class="font-headline font-medium text-sm">Membership</span></a>
+        <a href="admin.html" class="nav-item block px-4 py-3 flex items-center gap-4 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white"><span class="material-symbols-outlined" aria-hidden="true">admin_panel_settings</span><span class="font-headline font-medium text-sm">Admin</span></a>
+      </nav>
+    </div>
+    <div class="px-4 space-y-4">
+      <a href="subscription.html"><button class="w-full py-3 bg-amber-400 text-black font-bold text-xs uppercase tracking-tighter rounded-sm hover:brightness-110 transition-all active:scale-95">Upgrade Plan</button></a>
+      <div class="border-t border-zinc-900 pt-4 space-y-1">
+        <a class="nav-item text-zinc-500 px-4 py-2 flex items-center gap-4 hover:text-white text-xs transition-colors" href="#"><span class="material-symbols-outlined text-sm">contact_support</span><span>Support</span></a>
+        <a class="nav-item text-zinc-500 px-4 py-2 flex items-center gap-4 hover:text-red-400 text-xs transition-colors" href="index.html"><span class="material-symbols-outlined text-sm">power_settings_new</span><span>Sign Out</span></a>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="lg:ml-64 pt-20 px-6 pb-24 min-h-screen">
+    <section class="mb-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="md:col-span-2 bg-neutral-800 border-l-4 border-amber-400 p-8 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-amber-400/5 rounded-full blur-3xl -mr-32 -mt-32 transition-all group-hover:bg-amber-400/10"></div>
+        <h1 class="font-headline text-4xl font-black text-white uppercase tracking-tighter mb-2">Neural Interface <span class="text-amber-400 glow-text">Active</span></h1>
+        <p class="text-zinc-400 max-w-md mb-8">Accessing restricted presidential tier modules. All neural links encrypted and monitored.</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div><p class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Membership ID</p><p class="font-headline text-lg font-bold text-amber-400 glow-text">GAi001921</p></div>
+          <div><p class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Plan Status</p><p class="font-headline text-lg font-bold text-amber-400 glow-text">Premium</p></div>
+          <div><p class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Services Posted</p><p class="font-headline text-lg font-bold text-amber-400 glow-text">42</p></div>
+          <div><p class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Sync Ratio</p><p class="font-headline text-lg font-bold text-amber-400 glow-text">99.8%</p></div>
+        </div>
+      </div>
+      <div class="bg-neutral-800 p-6 flex flex-col justify-between border-t border-amber-400/20 relative overflow-hidden">
+        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-400/10 rounded-full blur-2xl"></div>
+        <div>
+          <div class="flex justify-between items-start mb-4">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 px-2 py-1 bg-blue-400/10 rounded-sm">System Health</span>
+            <span class="material-symbols-outlined text-blue-400" style="font-variation-settings: 'FILL' 1;">bolt</span>
+          </div>
+          <div class="space-y-4">
+            <div class="h-1 w-full bg-zinc-800 rounded-full overflow-hidden"><div class="h-full bg-blue-400 w-4/5 shadow-[0_0_10px_#6e9bff]"></div></div>
+            <p class="text-xs text-zinc-400 leading-relaxed">System latency optimized. Neural bypass protocols standing by for Presidential authorization.</p>
+          </div>
+        </div>
+        <button class="w-full py-2 border border-blue-400/30 text-blue-400 text-xs font-bold uppercase hover:bg-blue-400/10 transition-all mt-4">Run Diagnostic</button>
+      </div>
+    </section>
+    
+    <div class="flex flex-col xl:flex-row gap-8">
+      <section class="flex-1">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="font-headline text-xl font-bold uppercase tracking-tight flex items-center gap-3"><span class="w-8 h-[2px] bg-amber-400"></span>Trending Services</h2>
+          <a href="services.html" class="text-xs text-amber-400 font-bold uppercase tracking-widest hover:underline">View All Neural Links</a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="service-card bg-neutral-800 rounded-sm border-t border-white/5 overflow-hidden">
+            <div class="h-48 bg-gradient-to-br from-amber-400/20 to-neutral-900 relative">
+              <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent"></div>
+              <div class="absolute bottom-4 left-4"><span class="bg-amber-400 text-black text-[10px] font-black px-2 py-1 uppercase rounded-sm">Neural-Node Alpha</span></div>
+            </div>
+            <div class="p-5">
+              <h3 class="font-headline font-bold text-white text-lg mb-2">Deep-Mind Arbitrage Link</h3>
+              <p class="text-zinc-400 text-sm mb-4 line-clamp-2">High-frequency trading protocol using synthetic neural nodes for sub-millisecond execution.</p>
+              <div class="flex items-center justify-between">
+                <span class="font-headline font-bold text-amber-400 glow-text">2.44 GAi/hr</span>
+                <button class="p-2 border border-white/10 hover:border-amber-400/50 hover:text-amber-400 transition-all"><span class="material-symbols-outlined" aria-hidden="true">add_link</span></button>
+              </div>
+            </div>
+          </div>
+          <div class="service-card bg-neutral-800 rounded-sm border-t border-white/5 overflow-hidden">
+            <div class="h-48 bg-gradient-to-br from-purple-400/20 to-neutral-900 relative">
+              <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent"></div>
+              <div class="absolute bottom-4 left-4"><span class="bg-purple-400 text-white text-[10px] font-black px-2 py-1 uppercase rounded-sm">VVIP Bio-Port</span></div>
+            </div>
+            <div class="p-5">
+              <h3 class="font-headline font-bold text-white text-lg mb-2">Synthetic Memory Sharding</h3>
+              <p class="text-zinc-400 text-sm mb-4 line-clamp-2">Securely store encrypted memory fragments across the distributed neural nexus.</p>
+              <div class="flex items-center justify-between">
+                <span class="font-headline font-bold text-amber-400 glow-text">8.12 GAi/shd</span>
+                <button class="p-2 border border-white/10 hover:border-amber-400/50 hover:text-amber-400 transition-all"><span class="material-symbols-outlined" aria-hidden="true">bolt</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <aside class="w-full xl:w-80 space-y-8">
+        <div>
+          <h2 class="font-headline text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4 px-2 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse"></span>Active Members</h2>
+          <div class="bg-neutral-900 rounded-sm border border-white/5 divide-y divide-white/5">
+            <a href="profile.html" class="p-4 flex items-center gap-3 group cursor-pointer hover:bg-zinc-900/50 transition-colors">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400/30 to-neutral-800 border border-amber-400/30 flex items-center justify-center text-xs font-bold text-amber-400">XL</div>
+              <div><p class="text-sm font-bold text-white">Xenon_77</p><p class="text-[10px] text-amber-400/70 font-bold uppercase">Trading Nodes</p></div>
+              <div class="ml-auto"><span class="w-2 h-2 bg-green-500 rounded-full"></span></div>
+            </a>
+            <a href="profile.html" class="p-4 flex items-center gap-3 group cursor-pointer hover:bg-zinc-900/50 transition-colors">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400/30 to-neutral-800 border border-blue-400/30 flex items-center justify-center text-xs font-bold text-blue-400">NP</div>
+              <div><p class="text-sm font-bold text-white">Nova_Protocol</p><p class="text-[10px] text-blue-400/70 font-bold uppercase">Data Architect</p></div>
+              <div class="ml-auto"><span class="w-2 h-2 bg-amber-400 rounded-full"></span></div>
+            </a>
+            <a href="profile.html" class="p-4 flex items-center gap-3 group cursor-pointer hover:bg-zinc-900/50 transition-colors">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400/30 to-neutral-800 border border-purple-400/30 flex items-center justify-center text-xs font-bold text-purple-400">OR</div>
+              <div><p class="text-sm font-bold text-white">The_Oracle</p><p class="text-[10px] text-purple-400/70 font-bold uppercase">Storage Pro</p></div>
+              <div class="ml-auto"><span class="w-2 h-2 bg-blue-400 rounded-full"></span></div>
+            </a>
+          </div>
+        </div>
+        <div class="bg-neutral-800 p-6 border-t-2 border-amber-400">
+          <h2 class="font-headline text-sm font-bold uppercase tracking-widest text-white mb-4">Neural Logs</h2>
+          <div class="space-y-4">
+            <div class="flex gap-4"><div class="mt-1 w-1 h-1 rounded-full bg-amber-400 shadow-[0_0_5px_#ffc563]"></div><p class="text-xs text-zinc-400"><span class="text-white font-bold">14:22:</span> Node AH-9 link established. Protocol: EXCLUSIVES_V4</p></div>
+            <div class="flex gap-4"><div class="mt-1 w-1 h-1 rounded-full bg-zinc-700"></div><p class="text-xs text-zinc-400"><span class="text-white font-bold">12:05:</span> Biometric sync completed for System Operator.</p></div>
+            <div class="flex gap-4"><div class="mt-1 w-1 h-1 rounded-full bg-red-400"></div><p class="text-xs text-zinc-400"><span class="text-white font-bold">09:12:</span> Unauthorized query blocked in Sector 7.</p></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+  
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-black/90 backdrop-blur-2xl lg:hidden z-50 border-t border-amber-400/20">
+    <a href="#" class="flex flex-col items-center justify-center text-amber-400 bg-amber-400/5 rounded-xl py-1 px-4"><span class="material-symbols-outlined" aria-hidden="true">hub</span><span class="text-[10px] font-bold uppercase">Feed</span></a>
+    <a href="services.html" class="flex flex-col items-center justify-center text-zinc-500"><span class="material-symbols-outlined" aria-hidden="true">work</span><span class="text-[10px] font-bold uppercase">Services</span></a>
+    <a href="messenger.html" class="flex flex-col items-center justify-center text-zinc-500"><span class="material-symbols-outlined" aria-hidden="true">chat</span><span class="text-[10px] font-bold uppercase">Chat</span></a>
+    <a href="#" class="flex flex-col items-center justify-center text-zinc-500"><span class="material-symbols-outlined" aria-hidden="true">menu</span><span class="text-[10px] font-bold uppercase">Menu</span></a>
+  </nav>
+</body>
+</html>

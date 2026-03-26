@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Biometric Authentication | Exclusives GAi</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed": "#003076",
+              "on-surface-variant": "#adaaab",
+              "surface-container-high": "#201f21",
+              "secondary-fixed-dim": "#acc3ff",
+              "secondary-dim": "#0f6df3",
+              "tertiary": "#cb7bff",
+              "background": "#0e0e0f",
+              "surface-dim": "#0e0e0f",
+              "tertiary-container": "#ab08ff",
+              "on-secondary-fixed-variant": "#004baf",
+              "inverse-primary": "#7f5700",
+              "tertiary-fixed-dim": "#cf83ff",
+              "on-primary-container": "#523700",
+              "on-surface": "#ffffff",
+              "on-primary-fixed": "#382400",
+              "secondary-fixed": "#c0d1ff",
+              "error": "#ff7351",
+              "inverse-surface": "#fcf8f9",
+              "surface-container-highest": "#262627",
+              "primary-dim": "#eda600",
+              "on-background": "#ffffff",
+              "primary-container": "#feb300",
+              "on-error-container": "#ffd2c8",
+              "secondary-container": "#0058ca",
+              "surface-bright": "#2c2c2d",
+              "on-error": "#450900",
+              "on-secondary": "#001d4e",
+              "primary-fixed": "#feb300",
+              "tertiary-dim": "#ae25ff",
+              "on-tertiary": "#360055",
+              "outline-variant": "#484849",
+              "primary": "#ffc563",
+              "error-container": "#b92902",
+              "surface": "#0e0e0f",
+              "on-tertiary-fixed-variant": "#5b008c",
+              "on-primary": "#5e4000",
+              "on-primary-fixed-variant": "#5e4000",
+              "on-tertiary-container": "#ffffff",
+              "error-dim": "#d53d18",
+              "surface-container-lowest": "#000000",
+              "secondary": "#6e9bff",
+              "inverse-on-surface": "#565556",
+              "on-secondary-container": "#f7f7ff",
+              "on-tertiary-fixed": "#2a0044",
+              "surface-tint": "#ffc563",
+              "surface-variant": "#262627",
+              "surface-container-low": "#131314",
+              "tertiary-fixed": "#d797ff",
+              "outline": "#767576",
+              "primary-fixed-dim": "#eda600",
+              "surface-container": "#1a191b"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scanner-ring {
+            border: 2px solid transparent;
+            border-top-color: #ffc563;
+            border-bottom-color: #ffc563;
+            border-radius: 50%;
+        }
+        .hud-scanline {
+            background: linear-gradient(to bottom, transparent, #ffc563, transparent);
+            height: 2px;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.5;
+        }
+        .tech-corner-tl { border-top: 2px solid #ffc563; border-left: 2px solid #ffc563; }
+        .tech-corner-br { border-bottom: 2px solid #ffc563; border-right: 2px solid #ffc563; }
+    </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body selection:bg-primary selection:text-on-primary">
+<!-- Top Navigation Shell (Suppressed as per Logic for Transactional Flow, only Brand identity remains) -->
+<nav class="bg-black/80 backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(255,179,0,0.1)] fixed top-0 w-full z-50 px-6 h-16 flex justify-between items-center">
+<div class="text-2xl font-black tracking-tighter text-amber-500 font-['Space_Grotesk'] uppercase tracking-wider">
+            Exclusives GAi
+        </div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-amber-500" data-icon="fingerprint">fingerprint</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden">
+<img alt="User Biometric Status" class="w-full h-full object-cover" data-alt="high-tech cybernetic eye close up with orange glowing circuitry details cinematic lighting macro photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjeDUQvtItDEom37dbWyFcjHkI2ZLmWtazfBI7HDJjzs18c3S1u0tLcXBgLmvNc9JyPE6FdtIF5v_3xHfqAAgjI9wi4w2rV8_OUkRI_o1FcE6A-MtueU1HvEiNWBTGLFx68YEMZkio7dYVsNBNuhTfpdCVIKkxKJNPfXLz7Kw4hRv2T_zTGo2ujrgSDdx-A28m-M3RDiCr2yKV65ELISAfk104RUy1v7yUtNILKJIajNuvtcQ-t689dygSw9FLwWMX0ep6jvwr4xM"/>
+</div>
+</div>
+</nav>
+<main class="min-h-screen flex flex-col items-center justify-center pt-16 px-4 relative overflow-hidden">
+<!-- Background Ambient Glows -->
+<div class="absolute top-1/4 -left-20 w-96 h-96 bg-primary/5 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/5 rounded-full blur-[120px]"></div>
+<div class="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center z-10">
+<!-- Left Side: Status & HUD Metrics -->
+<div class="lg:col-span-3 hidden lg:flex flex-col gap-6">
+<div class="bg-surface-container-high/40 p-4 border-l-2 border-primary">
+<p class="font-headline text-[10px] uppercase tracking-widest text-primary mb-1">System Entropy</p>
+<p class="font-headline text-xl text-on-surface">0.00042%</p>
+</div>
+<div class="bg-surface-container-high/40 p-4 border-l-2 border-secondary">
+<p class="font-headline text-[10px] uppercase tracking-widest text-secondary mb-1">Neural Latency</p>
+<p class="font-headline text-xl text-on-surface">14ms</p>
+</div>
+<div class="bg-surface-container-high/40 p-4 border-l-2 border-tertiary">
+<p class="font-headline text-[10px] uppercase tracking-widest text-tertiary mb-1">Encrypted Link</p>
+<p class="font-headline text-xl text-on-surface">AES-768</p>
+</div>
+</div>
+<!-- Center: Primary Scanner Interface -->
+<div class="lg:col-span-6 flex flex-col items-center">
+<div class="relative w-72 h-72 md:w-80 md:h-80 flex items-center justify-center mb-10">
+<!-- Scanner Frame -->
+<div class="absolute inset-0 tech-corner-tl w-8 h-8 opacity-60"></div>
+<div class="absolute top-0 right-0 border-t-2 border-r-2 border-primary w-8 h-8 opacity-60"></div>
+<div class="absolute bottom-0 left-0 border-b-2 border-l-2 border-primary w-8 h-8 opacity-60"></div>
+<div class="absolute inset-0 tech-corner-br w-8 h-8 ml-auto mt-auto opacity-60"></div>
+<!-- Animated Circular Elements -->
+<div class="absolute inset-4 border border-outline-variant/30 rounded-full"></div>
+<div class="absolute inset-8 border border-primary/20 rounded-full scanner-ring"></div>
+<!-- Inner Iris Scanner -->
+<div class="relative w-56 h-56 rounded-full overflow-hidden border border-primary/40 p-1 bg-surface-container-low shadow-[0_0_30px_rgba(255,197,99,0.15)]">
+<img alt="Facial Scan Feed" class="w-full h-full object-cover grayscale opacity-80 brightness-75" data-alt="Close-up portrait of a man looking directly into camera with soft professional lighting against a dark gray background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFPw7PFJBA08MUAF6iMTASyDeEKLWHylqnRgkp11j5mbZ2frTa_xZ6zO-wgTiZF9cyqGeXKrfsnIM2R9fuI-5fplu1WxgIrwBv-r2YV988Hb5TO93kpZnNsv3Lap16hkXkyqwUvzE92RNjoeGQIknOMlrEEMm8ThciURNL3z8mrq-VaOLl9QmUFS_5Zr0LezJHBDG6rxOlNbcqPeNgwwD77JCl6zD2V2Yh0dnqZDUd60Ybnlmd7DRR-TZPDgEZlWHb69FJOLjPbAE"/>
+<!-- HUD Overlay on Camera -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="w-24 h-24 border border-primary/40 rounded-sm opacity-50"></div>
+<div class="absolute top-1/2 left-0 w-full h-[1px] bg-primary/30"></div>
+<div class="absolute top-0 left-1/2 h-full w-[1px] bg-primary/30"></div>
+</div>
+<div class="hud-scanline"></div>
+</div>
+</div>
+<div class="text-center space-y-4 max-w-sm">
+<h1 class="font-headline text-3xl font-bold tracking-tight text-on-surface">Biometric Verification</h1>
+<p class="text-on-surface-variant font-medium">Align Face with Scanner or Speak Secret Phrase</p>
+<!-- Progress Bar -->
+<div class="w-full bg-surface-container-highest h-1.5 rounded-none mt-6 overflow-hidden relative">
+<div class="absolute top-0 left-0 h-full w-2/3 bg-primary shadow-[0_0_10px_#ffc563]"></div>
+</div>
+<div class="flex justify-between w-full">
+<span class="font-headline text-[10px] text-primary uppercase">Analyzing Neural Patterns</span>
+<span class="font-headline text-[10px] text-primary">68%</span>
+</div>
+</div>
+</div>
+<!-- Right Side: Secondary Actions -->
+<div class="lg:col-span-3 flex flex-col gap-4">
+<button class="w-full bg-primary text-on-primary py-4 px-6 font-headline font-bold uppercase tracking-widest text-sm flex items-center justify-between group transition-all active:scale-95">
+<span>Initiate Scan</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</button>
+<div class="relative py-4 flex items-center">
+<div class="flex-grow border-t border-outline-variant/30"></div>
+<span class="flex-shrink mx-4 font-headline text-[10px] text-on-surface-variant uppercase tracking-[0.2em]">Manual Protocol</span>
+<div class="flex-grow border-t border-outline-variant/30"></div>
+</div>
+<div class="space-y-3">
+<button class="w-full bg-surface-container-high text-on-surface-variant py-3 px-6 font-medium text-sm flex items-center gap-3 border border-outline-variant/10 hover:border-outline-variant hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="key">key</span>
+<span>Use Email/Password</span>
+</button>
+<button class="w-full bg-surface-container-high text-on-surface-variant py-3 px-6 font-medium text-sm flex items-center gap-3 border border-outline-variant/10 hover:border-outline-variant hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="emergency">emergency</span>
+<span>Backup Recovery Code</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Visual Elements -->
+<div class="mt-20 flex gap-12 opacity-30 grayscale pointer-events-none">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="mic">mic</span>
+<span class="font-headline text-[9px] uppercase tracking-widest">Acoustics</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="visibility">visibility</span>
+<span class="font-headline text-[9px] uppercase tracking-widest">Optics</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="lock_open">lock_open</span>
+<span class="font-headline text-[9px] uppercase tracking-widest">Access</span>
+</div>
+</div>
+</main>
+<!-- Navigation Shell Suppressed as this is a focused Task-Focused/Transactional page -->
+<!-- SideNavBar & BottomNavBar excluded per requirements for focus-intensive journeys -->
+<!-- Status Indicators Float -->
+<div class="fixed bottom-8 left-8 hidden lg:block">
+<div class="flex items-center gap-3 bg-surface-container-highest/60 backdrop-blur-md px-4 py-2 border border-outline-variant/20">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="font-headline text-[10px] tracking-widest text-on-surface-variant uppercase">Session: Presidential Tier - Active</span>
+</div>
+</div>
+<div class="fixed bottom-8 right-8 hidden lg:block">
+<div class="flex items-center gap-6">
+<div class="text-right">
+<p class="font-headline text-[10px] text-on-surface-variant uppercase">Operator</p>
+<p class="font-bold text-xs">ID: EX-992-G</p>
+</div>
+<div class="w-[1px] h-8 bg-outline-variant/30"></div>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-pointer" data-icon="help">help</span>
+</div>
+</div>
+</body></html>

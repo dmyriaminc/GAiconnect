@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GAi | Where People Connect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed": "#003076",
+                        "on-surface-variant": "#adaaab",
+                        "surface-container-high": "#201f21",
+                        "secondary-fixed-dim": "#acc3ff",
+                        "secondary-dim": "#0f6df3",
+                        "tertiary": "#cb7bff",
+                        "background": "#0e0e0f",
+                        "surface-dim": "#0e0e0f",
+                        "tertiary-container": "#ab08ff",
+                        "on-secondary-fixed-variant": "#004baf",
+                        "inverse-primary": "#7f5700",
+                        "tertiary-fixed-dim": "#cf83ff",
+                        "on-primary-container": "#523700",
+                        "on-surface": "#ffffff",
+                        "on-primary-fixed": "#382400",
+                        "secondary-fixed": "#c0d1ff",
+                        "error": "#ff7351",
+                        "inverse-surface": "#fcf8f9",
+                        "surface-container-highest": "#262627",
+                        "primary-dim": "#eda600",
+                        "on-background": "#ffffff",
+                        "primary-container": "#feb300",
+                        "on-error-container": "#ffd2c8",
+                        "secondary-container": "#0058ca",
+                        "surface-bright": "#2c2c2d",
+                        "on-error": "#450900",
+                        "on-secondary": "#001d4e",
+                        "primary-fixed": "#feb300",
+                        "tertiary-dim": "#ae25ff",
+                        "on-tertiary": "#360055",
+                        "outline-variant": "#484849",
+                        "primary": "#ffc563",
+                        "error-container": "#b92902",
+                        "surface": "#0e0e0f",
+                        "on-tertiary-fixed-variant": "#5b008c",
+                        "on-primary": "#5e4000",
+                        "on-primary-fixed-variant": "#5e4000",
+                        "on-tertiary-container": "#ffffff",
+                        "error-dim": "#d53d18",
+                        "surface-container-lowest": "#000000",
+                        "secondary": "#6e9bff",
+                        "inverse-on-surface": "#565556",
+                        "on-secondary-container": "#f7f7ff",
+                        "on-tertiary-fixed": "#2a0044",
+                        "surface-tint": "#ffc563",
+                        "surface-variant": "#262627",
+                        "surface-container-low": "#131314",
+                        "tertiary-fixed": "#d797ff",
+                        "outline": "#767576",
+                        "primary-fixed-dim": "#eda600",
+                        "surface-container": "#1a191b"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tech-cut-tr { clip-path: polygon(0 0, 90% 0, 100% 15%, 100% 100%, 0 100%); }
+        .tech-cut-bl { clip-path: polygon(0 0, 100% 0, 100% 100%, 15% 100%, 0 85%); }
+        .glass-panel {
+            background: rgba(32, 31, 33, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 197, 99, 0.1);
+        }
+        .glow-amber { box-shadow: 0 0 20px rgba(255, 179, 0, 0.15); }
+    </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body selection:bg-primary selection:text-on-primary">
+<!-- TopNavBar Implementation -->
+<header class="bg-black/80 backdrop-blur-xl docked full-width top-0 z-50 border-b border-white/10 shadow-[0_0_20px_rgba(255,179,0,0.1)] fixed left-0 right-0">
+<div class="flex justify-between items-center w-full px-6 h-16">
+<div class="text-2xl font-black tracking-tighter text-amber-500 font-['Space_Grotesk']">
+                GAi
+            </div>
+<nav class="hidden md:flex space-x-8 items-center">
+<a class="text-amber-400 font-bold font-['Space_Grotesk'] uppercase tracking-wider text-sm" href="#">Neural Feed</a>
+<a class="text-zinc-500 hover:text-amber-300 transition-colors font-['Space_Grotesk'] uppercase tracking-wider text-sm" href="#">Membership</a>
+<a class="text-zinc-500 hover:text-amber-300 transition-colors font-['Space_Grotesk'] uppercase tracking-wider text-sm" href="#">Vault</a>
+</nav>
+<div class="flex items-center space-x-6">
+<div class="hidden sm:flex items-center space-x-4">
+<span class="material-symbols-outlined text-amber-500 active:scale-95 duration-200 cursor-pointer">fingerprint</span>
+<span class="material-symbols-outlined text-amber-500 active:scale-95 duration-200 cursor-pointer">notifications_active</span>
+</div>
+<div class="h-10 w-10 bg-surface-bright border border-primary/20 flex items-center justify-center">
+<img alt="User Biometric Status" class="h-full w-full object-cover" data-alt="high-tech profile portrait of a man with subtle biometric scanning light patterns overlaid on his face, cinematic dark lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8fnnYKcczOvkgNT_ylFiMSvdQf3BIJ5PJvUaNAZRPbcajRgb1oG8WizeiLhXG8kXTg4PPZ5fhhQF-T7FfL5iKBCZaUi1qXwJk-EdSD0LHRcjZmJNtd48VZcAS-rLZOYuy5OWceFLD6JniIP5MA6DF5VRdJIMl6o23Cz4aqlZElgw0AvdtedO1wCEl01t1-RKU5Hn5xhh_h0oCcnvCKbIdsNZHnMAL_Wu8G4pfaHNvoSzkiJ9PkZ5qt4UD0vNWlKejl8ZDCCHekUY"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-16">
+<!-- Hero Section -->
+<section class="relative min-h-[921px] flex items-center overflow-hidden px-6 lg:px-24">
+<div class="absolute inset-0 z-0">
+<img alt="Hero Background" class="w-full h-full object-cover opacity-40" data-alt="striking portrait of a sleek cyborg with glowing amber mechanical eye and neural filaments, deep charcoal background, cinematic atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiQAZ9MaE0cgiWGD7baWVYqOvuUBsECwmTMpffmplownyUVy3FLxg80Q8vRnJob3c3Bs2WvT8Mb291wMBNzFxUn3wO0lGf3hw65-SJD56qhrOtz-BQjrknhQ_SiWqE3Mjqpt8RQ_GR1DusST_9s2b8u0_Psy7uI8IOXchhhB0lmmNn4r1SzEri4R_VzcIlVslv6VqjqBj4wrM4B5Q-Y21JU25l38xbNyK27n7NKFKMvpDrMySeFuAh_uHKfVkZUk_2P_E41LAqj3Y"/>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-lowest via-surface-container-lowest/80 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-4xl">
+<div class="inline-flex items-center space-x-3 mb-6 bg-primary/10 px-4 py-2 border-l-2 border-primary">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="text-primary font-headline text-xs tracking-[0.2em] font-bold uppercase">System Status: Presidential Tier Active</span>
+</div>
+<h1 class="font-headline text-5xl md:text-8xl font-black text-on-surface leading-none mb-6 tracking-tighter">
+                    EXCLUSIVES <br/>
+<span class="text-primary italic">CONNECT</span>
+</h1>
+<p class="text-on-surface-variant text-lg md:text-xl max-w-xl font-light leading-relaxed mb-10">
+                    Enter the world's first biometric-encrypted social ecosystem. Where identity is absolute and exclusivity is forged in neural data.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-primary text-on-primary font-headline font-bold py-4 px-10 tech-cut-tr hover:brightness-110 active:scale-95 transition-all">
+                        JOIN THE NETWORK
+                    </button>
+<button class="border border-outline-variant text-on-surface font-headline font-bold py-4 px-10 tech-cut-bl hover:bg-surface-bright transition-all">
+                        VIEW PROTOCOLS
+                    </button>
+</div>
+</div>
+<!-- Side HUD Element -->
+<div class="hidden lg:flex flex-col absolute right-12 top-1/2 -translate-y-1/2 space-y-8 border-r border-primary/20 pr-6">
+<div class="text-right">
+<div class="text-primary font-headline text-2xl font-bold">99.9%</div>
+<div class="text-on-surface-variant text-[10px] uppercase tracking-widest">Uptime Integrity</div>
+</div>
+<div class="text-right">
+<div class="text-primary font-headline text-2xl font-bold">4.2 PB</div>
+<div class="text-on-surface-variant text-[10px] uppercase tracking-widest">Vault Capacity</div>
+</div>
+<div class="text-right">
+<div class="text-primary font-headline text-2xl font-bold">256-BIT</div>
+<div class="text-on-surface-variant text-[10px] uppercase tracking-widest">Neural Encryption</div>
+</div>
+</div>
+</section>
+<!-- Feature Bento Grid -->
+<section class="py-24 px-6 lg:px-24 bg-surface-container-low">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Main Feature -->
+<div class="md:col-span-8 glass-panel p-8 flex flex-col justify-between min-h-[400px] group overflow-hidden relative">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+<div>
+<span class="material-symbols-outlined text-primary text-4xl mb-6">fingerprint</span>
+<h3 class="font-headline text-4xl font-bold mb-4 tracking-tight">Biometric Security</h3>
+<p class="text-on-surface-variant text-lg max-w-md">Your DNA is your password. Utilizing multi-spectral biometric scans to ensure only verified biological entities access the network.</p>
+</div>
+<div class="flex items-end justify-between mt-12">
+<div class="h-[2px] w-24 bg-primary"></div>
+<span class="font-headline text-primary text-sm font-bold tracking-[0.3em] uppercase">Protocol Alpha-01</span>
+</div>
+</div>
+<!-- Secondary Feature -->
+<div class="md:col-span-4 bg-surface-bright p-8 flex flex-col justify-between border-t-2 border-primary">
+<span class="material-symbols-outlined text-primary text-4xl mb-6">workspace_premium</span>
+<h3 class="font-headline text-2xl font-bold mb-4">Exclusive Services</h3>
+<p class="text-on-surface-variant">Priority access to orbital transport, deep-sea sanctuaries, and neural-link concierge services available only to VVIP tier.</p>
+<a class="text-primary font-bold flex items-center mt-6 group" href="#">
+                        UPGRADE ACCESS 
+                        <span class="material-symbols-outlined ml-2 group-hover:translate-x-2 transition-transform">arrow_forward</span>
+</a>
+</div>
+<!-- Tertiary Feature -->
+<div class="md:col-span-4 glass-panel p-8 border-b-2 border-primary/20">
+<span class="material-symbols-outlined text-primary text-4xl mb-6">lock</span>
+<h3 class="font-headline text-2xl font-bold mb-4">The Vault</h3>
+<p class="text-on-surface-variant">Cold-storage for your digital legacy. Encrypted assets that remain even when you are disconnected.</p>
+</div>
+<!-- Messaging Feature -->
+<div class="md:col-span-8 bg-surface-container-highest p-8 relative overflow-hidden group">
+<div class="relative z-10 h-full flex flex-col lg:flex-row gap-8 items-center">
+<div class="flex-1">
+<span class="material-symbols-outlined text-primary text-4xl mb-6">chat_bubble</span>
+<h3 class="font-headline text-4xl font-bold mb-4 tracking-tight">Private Messaging</h3>
+<p class="text-on-surface-variant text-lg">Self-destructing neural pulses. Communications that leave no metadata trail. Pure, unfiltered connectivity.</p>
+</div>
+<div class="w-full lg:w-1/3 aspect-square bg-surface-container-low border border-outline-variant flex items-center justify-center">
+<img alt="Messaging Interface" class="w-full h-full object-cover opacity-60" data-alt="abstract close up of a digital mesh screen with orange light particles representing data transmission in a futuristic dark setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuZhqTdKoaiTmDprUxWiuAgvfWmZTYdp1uZIZ9N_iDutQ-_Gt7H-Dx459kKPJzB27uNXtvfV6r221Wuri5q5AMJiwIkDSzOEIZPw3jeKyg6OOHhOtWDVb-TV8WlgPwGw3_RZY9TGILv4KvsBTSmYqC5lzaJ44MxnSrlqbImk4lELTy-L-p4XWMnzy30XbsZzl8AZq04WygfSNCOCikl2rn7CAK2qq_rbV_0nGbEqJQaBw6GC-PN06aziEpW2SItm21rU8_3P-haIs"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Membership Tiers -->
+<section class="py-24 px-6 lg:px-24">
+<div class="text-center mb-16">
+<h2 class="font-headline text-4xl md:text-5xl font-black mb-4 uppercase tracking-tighter">SELECT YOUR TIER</h2>
+<div class="h-1 w-24 bg-primary mx-auto"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Standard -->
+<div class="bg-surface-container-high border border-outline-variant p-10 hover:border-primary/50 transition-colors">
+<div class="text-on-surface-variant font-headline text-xs tracking-widest uppercase mb-4">Tier 01</div>
+<h4 class="text-2xl font-bold mb-8">Operator</h4>
+<ul class="space-y-4 mb-12">
+<li class="flex items-center text-on-surface-variant"><span class="material-symbols-outlined text-primary mr-2 text-sm">check</span> Biometric Identity</li>
+<li class="flex items-center text-on-surface-variant"><span class="material-symbols-outlined text-primary mr-2 text-sm">check</span> Global Feed Access</li>
+<li class="flex items-center text-on-surface-variant"><span class="material-symbols-outlined text-primary mr-2 text-sm">check</span> 50GB Vault</li>
+</ul>
+<button class="w-full py-3 border border-outline text-on-surface font-bold hover:bg-surface-bright transition-colors uppercase text-sm">Initialize</button>
+</div>
+<!-- VIP -->
+<div class="bg-surface-container-highest border-2 border-primary p-10 relative overflow-hidden glow-amber scale-105">
+<div class="absolute top-0 right-0 bg-primary text-on-primary px-4 py-1 text-[10px] font-black uppercase tracking-tighter">Most Active</div>
+<div class="text-primary font-headline text-xs tracking-widest uppercase mb-4">Tier 02</div>
+<h4 class="text-2xl font-bold mb-8 text-primary">Presidential</h4>
+<ul class="space-y-4 mb-12">
+<li class="flex items-center"><span class="material-symbols-outlined text-primary mr-2 text-sm">check</span> Full Neural Encryption</li>
+<li class="flex items-center"><span class="material-symbols-outlined text-primary mr-2 text-sm">check</span> Priority Concierge</li>
+<li class="flex items-center"><span class="material-symbols-outlined text-primary mr-2 text-sm">check</span> Unlimited Vault</li>
+<li class="flex items-center"><span class="material-symbols-outlined text-primary mr-2 text-sm">check</span> Event Stealth Access</li>
+</ul>
+<button class="w-full py-3 bg-primary text-on-primary font-bold tech-cut-tr hover:brightness-110 transition-colors uppercase text-sm">Adopt Protocol</button>
+</div>
+<!-- VVIP -->
+<div class="bg-surface-container-high border border-outline-variant p-10 hover:border-tertiary/50 transition-colors group">
+<div class="text-on-surface-variant font-headline text-xs tracking-widest uppercase mb-4 group-hover:text-tertiary transition-colors">Tier 03</div>
+<h4 class="text-2xl font-bold mb-8">Executive Soul</h4>
+<ul class="space-y-4 mb-12">
+<li class="flex items-center text-on-surface-variant"><span class="material-symbols-outlined text-tertiary mr-2 text-sm">check</span> Multi-dimensional Access</li>
+<li class="flex items-center text-on-surface-variant"><span class="material-symbols-outlined text-tertiary mr-2 text-sm">check</span> Governance Rights</li>
+<li class="flex items-center text-on-surface-variant"><span class="material-symbols-outlined text-tertiary mr-2 text-sm">check</span> Digital Immortality Beta</li>
+</ul>
+<button class="w-full py-3 border border-outline text-on-surface font-bold hover:bg-surface-bright transition-colors uppercase text-sm">Request Invite</button>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-24 px-6 lg:px-24 bg-surface-container-lowest relative overflow-hidden">
+<div class="absolute inset-0 opacity-10">
+<div class="h-px w-full bg-primary absolute top-1/4"></div>
+<div class="h-px w-full bg-primary absolute top-2/4"></div>
+<div class="h-px w-full bg-primary absolute top-3/4"></div>
+<div class="w-px h-full bg-primary absolute left-1/4"></div>
+<div class="w-px h-full bg-primary absolute left-2/4"></div>
+<div class="w-px h-full bg-primary absolute left-3/4"></div>
+</div>
+<div class="relative z-10 glass-panel max-w-5xl mx-auto p-12 text-center border-t-4 border-primary">
+<h2 class="font-headline text-4xl md:text-6xl font-black mb-6 tracking-tight uppercase">Ready to transcend?</h2>
+<p class="text-on-surface-variant text-xl mb-12 max-w-2xl mx-auto font-light">Join the elite network that's redefining what it means to connect. Your biometric signature is your key to the future.</p>
+<div class="flex flex-col sm:flex-row justify-center gap-6">
+<input class="bg-surface-container-lowest border-b-2 border-outline-variant focus:border-primary focus:ring-0 text-on-surface font-headline placeholder:text-outline py-4 px-6 min-w-[300px] outline-none transition-colors" placeholder="ENTER BIOMETRIC ID / EMAIL" type="email"/>
+<button class="bg-primary text-on-primary font-headline font-black py-4 px-12 tech-cut-tr hover:brightness-110 active:scale-95 transition-all">
+                        INITIALIZE SYNC
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low border-t border-outline-variant/20 py-16 px-6 lg:px-24">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+<div class="col-span-1 md:col-span-1">
+<div class="text-2xl font-black tracking-tighter text-amber-500 font-['Space_Grotesk'] mb-6 uppercase">
+                    GAi
+                </div>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                    The premier social layer for the tech-enhanced era. Secure, biological, exclusive.
+                </p>
+</div>
+<div>
+<h5 class="font-headline text-xs font-bold uppercase tracking-[0.2em] text-primary mb-6">Protocols</h5>
+<ul class="space-y-3 text-on-surface-variant text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Neural Feed</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Biometric Auth</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Vault Security</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Privacy Tiers</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-headline text-xs font-bold uppercase tracking-[0.2em] text-primary mb-6">Company</h5>
+<ul class="space-y-3 text-on-surface-variant text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Our Vision</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">System Status</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Network News</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Legal Framework</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-headline text-xs font-bold uppercase tracking-[0.2em] text-primary mb-6">Contact</h5>
+<ul class="space-y-3 text-on-surface-variant text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Support Portal</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">API Documentation</a></li>
+<li class="pt-4">
+<div class="flex space-x-4">
+<span class="material-symbols-outlined text-primary cursor-pointer">hub</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">sensors</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">public</span>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="border-t border-outline-variant/10 pt-8 flex flex-col md:row justify-between items-center text-[10px] text-outline font-headline tracking-[0.3em] uppercase">
+<div>© 2024 GAi HYPERSTRUCTURES</div>
+<div class="mt-4 md:mt-0">ENCRYPTION: ACTIVE | LATENCY: 2ms</div>
+</div>
+</footer>
+<!-- BottomNavBar for Mobile -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-black/90 backdrop-blur-2xl border-t border-amber-500/20 lg:hidden z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<div class="flex flex-col items-center justify-center text-amber-500 bg-amber-500/5 rounded-xl py-1 active:scale-90 duration-150">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-[10px] font-bold uppercase font-['Space_Grotesk'] mt-1">Feed</span>
+</div>
+<div class="flex flex-col items-center justify-center text-zinc-600 active:bg-zinc-800 active:scale-90 duration-150">
+<span class="material-symbols-outlined">key</span>
+<span class="text-[10px] font-bold uppercase font-['Space_Grotesk'] mt-1">Vault</span>
+</div>
+<div class="flex flex-col items-center justify-center text-zinc-600 active:bg-zinc-800 active:scale-90 duration-150">
+<span class="material-symbols-outlined">sensors</span>
+<span class="text-[10px] font-bold uppercase font-['Space_Grotesk'] mt-1">Status</span>
+</div>
+<div class="flex flex-col items-center justify-center text-zinc-600 active:bg-zinc-800 active:scale-90 duration-150">
+<span class="material-symbols-outlined">menu</span>
+<span class="text-[10px] font-bold uppercase font-['Space_Grotesk'] mt-1">Menu</span>
+</div>
+</nav>
+</body></html>

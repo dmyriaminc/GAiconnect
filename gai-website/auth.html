@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | GAi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Text:opsz,wght@20..48,100..700;0..1,FILL@0..1" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --glow-primary: 0 0 20px rgba(255, 197, 99, 0.4), 0 0 40px rgba(255, 197, 99, 0.2);
+      --glow-secondary: 0 0 20px rgba(110, 155, 255, 0.4), 0 0 40px rgba(110, 155, 255, 0.2);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Manrope', sans-serif; background: #000000; color: #ffffff; min-height: 100vh; }
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    .material-symbols-outlined { font-family: 'Material Symbols Text'; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    .glass-panel { background: linear-gradient(135deg, rgba(38, 38, 39, 0.6) 0%, rgba(14, 14, 15, 0.8) 100%); backdrop-filter: blur(16px); border: 1px solid rgba(255, 197, 99, 0.1); }
+    .input-cyber { background: #262627; border: none; border-bottom: 2px solid #484849; color: #ffffff; padding: 12px 16px; font-family: 'Manrope', sans-serif; transition: all 0.2s ease; outline: none; width: 100%; }
+    .input-cyber:focus { border-bottom-color: #ffc563; box-shadow: 0 4px 15px rgba(255, 197, 99, 0.1); }
+    .input-cyber::placeholder { color: #767576; }
+    .btn-primary { background: #ffc563; color: #5e4000; font-family: 'Space Grotesk', sans-serif; font-weight: 700; padding: 12px 32px; border: none; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.1em; }
+    .btn-primary:hover { filter: brightness(1.15); box-shadow: var(--glow-primary); transform: translateY(-2px); }
+    .btn-secondary { background: transparent; color: #ffffff; font-family: 'Space Grotesk', sans-serif; font-weight: 600; padding: 12px 32px; border: 1px solid #484849; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.1em; }
+    .btn-secondary:hover { border-color: #ffc563; color: #ffc563; box-shadow: 0 0 15px rgba(255, 197, 99, 0.2); }
+    .tab-btn { transition: all 0.3s ease; position: relative; }
+    .tab-btn::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #ffc563; transform: scaleX(0); transition: transform 0.3s ease; }
+    .tab-btn.active::after { transform: scaleX(1); box-shadow: 0 0 10px #ffc563; }
+    @keyframes pulse-glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .progress-glow { animation: pulse-glow 1.5s ease-in-out infinite; }
+    .scanline-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 100; }
+    .scanline-overlay::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.1) 2px, rgba(0, 0, 0, 0.1) 4px); }
+    .scanner-ring { border: 2px solid transparent; border-top-color: #ffc563; border-bottom-color: #ffc563; border-radius: 50%; animation: scanner-rotate 3s linear infinite; }
+    @keyframes scanner-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .scan-beam { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #ffc563, transparent); animation: scan-beam 2s ease-in-out infinite; box-shadow: 0 0 20px #ffc563, 0 0 40px #ffc563; }
+    @keyframes scan-beam { 0%, 100% { top: 10%; opacity: 0; } 10% { opacity: 1; } 50% { top: 90%; opacity: 1; } 60% { opacity: 0; } }
+  </style>
+</head>
+<body class="bg-black">
+  <div class="scanline-overlay"></div>
+  
+  <!-- Top Navigation -->
+  <nav class="bg-black/80 backdrop-blur-xl border-b border-white/10 fixed top-0 w-full z-50 px-6 h-16 flex justify-between items-center">
+    <a href="index.html" class="flex items-center gap-2">
+      <span class="font-headline text-xl font-black tracking-tighter text-amber-400 uppercase">GAi</span>
+    </a>
+    <div class="flex items-center gap-4">
+      <span class="material-symbols-outlined text-amber-400" style="font-variation-settings: 'FILL' 1;">fingerprint</span>
+      <div class="w-8 h-8 rounded-sm bg-neutral-800 border border-zinc-700 overflow-hidden">
+        <div class="w-full h-full bg-gradient-to-br from-amber-400/30 to-transparent"></div>
+      </div>
+    </div>
+  </nav>
+  
+  <main class="min-h-screen flex items-center justify-center pt-16 px-4 relative overflow-hidden">
+    <!-- Background Ambient Glows -->
+    <div class="absolute top-1/4 -left-32 w-96 h-96 bg-amber-400/5 rounded-full blur-[120px]"></div>
+    <div class="absolute bottom-1/4 -right-32 w-96 h-96 bg-blue-400/5 rounded-full blur-[120px]"></div>
+    
+    <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center z-10">
+      <!-- Left Side: Status & HUD Metrics -->
+      <div class="lg:col-span-3 hidden lg:flex flex-col gap-6">
+        <div class="glass-panel p-4 border-l-2 border-amber-400">
+          <p class="font-headline text-[10px] uppercase tracking-widest text-amber-400 mb-1">Biometric Verification</p>
+          <p class="font-headline text-xl text-white">0.00042%</p>
+        </div>
+        <div class="glass-panel p-4 border-l-2 border-blue-400">
+          <p class="font-headline text-[10px] uppercase tracking-widest text-blue-400 mb-1">Network Speed</p>
+          <p class="font-headline text-xl text-white">14ms</p>
+        </div>
+        <div class="glass-panel p-4 border-l-2 border-purple-400">
+          <p class="font-headline text-[10px] uppercase tracking-widest text-purple-400 mb-1">Secure Connection</p>
+          <p class="font-headline text-xl text-white">AES-768</p>
+        </div>
+      </div>
+      
+      <!-- Center: Primary Scanner Interface -->
+      <div class="lg:col-span-6 flex flex-col items-center">
+        <div class="relative w-72 h-72 md:w-80 md:h-80 mb-10">
+          <div class="absolute inset-0 scanner-ring" style="animation-duration: 3s;"></div>
+          <div class="absolute inset-4 scanner-ring" style="animation-duration: 2s; animation-direction: reverse; border-top-color: #fbbf24; border-bottom-color: #fbbf24;"></div>
+          <div class="absolute inset-8 rounded-full border border-zinc-700"></div>
+          <div class="scan-beam"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-32 h-32 rounded-full bg-neutral-900 border border-amber-400/30 flex items-center justify-center shadow-[0_0_40px_rgba(255,197,99,0.15)]">
+              <span class="material-symbols-outlined text-6xl text-amber-400/50" style="font-variation-settings: 'FILL' 1;">face</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center space-y-4 max-w-sm mb-10">
+          <h1 class="font-headline text-3xl font-bold tracking-tight text-white">Biometric Verification</h1>
+          <p class="text-zinc-400 font-medium">Align Face with Scanner</p>
+          <div class="w-full bg-neutral-800 h-1.5 rounded-none mt-6 overflow-hidden relative">
+            <div id="progress-bar" class="absolute top-0 left-0 h-full bg-amber-400 progress-glow transition-all duration-500" style="width: 0%;"></div>
+          </div>
+          <div class="flex justify-between w-full">
+            <span id="progress-text" class="font-headline text-[10px] text-amber-400 uppercase">Initializing</span>
+            <span id="progress-percent" class="font-headline text-[10px] text-amber-400">0%</span>
+          </div>
+        </div>
+        
+        <button id="scan-btn" class="btn-primary flex items-center gap-3 px-8">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">fingerprint</span>
+          Initiate Scan
+        </button>
+      </div>
+      
+      <!-- Right Side: Secondary Actions -->
+      <div class="lg:col-span-3 flex flex-col gap-6">
+        <div class="glass-panel p-6">
+          <div class="flex border-b border-zinc-700 mb-6">
+            <button class="tab-btn active flex-1 py-2 text-sm font-headline uppercase tracking-wider" data-tab="biometric">Biometric</button>
+            <button class="tab-btn flex-1 py-2 text-sm font-headline uppercase tracking-wider text-zinc-500" data-tab="manual">Manual</button>
+          </div>
+          
+          <div id="tab-biometric" class="tab-content space-y-4">
+            <button class="w-full btn-primary flex items-center justify-between group">
+              <span>Voice Scan</span>
+              <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">mic</span>
+            </button>
+            <button class="w-full bg-neutral-800 text-zinc-400 py-3 px-6 font-medium text-sm flex items-center gap-3 border border-zinc-700 hover:border-amber-400 hover:text-white transition-all">
+              <span class="material-symbols-outlined text-sm">face</span>
+              <span>Face Recognition</span>
+            </button>
+          </div>
+          
+          <div id="tab-manual" class="tab-content hidden space-y-4">
+            <div>
+              <label class="font-headline text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Membership ID</label>
+              <input type="text" class="input-cyber" placeholder="GAiXXXXXX">
+            </div>
+            <div>
+              <label class="font-headline text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Password</label>
+              <input type="password" class="input-cyber" placeholder="********">
+            </div>
+            <button class="btn-primary w-full">Login</button>
+          </div>
+        </div>
+        
+        <div class="flex items-center">
+          <div class="flex-grow border-t border-zinc-700/30"></div>
+          <span class="flex-shrink mx-4 font-headline text-[10px] text-zinc-500 uppercase tracking-[0.2em]">Or</span>
+          <div class="flex-grow border-t border-zinc-700/30"></div>
+        </div>
+        
+        <div class="space-y-3">
+          <button class="w-full bg-neutral-800 text-zinc-400 py-3 px-6 font-medium text-sm flex items-center gap-3 border border-zinc-700 hover:border-zinc-500 hover:text-white transition-all">
+            <span class="material-symbols-outlined text-sm">key</span>
+            <span>Use Backup Code</span>
+          </button>
+          <a href="subscription.html" class="block w-full bg-neutral-800 text-zinc-400 py-3 px-6 font-medium text-sm flex items-center gap-3 border border-zinc-700 hover:border-zinc-500 hover:text-white transition-all text-center">
+            <span class="material-symbols-outlined text-sm">person_add</span>
+            <span>Create Account</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer Visual Elements -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-12 opacity-30 grayscale">
+      <div class="flex flex-col items-center">
+        <span class="material-symbols-outlined text-4xl mb-2" style="font-variation-settings: 'FILL' 1;">mic</span>
+        <span class="font-headline text-[9px] uppercase tracking-widest">Acoustics</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <span class="material-symbols-outlined text-4xl mb-2" style="font-variation-settings: 'FILL' 1;">visibility</span>
+        <span class="font-headline text-[9px] uppercase tracking-widest">Optics</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <span class="material-symbols-outlined text-4xl mb-2" style="font-variation-settings: 'FILL' 1;">lock_open</span>
+        <span class="font-headline text-[9px] uppercase tracking-widest">Access</span>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Status Indicators -->
+  <div class="fixed bottom-8 left-8 hidden lg:flex items-center gap-3 bg-neutral-800/60 backdrop-blur-md px-4 py-2 border border-zinc-700/20">
+    <div class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
+    <span class="font-headline text-[10px] tracking-widest text-zinc-400 uppercase">Session: Premium - Active</span>
+  </div>
+  
+  <div class="fixed bottom-8 right-8 hidden lg:flex items-center gap-6">
+    <div class="text-right">
+      <p class="font-headline text-[10px] text-zinc-500 uppercase">Operator</p>
+      <p class="font-bold text-sm text-amber-400">ID: EX-992-G</p>
+    </div>
+    <div class="w-[1px] h-8 bg-zinc-700/30"></div>
+    <button class="material-symbols-outlined text-zinc-500 hover:text-amber-400 transition-colors cursor-pointer" style="font-variation-settings: 'FILL' 1;">help</button>
+  </div>
+  
+  <script>
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.tab;
+        tabContents.forEach(content => {
+          content.classList.add('hidden');
+          if (content.id === `tab-${tab}`) content.classList.remove('hidden');
+        });
+      });
+    });
+    
+    const scanBtn = document.getElementById('scan-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const progressPercent = document.getElementById('progress-percent');
+    
+    const progressStates = [
+      { percent: 15, text: 'Initializing' },
+      { percent: 35, text: 'Scanning' },
+      { percent: 55, text: 'Analyzing' },
+      { percent: 75, text: 'Verifying' },
+      { percent: 90, text: 'Authenticating' },
+      { percent: 100, text: 'Access Granted' }
+    ];
+    
+    let currentStep = 0;
+    
+    scanBtn.addEventListener('click', () => {
+      if (currentStep < progressStates.length) {
+        const interval = setInterval(() => {
+          if (currentStep < progressStates.length) {
+            const state = progressStates[currentStep];
+            progressBar.style.width = state.percent + '%';
+            progressText.textContent = state.text;
+            progressPercent.textContent = state.percent + '%';
+            currentStep++;
+          } else {
+            clearInterval(interval);
+            setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+          }
+        }, 600);
+      }
+    });
+  </script>
+</body>
+</html>

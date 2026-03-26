@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAi | Where People Connect</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Text:opsz,wght@20..48,100..700;0..1,FILL@0..1" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN with Config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ffc563',
+            'primary-dim': '#eda600',
+            'primary-fixed': '#feb300',
+            'on-primary': '#5e4000',
+            'surface-container-lowest': '#000000',
+            'surface-container-low': '#131314',
+            'surface-container': '#1a191b',
+            'surface-container-high': '#201f21',
+            'surface-container-highest': '#262627',
+            'surface-bright': '#2c2c2d',
+            'on-surface': '#ffffff',
+            'on-surface-variant': '#adaaab',
+            outline: '#767576',
+            'outline-variant': '#484849',
+            secondary: '#6e9bff',
+            tertiary: '#cb7bff',
+            error: '#ff7351',
+            'surface-dim': '#0e0e0f',
+          },
+          fontFamily: {
+            headline: ['Space Grotesk', 'sans-serif'],
+            body: ['Manrope', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  
+  <!-- Custom CSS - Must come after Tailwind -->
+  <style>
+    /* CSS Variables */
+    :root {
+      --glow-primary: 0 0 20px rgba(255, 197, 99, 0.4), 0 0 40px rgba(255, 197, 99, 0.2), 0 0 60px rgba(255, 197, 99, 0.1);
+      --glow-secondary: 0 0 20px rgba(110, 155, 255, 0.4), 0 0 40px rgba(110, 155, 255, 0.2);
+      --glow-tertiary: 0 0 20px rgba(203, 123, 255, 0.4), 0 0 40px rgba(203, 123, 255, 0.2);
+      --glow-intense: 0 0 30px rgba(255, 197, 99, 0.6), 0 0 60px rgba(255, 197, 99, 0.4), 0 0 90px rgba(255, 197, 99, 0.2);
+    }
+
+    /* Base Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: #000000;
+      color: #ffffff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    ::selection { background: #ffc563; color: #5e4000; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #000000; }
+    ::-webkit-scrollbar-thumb { background: #201f21; border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2c2c2d; }
+
+    /* Font Classes */
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    .font-body { font-family: 'Manrope', sans-serif; }
+
+    /* Material Symbols */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Text';
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    /* Hero Background */
+    .hero-bg {
+      background: 
+        radial-gradient(ellipse at 20% 50%, rgba(255, 197, 99, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(203, 123, 255, 0.06) 0%, transparent 40%),
+        radial-gradient(ellipse at 60% 80%, rgba(110, 155, 255, 0.05) 0%, transparent 40%);
+    }
+
+    /* Floating Orbs */
+    .floating-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.4;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    /* Particles */
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #ffc563;
+      border-radius: 50%;
+      animation: particle-float 8s linear infinite;
+      opacity: 0.6;
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: linear-gradient(135deg, rgba(38, 38, 39, 0.6) 0%, rgba(14, 14, 15, 0.8) 100%);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 197, 99, 0.1);
+    }
+    .glass-panel-secondary {
+      background: linear-gradient(135deg, rgba(38, 38, 39, 0.6) 0%, rgba(14, 14, 15, 0.8) 100%);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(110, 155, 255, 0.15);
+    }
+    .glass-panel-tertiary {
+      background: linear-gradient(135deg, rgba(38, 38, 39, 0.6) 0%, rgba(14, 14, 15, 0.8) 100%);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(203, 123, 255, 0.15);
+    }
+
+    /* Glow Effects */
+    .glow-border { box-shadow: var(--glow-primary), inset 0 0 20px rgba(255, 197, 99, 0.05); border-color: #ffc563 !important; }
+    .glow-border-secondary { box-shadow: var(--glow-secondary), inset 0 0 20px rgba(110, 155, 255, 0.05); border-color: #6e9bff !important; }
+    .glow-border-tertiary { box-shadow: var(--glow-tertiary), inset 0 0 20px rgba(203, 123, 255, 0.05); border-color: #cb7bff !important; }
+    .glow-text { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+    .glow-text-primary { color: #ffc563; text-shadow: 0 0 10px #ffc563, 0 0 30px #ffc563; }
+    .glow-text-secondary { color: #6e9bff; text-shadow: 0 0 10px #6e9bff, 0 0 30px #6e9bff; }
+    .glow-text-tertiary { color: #cb7bff; text-shadow: 0 0 10px #cb7bff, 0 0 30px #cb7bff; }
+
+    /* Buttons */
+    .btn-primary {
+      background: #ffc563;
+      color: #5e4000;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      padding: 12px 32px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+    }
+    .btn-primary:hover {
+      filter: brightness(1.15);
+      box-shadow: var(--glow-intense);
+      transform: translateY(-2px);
+    }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-secondary {
+      background: transparent;
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      padding: 12px 32px;
+      border: 1px solid #484849;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .btn-secondary:hover {
+      border-color: #ffc563;
+      color: #ffc563;
+      box-shadow: 0 0 15px rgba(255, 197, 99, 0.2);
+    }
+
+    .btn-tertiary {
+      background: #cb7bff;
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      padding: 12px 32px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      box-shadow: 0 0 20px rgba(203, 123, 255, 0.3);
+    }
+    .btn-tertiary:hover {
+      box-shadow: 0 0 30px rgba(203, 123, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* Input Fields */
+    .input-cyber {
+      background: #262627;
+      border: none;
+      border-bottom: 2px solid #484849;
+      color: #ffffff;
+      padding: 12px 16px;
+      font-family: 'Manrope', sans-serif;
+      transition: all 0.2s ease;
+      outline: none;
+      width: 100%;
+    }
+    .input-cyber:focus {
+      border-bottom-color: #ffc563;
+      box-shadow: 0 4px 15px rgba(255, 197, 99, 0.1);
+    }
+    .input-cyber::placeholder { color: #767576; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+    .badge-primary { background: rgba(255, 197, 99, 0.15); color: #ffc563; border: 1px solid rgba(255, 197, 99, 0.3); }
+    .badge-secondary { background: rgba(110, 155, 255, 0.15); color: #6e9bff; border: 1px solid rgba(110, 155, 255, 0.3); }
+    .badge-tertiary { background: rgba(203, 123, 255, 0.15); color: #cb7bff; border: 1px solid rgba(203, 123, 255, 0.3); }
+
+    /* Status Dots */
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .status-dot-success { background: #4ade80; box-shadow: 0 0 10px #4ade80; }
+
+    /* Grid Lines Background */
+    .grid-lines {
+      background-image: 
+        linear-gradient(to right, rgba(255, 197, 99, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 197, 99, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    /* Scanline Overlay */
+    .scanline-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .scanline-overlay::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.1) 2px,
+        rgba(0, 0, 0, 0.1) 4px
+      );
+    }
+
+    /* Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes particle-float {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; filter: brightness(1); }
+      50% { opacity: 0.8; filter: brightness(1.3); }
+    }
+    @keyframes hud-pulse {
+      0%, 100% { box-shadow: 0 0 5px #ffc563, inset 0 0 5px rgba(255, 197, 99, 0.3); }
+      50% { box-shadow: 0 0 20px #ffc563, inset 0 0 10px rgba(255, 197, 99, 0.5); }
+    }
+
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .animate-hud-pulse { animation: hud-pulse 1.5s ease-in-out infinite; }
+
+    /* Feature Cards */
+    .feature-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(255, 197, 99, 0.15);
+    }
+    .feature-card:hover .feature-icon {
+      animation: icon-pulse 0.6s ease-out;
+    }
+    @keyframes icon-pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    /* Tier Cards */
+    .tier-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .tier-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 197, 99, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+    .tier-card:hover::before { left: 100%; }
+    .tier-card.featured { transform: scale(1.05); z-index: 10; }
+
+    /* Stat Counter */
+    .stat-counter {
+      background: linear-gradient(135deg, #262627 0%, #1a191b 100%);
+      border: 1px solid rgba(255, 197, 99, 0.2);
+    }
+
+    /* Nav Link */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #ffc563;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px #ffc563;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    /* CTA Section */
+    .cta-section {
+      background: 
+        linear-gradient(135deg, rgba(255, 197, 99, 0.05) 0%, transparent 50%),
+        #131314;
+    }
+
+    /* Tech Pattern */
+    .tech-pattern {
+      background-image: radial-gradient(circle at 2px 2px, rgba(255, 197, 99, 0.05) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+  </style>
+</head>
+<body class="grid-lines">
+  <!-- Floating Particles Container -->
+  <div id="particles" class="fixed inset-0 pointer-events-none z-0"></div>
+  
+  <!-- Top Navigation -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-2xl border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="font-headline text-2xl font-black tracking-tighter text-amber-400 glow-text-primary">GAi</span>
+      </a>
+      
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="#" class="nav-link text-amber-400 font-headline text-sm uppercase tracking-widest font-bold">Feed</a>
+        <a href="subscription.html" class="nav-link text-zinc-400 hover:text-white transition-colors font-headline text-sm uppercase tracking-widest">Membership</a>
+        <a href="#" class="nav-link text-zinc-400 hover:text-white transition-colors font-headline text-sm uppercase tracking-widest">Profile</a>
+        <a href="auth.html" class="nav-link text-zinc-400 hover:text-white transition-colors font-headline text-sm uppercase tracking-widest">Login</a>
+      </nav>
+      
+      <div class="flex items-center gap-4">
+        <button class="p-2 text-zinc-400 hover:text-amber-400 transition-colors">
+          <span class="material-symbols-outlined" aria-hidden="true">fingerprint</span>
+        </button>
+        <button class="p-2 text-zinc-400 hover:text-amber-400 transition-colors relative">
+          <span class="material-symbols-outlined" aria-hidden="true">notifications_active</span>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-amber-400 rounded-full animate-pulse-glow"></span>
+        </button>
+        <a href="auth.html" class="hidden sm:flex">
+          <button class="btn-primary text-sm py-2 px-6">Get Started</button>
+        </a>
+      </div>
+      
+      <button class="md:hidden p-2 text-zinc-400" id="mobile-menu-btn">
+        <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+      </button>
+    </div>
+  </header>
+  
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-40 hidden flex-col items-center justify-center gap-6">
+    <a href="#" class="text-amber-400 font-headline text-xl uppercase tracking-widest">Feed</a>
+    <a href="subscription.html" class="text-white font-headline text-xl uppercase tracking-widest">Membership</a>
+    <a href="#" class="text-white font-headline text-xl uppercase tracking-widest">Profile</a>
+    <a href="auth.html" class="text-white font-headline text-xl uppercase tracking-widest">Login</a>
+    <button class="mt-8 text-zinc-400" id="mobile-menu-close">
+      <span class="material-symbols-outlined text-3xl" aria-hidden="true">close</span>
+    </button>
+  </div>
+  
+  <main class="pt-16">
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center hero-bg overflow-hidden">
+      <div class="floating-orb w-96 h-96 bg-amber-400/30 -left-48 top-20" style="animation-delay: 0s;"></div>
+      <div class="floating-orb w-80 h-80 bg-purple-400/20 left-1/3 top-40" style="animation-delay: 2s;"></div>
+      <div class="floating-orb w-72 h-72 bg-blue-400/20 right-20 bottom-20" style="animation-delay: 4s;"></div>
+      
+      <div class="max-w-7xl mx-auto px-6 py-20 relative z-10 w-full">
+        <div class="max-w-4xl">
+          <div class="inline-flex items-center gap-3 mb-8 px-4 py-2 glass-panel border-l-2 border-amber-400 animate-hud-pulse">
+            <span class="material-symbols-outlined text-amber-400" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">security</span>
+            <span class="text-amber-400 font-headline text-xs tracking-[0.2em] font-bold uppercase">System Status: Premium Active</span>
+          </div>
+          
+          <h1 class="font-headline text-white leading-none mb-8 tracking-tighter" style="font-size: 32px;">
+            Where Exclusive People Connect<br>
+            <span class="text-amber-400 glow-text-primary italic">GAi</span>
+          </h1>
+          
+          <p class="text-zinc-400 text-lg md:text-xl max-w-2xl mb-12 leading-relaxed font-light">
+            Join a premium community of like-minded individuals. Build meaningful connections, share experiences, and grow together.
+          </p>
+          
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="auth.html">
+              <button class="btn-primary w-full sm:w-auto text-lg py-4 px-12">Join the Network</button>
+            </a>
+            <a href="#features">
+              <button class="btn-secondary w-full sm:w-auto text-lg py-4 px-12">View Features</button>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Side HUD -->
+      <div class="hidden lg:flex flex-col absolute right-12 top-1/3 space-y-12 border-r border-amber-400/20 pr-8">
+        <div class="text-right">
+          <div class="text-amber-400 font-headline text-3xl font-bold glow-text-primary">99.9%</div>
+          <div class="text-zinc-500 text-[10px] uppercase tracking-widest">Uptime Integrity</div>
+        </div>
+        <div class="text-right">
+          <div class="text-amber-400 font-headline text-3xl font-bold glow-text-primary">4.2 PB</div>
+          <div class="text-zinc-500 text-[10px] uppercase tracking-widest">Storage Capacity</div>
+        </div>
+        <div class="text-right">
+          <div class="text-amber-400 font-headline text-3xl font-bold glow-text-primary">256-BIT</div>
+          <div class="text-zinc-500 text-[10px] uppercase tracking-widest">Neural Encryption</div>
+        </div>
+      </div>
+      
+      <!-- Scroll Indicator -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-float">
+        <span class="text-zinc-500 text-xs uppercase tracking-widest">Scroll</span>
+        <span class="material-symbols-outlined text-amber-400" aria-hidden="true">expand_more</span>
+      </div>
+    </section>
+    
+    <!-- Features Bento Grid -->
+    <section id="features" class="py-24 px-6 bg-slate-900">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="font-headline text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">Core Features</h2>
+          <div class="h-1 w-24 bg-amber-400 mx-auto"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <!-- Main Feature -->
+          <div class="md:col-span-8 feature-card glass-panel p-10 min-h-[450px] flex flex-col justify-between relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-amber-400/5 rounded-full blur-3xl -mr-48 -mt-48 group-hover:bg-amber-400/10 transition-all duration-500"></div>
+            <div class="relative z-10">
+              <span class="material-symbols-outlined text-amber-400 text-5xl mb-6 feature-icon" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">fingerprint</span>
+              <h3 class="font-headline text-4xl font-bold mb-4 tracking-tight">Biometric Security</h3>
+              <p class="text-zinc-400 text-lg max-w-lg">Your DNA is your password. Utilizing multi-spectral biometric scans to ensure only verified biological entities access the network.</p>
+            </div>
+            <div class="relative z-10 flex items-end justify-between mt-12">
+              <div class="h-[2px] w-24 bg-amber-400"></div>
+              <span class="font-headline text-amber-400 text-sm font-bold tracking-[0.3em] uppercase">Biometric Security</span>
+            </div>
+          </div>
+          
+          <!-- Secondary Feature -->
+          <div class="md:col-span-4 feature-card bg-zinc-800 p-10 flex flex-col justify-between border-t-2 border-amber-400 hover:glow-border transition-all">
+            <span class="material-symbols-outlined text-amber-400 text-5xl feature-icon" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+            <div>
+              <h3 class="font-headline text-2xl font-bold mb-4">Exclusive Services</h3>
+              <p class="text-zinc-400 mb-6">Priority access to orbital transport, deep-sea sanctuaries, and neural-link concierge services available only to VVIP tier.</p>
+              <a href="subscription.html" class="text-amber-400 font-bold flex items-center gap-2 hover:translate-x-2 transition-transform">
+                Upgrade Access
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+          
+          <!-- Tertiary Features -->
+          <div class="md:col-span-4 feature-card glass-panel p-8 border-b-2 border-amber-400/20 hover:border-amber-400/50 transition-all">
+            <span class="material-symbols-outlined text-amber-400 text-4xl mb-6 feature-icon" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">lock</span>
+            <h3 class="font-headline text-2xl font-bold mb-4">Storage</h3>
+            <p class="text-zinc-400">Cold-storage for your digital legacy. Encrypted assets that remain even when you are disconnected.</p>
+          </div>
+          
+          <div class="md:col-span-4 feature-card glass-panel-secondary p-8 border-b-2 border-blue-400/20 hover:border-blue-400/50 transition-all">
+            <span class="material-symbols-outlined text-blue-400 text-4xl mb-6 feature-icon" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">hub</span>
+            <h3 class="font-headline text-2xl font-bold mb-4">Global Mesh</h3>
+            <p class="text-zinc-400">Propagate your identity across 42 neural nodes instantly. Zero latency, maximum reach.</p>
+          </div>
+          
+          <div class="md:col-span-4 feature-card glass-panel-tertiary p-8 border-b-2 border-purple-400/20 hover:border-purple-400/50 transition-all">
+            <span class="material-symbols-outlined text-purple-400 text-4xl mb-6 feature-icon" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">psychology</span>
+            <h3 class="font-headline text-2xl font-bold mb-4">Neural Interface</h3>
+            <p class="text-zinc-400">Direct brain-to-network connectivity. Think, connect, transact without physical input.</p>
+          </div>
+          
+          <!-- Messaging Feature -->
+          <div class="md:col-span-12 feature-card bg-neutral-800 p-10 relative overflow-hidden group">
+            <div class="relative z-10 flex flex-col lg:flex-row gap-12 items-center">
+              <div class="flex-1">
+                <span class="material-symbols-outlined text-amber-400 text-4xl mb-6 feature-icon" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+                <h3 class="font-headline text-4xl font-bold mb-4 tracking-tight">Private Messaging</h3>
+                <p class="text-zinc-400 text-lg">Self-destructing neural pulses. Communications that leave no metadata trail. Pure, unfiltered connectivity.</p>
+              </div>
+              <div class="w-full lg:w-1/3 aspect-square bg-slate-900 border border-zinc-700 flex items-center justify-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-amber-400/10 to-transparent"></div>
+                <span class="material-symbols-outlined text-6xl text-amber-400/30" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">forum</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="py-16 px-6 bg-black">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div class="stat-counter p-6 text-center">
+            <div class="text-amber-400 font-headline text-4xl font-black mb-2 glow-text-primary">12K+</div>
+            <div class="text-zinc-500 text-xs uppercase tracking-widest">Active Operators</div>
+          </div>
+          <div class="stat-counter p-6 text-center">
+            <div class="text-blue-400 font-headline text-4xl font-black mb-2 glow-text-secondary">4.2PB</div>
+            <div class="text-zinc-500 text-xs uppercase tracking-widest">Data Secured</div>
+          </div>
+          <div class="stat-counter p-6 text-center">
+            <div class="text-purple-400 font-headline text-4xl font-black mb-2 glow-text-tertiary">99.9%</div>
+            <div class="text-zinc-500 text-xs uppercase tracking-widest">Uptime</div>
+          </div>
+          <div class="stat-counter p-6 text-center">
+            <div class="text-amber-400 font-headline text-4xl font-black mb-2 glow-text-primary">42</div>
+            <div class="text-zinc-500 text-xs uppercase tracking-widest">Neural Nodes</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Membership Tiers -->
+    <section class="py-24 px-6 bg-slate-900">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="font-headline text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">Select Your Plan</h2>
+          <div class="h-1 w-24 bg-amber-400 mx-auto"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Free Plan -->
+          <div class="tier-card glass-panel-secondary p-10 border-t-2 border-blue-400/50 hover:glow-border-secondary transition-all">
+            <div class="text-zinc-500 font-headline text-xs tracking-widest uppercase mb-2">Plan 01</div>
+            <h4 class="font-headline text-2xl font-bold mb-2">Free</h4>
+            <div class="mb-6">
+              <span class="text-blue-400 font-headline text-4xl font-black">$0</span>
+              <span class="text-zinc-500 text-sm">/month</span>
+            </div>
+            <ul class="space-y-4 mb-10">
+              <li class="flex items-center gap-3 text-zinc-400">
+                <span class="material-symbols-outlined text-blue-400 text-lg" aria-hidden="true">check_circle</span> Basic Identity
+              </li>
+              <li class="flex items-center gap-3 text-zinc-400">
+                <span class="material-symbols-outlined text-blue-400 text-lg" aria-hidden="true">check_circle</span> Global Feed Access
+              </li>
+              <li class="flex items-center gap-3 text-zinc-400">
+                <span class="material-symbols-outlined text-blue-400 text-lg" aria-hidden="true">check_circle</span> 5GB Storage
+              </li>
+            </ul>
+            <button class="btn-secondary w-full">Get Started</button>
+          </div>
+          
+          <!-- Premium Plan (Featured) -->
+          <div class="tier-card featured glass-panel p-10 border-t-2 border-amber-400/50 glow-border transition-all relative">
+            <div class="absolute -top-3 left-8 bg-amber-400 px-4 py-1">
+              <span class="font-headline font-bold text-[10px] text-black uppercase tracking-wider">Most Popular</span>
+            </div>
+            <div class="text-amber-400 font-headline text-xs tracking-widest uppercase mb-2">Plan 02</div>
+            <h4 class="font-headline text-2xl font-bold mb-2 text-amber-400">Premium</h4>
+            <div class="mb-6">
+              <span class="text-amber-400 font-headline text-4xl font-black glow-text-primary">$19</span>
+              <span class="text-zinc-500 text-sm">/month</span>
+            </div>
+            <ul class="space-y-4 mb-10">
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-amber-400 text-lg" aria-hidden="true">check_circle</span> Full Encryption
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-amber-400 text-lg" aria-hidden="true">check_circle</span> Priority Support
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-amber-400 text-lg" aria-hidden="true">check_circle</span> Unlimited Storage
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-amber-400 text-lg" aria-hidden="true">check_circle</span> Exclusive Events
+              </li>
+            </ul>
+            <button class="btn-primary w-full">Subscribe</button>
+          </div>
+          
+          <!-- Elite Plan -->
+          <div class="tier-card glass-panel-tertiary p-10 border-t-2 border-purple-400/50 hover:glow-border-tertiary transition-all">
+            <div class="text-zinc-500 font-headline text-xs tracking-widest uppercase mb-2">Plan 03</div>
+            <h4 class="font-headline text-2xl font-bold mb-2">Elite</h4>
+            <div class="mb-6">
+              <span class="text-purple-400 font-headline text-4xl font-black">$49</span>
+              <span class="text-zinc-500 text-sm">/month</span>
+            </div>
+            <ul class="space-y-4 mb-10">
+              <li class="flex items-center gap-3 text-zinc-400">
+                <span class="material-symbols-outlined text-purple-400 text-lg" aria-hidden="true">verified</span> VIP Access
+              </li>
+              <li class="flex items-center gap-3 text-zinc-400">
+                <span class="material-symbols-outlined text-purple-400 text-lg" aria-hidden="true">check_circle</span> Premium Support
+              </li>
+              <li class="flex items-center gap-3 text-zinc-400">
+                <span class="material-symbols-outlined text-purple-400 text-lg" aria-hidden="true">check_circle</span> Early Features
+              </li>
+            </ul>
+            <button class="btn-tertiary w-full">Request Invite</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta-section py-24 px-6 relative overflow-hidden">
+      <div class="absolute inset-0 opacity-20">
+        <div class="h-px w-full bg-amber-400 absolute top-1/4"></div>
+        <div class="h-px w-full bg-amber-400 absolute top-2/4"></div>
+        <div class="h-px w-full bg-amber-400 absolute top-3/4"></div>
+        <div class="w-px h-full bg-amber-400 absolute left-1/4"></div>
+        <div class="w-px h-full bg-amber-400 absolute left-2/4"></div>
+        <div class="w-px h-full bg-amber-400 absolute left-3/4"></div>
+      </div>
+      
+      <div class="max-w-4xl mx-auto relative z-10 glass-panel p-16 text-center border-t-4 border-amber-400">
+        <h2 class="font-headline text-4xl md:text-6xl font-black mb-6 tracking-tight uppercase">Ready to transcend?</h2>
+        <p class="text-zinc-400 text-xl mb-12 max-w-2xl mx-auto font-light">
+          Join the elite network that's redefining what it means to connect. Your biometric signature is your key to the future.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <input class="input-cyber min-w-[300px] text-center sm:text-left" placeholder="Enter Email" type="email">
+          <button class="btn-primary text-lg px-10">Join the Network</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <!-- Footer -->
+  <footer class="bg-slate-900 border-t border-zinc-800 py-16 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+        <div>
+          <div class="flex items-center gap-2 mb-6">
+            <span class="material-symbols-outlined text-amber-400 text-2xl" aria-hidden="true">psychology</span>
+            <span class="font-headline text-2xl font-black tracking-tighter text-amber-400">GAi</span>
+          </div>
+          <p class="text-zinc-400 text-sm leading-relaxed">
+            The premier social layer for the tech-enhanced era. Secure, biological, exclusive.
+          </p>
+        </div>
+        
+        <div>
+          <h5 class="font-headline text-xs font-bold uppercase tracking-[0.2em] text-amber-400 mb-6">Features</h5>
+          <ul class="space-y-3 text-zinc-400 text-sm">
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Neural Feed</a></li>
+            <li><a href="auth.html" class="hover:text-amber-400 transition-colors">Biometric Auth</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Profile</a></li>
+            <li><a href="subscription.html" class="hover:text-amber-400 transition-colors">Privacy Tiers</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h5 class="font-headline text-xs font-bold uppercase tracking-[0.2em] text-amber-400 mb-6">Company</h5>
+          <ul class="space-y-3 text-zinc-400 text-sm">
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Our Vision</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">System Status</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Network News</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Legal Framework</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h5 class="font-headline text-xs font-bold uppercase tracking-[0.2em] text-amber-400 mb-6">Connect</h5>
+          <ul class="space-y-3 text-zinc-400 text-sm">
+            <li><a href="#" class="hover:text-amber-400 transition-colors">Support Portal</a></li>
+            <li><a href="#" class="hover:text-amber-400 transition-colors">API Documentation</a></li>
+            <li class="pt-4">
+              <div class="flex gap-4">
+                <span class="material-symbols-outlined text-amber-400 cursor-pointer hover:glow-text transition-all" aria-hidden="true">hub</span>
+                <span class="material-symbols-outlined text-amber-400 cursor-pointer hover:glow-text transition-all" aria-hidden="true">sensors</span>
+                <span class="material-symbols-outlined text-amber-400 cursor-pointer hover:glow-text transition-all" aria-hidden="true">public</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-zinc-800 pt-8 flex flex-col md:flex-row justify-between items-center text-[10px] text-zinc-500 font-headline tracking-[0.3em] uppercase">
+        <div>2024 GAi Hyperstructures</div>
+        <div class="mt-4 md:mt-0 flex items-center gap-4">
+          <span class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse-glow"></span>
+            Encryption: Active
+          </span>
+          <span>Latency: 2ms</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="fixed bottom-0 left-0 w-full lg:hidden flex justify-around items-center px-4 pb-6 pt-2 bg-black/90 backdrop-blur-2xl border-t border-amber-400/20 z-50">
+    <a href="#" class="flex flex-col items-center justify-center text-amber-400 bg-amber-400/5 rounded-xl py-1 px-4">
+      <span class="material-symbols-outlined" aria-hidden="true">grid_view</span>
+      <span class="text-[10px] font-bold uppercase">Feed</span>
+    </a>
+    <a href="#" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined" aria-hidden="true">key</span>
+      <span class="text-[10px] font-bold uppercase">Profile</span>
+    </a>
+    <a href="#" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined" aria-hidden="true">sensors</span>
+      <span class="text-[10px] font-bold uppercase">Status</span>
+    </a>
+    <a href="#" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+      <span class="text-[10px] font-bold uppercase">Menu</span>
+    </a>
+  </nav>
+  
+  <script>
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuClose = document.getElementById('mobile-menu-close');
+    
+    if (mobileMenuBtn && mobileMenu) {
+      mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.remove('hidden');
+        mobileMenu.classList.add('flex');
+      });
+    }
+    
+    if (mobileMenuClose && mobileMenu) {
+      mobileMenuClose.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        mobileMenu.classList.remove('flex');
+      });
+    }
+    
+    // Create floating particles
+    function createParticles() {
+      const container = document.getElementById('particles');
+      if (!container) return;
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 8 + 's';
+        particle.style.animationDuration = (8 + Math.random() * 4) + 's';
+        container.appendChild(particle);
+      }
+    }
+    createParticles();
+    
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
