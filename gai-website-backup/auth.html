@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="supabase-client.js"></script>
   <style>
     :root {
       --glow-primary: 0 0 20px rgba(255, 197, 99, 0.4), 0 0 40px rgba(255, 197, 99, 0.2);
@@ -150,14 +149,10 @@
             <span class="material-symbols-outlined text-sm">key</span>
             <span>Use Backup Code</span>
           </button>
-          <button onclick="showRegistrationForm()" class="w-full bg-neutral-800 text-zinc-400 py-3 px-6 font-medium text-sm flex items-center gap-3 border border-zinc-700 hover:border-zinc-500 hover:text-white transition-all cursor-pointer">
+          <a href="subscription.html" class="block w-full bg-neutral-800 text-zinc-400 py-3 px-6 font-medium text-sm flex items-center gap-3 border border-zinc-700 hover:border-zinc-500 hover:text-white transition-all text-center">
             <span class="material-symbols-outlined text-sm">person_add</span>
             <span>Create Account</span>
-          </button>
-          <button onclick="showAdminLogin()" class="w-full bg-red-900/30 text-red-400 py-3 px-6 font-medium text-sm flex items-center gap-3 border border-red-900/50 hover:border-red-700 hover:text-red-300 transition-all cursor-pointer">
-            <span class="material-symbols-outlined text-sm">admin_panel_settings</span>
-            <span>Admin Login</span>
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -190,218 +185,11 @@
     <button class="material-symbols-outlined filled text-zinc-500 hover:text-amber-400 transition-colors cursor-pointer">help</button>
   </div>
   
-  <!-- Registration Modal -->
-  <div id="registration-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[200] hidden flex items-center justify-center p-4">
-    <div class="glass-panel max-w-lg w-full max-h-[90vh] overflow-y-auto p-8 relative">
-      <button onclick="closeRegistrationForm()" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-      <h2 class="font-headline text-2xl font-bold text-amber-400 mb-6">Create Account</h2>
-      <form id="registration-form" onsubmit="handleRegistration(event)" class="space-y-4">
-        <div>
-          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Full Name *</label>
-          <input type="text" id="reg-fullname" required class="input-cyber" placeholder="John Doe">
-        </div>
-        <div>
-          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Nickname *</label>
-          <input type="text" id="reg-nickname" required class="input-cyber" placeholder="YourNickname">
-        </div>
-        <div>
-          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Email *</label>
-          <input type="email" id="reg-email" required class="input-cyber" placeholder="email@example.com">
-        </div>
-        <div>
-          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Password *</label>
-          <input type="password" id="reg-password" required minlength="6" class="input-cyber" placeholder="Min 6 characters">
-        </div>
-        <div>
-          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Date of Birth</label>
-          <input type="date" id="reg-dob" class="input-cyber">
-        </div>
-        <div>
-          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Nationality</label>
-          <input type="text" id="reg-nationality" class="input-cyber" placeholder="Your Country">
-        </div>
-        <div>
-          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Location</label>
-          <input type="text" id="reg-location" class="input-cyber" placeholder="City, Country">
-        </div>
-        <div class="pt-4">
-          <button type="submit" class="btn-primary w-full">Create Account</button>
-        </div>
-        <p class="text-xs text-zinc-500 text-center">By registering, you agree to our Terms of Service and Privacy Policy.</p>
-      </form>
-    </div>
-  </div>
-
-  <!-- Admin Login Modal -->
-  <div id="admin-login-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[200] hidden flex items-center justify-center p-4">
-    <div class="glass-panel max-w-md w-full p-8 relative">
-      <button onclick="closeAdminLogin()" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-      <div class="text-center mb-6">
-        <span class="material-symbols-outlined text-4xl text-red-400 mb-2">admin_panel_settings</span>
-        <h2 class="font-headline text-2xl font-bold text-red-400">Admin Access</h2>
-      </div>
-      <form id="admin-login-form" onsubmit="handleAdminLogin(event)" class="space-y-4">
-        <div>
-          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Admin Username</label>
-          <input type="text" id="admin-username" required class="input-cyber" placeholder="admin">
-        </div>
-        <div>
-          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Admin Password</label>
-          <input type="password" id="admin-password" required class="input-cyber" placeholder="********">
-        </div>
-        <div class="pt-2">
-          <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition-colors">Login as Admin</button>
-        </div>
-        <p class="text-xs text-zinc-500 text-center">Restricted access - authorized personnel only</p>
-      </form>
-    </div>
-  </div>
-
   <script>
     let voiceStream = null;
     let faceStream = null;
     let mediaRecorder = null;
     let audioChunks = [];
-
-    // Registration functions
-    function showRegistrationForm() {
-      document.getElementById('registration-modal').classList.remove('hidden');
-    }
-
-    function closeRegistrationForm() {
-      document.getElementById('registration-modal').classList.add('hidden');
-    }
-
-    async function handleRegistration(event) {
-      event.preventDefault();
-      
-      const fullname = document.getElementById('reg-fullname').value.trim();
-      const nickname = document.getElementById('reg-nickname').value.trim();
-      const email = document.getElementById('reg-email').value.trim();
-      const password = document.getElementById('reg-password').value;
-      const dob = document.getElementById('reg-dob').value;
-      const nationality = document.getElementById('reg-nationality').value.trim();
-      const location = document.getElementById('reg-location').value.trim();
-
-      try {
-        let newUser;
-        
-        if (supabase.isConfigured) {
-          // Use Supabase for production
-          const { data, error } = await supabase.signUp(email, password, {
-            fullname,
-            nickname,
-            dob,
-            nationality,
-            location,
-            tier: 'Standard'
-          });
-          
-          if (error) throw error;
-          
-          // Also save to our users table
-          const users = await GAiData.getUsers();
-          newUser = await GAiData.createUser({
-            fullname,
-            nickname,
-            email,
-            password: 'b64:' + btoa(password),
-            dob,
-            nationality,
-            location,
-            tier: 'Standard',
-            supabase_id: data.user.id
-          });
-          
-          // Store Supabase token
-          localStorage.setItem('gai_supabase_token', data.session.access_token);
-        } else {
-          // Fallback to localStorage
-          const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
-          
-          if (users.find(u => u.email === email)) {
-            alert('Email already registered. Please use a different email or login.');
-            return;
-          }
-
-          if (users.find(u => u.nickname.toLowerCase() === nickname.toLowerCase())) {
-            alert('Nickname already taken. Please choose a different nickname.');
-            return;
-          }
-
-          newUser = {
-            id: 'GAi' + String(users.length + 1001).padStart(6, '0'),
-            fullname,
-            nickname,
-            email,
-            password: 'b64:' + btoa(password),
-            dob,
-            nationality,
-            location,
-            tier: 'Standard',
-            verified: false,
-            createdAt: new Date().toISOString(),
-            status: 'active'
-          };
-
-          users.push(newUser);
-          localStorage.setItem('gai_users', JSON.stringify(users));
-        }
-
-        // Auto-login the new user
-        localStorage.setItem('gai_isLoggedIn', 'true');
-        localStorage.setItem('gai_userId', newUser.id || newUser.user_id);
-        localStorage.setItem('gai_username', nickname);
-        localStorage.setItem('gai_userTier', newUser.tier);
-        localStorage.setItem('gai_reg_fullname', fullname);
-        localStorage.setItem('gai_reg_nickname', nickname);
-        localStorage.setItem('gai_reg_email', email);
-        localStorage.setItem('gai_reg_dob', dob);
-        localStorage.setItem('gai_reg_nationality', nationality);
-        localStorage.setItem('gai_reg_location', location);
-
-        alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!');
-        window.location.href = 'dashboard.html';
-        
-      } catch (error) {
-        alert('Registration failed: ' + error.message);
-      }
-    }
-
-    // Admin login functions
-    function showAdminLogin() {
-      document.getElementById('admin-login-modal').classList.remove('hidden');
-    }
-
-    function closeAdminLogin() {
-      document.getElementById('admin-login-modal').classList.add('hidden');
-    }
-
-    function handleAdminLogin(event) {
-      event.preventDefault();
-      
-      const username = document.getElementById('admin-username').value;
-      const password = document.getElementById('admin-password').value;
-
-      // Default admin credentials (change these in production)
-      const adminCredentials = {
-        username: 'admin',
-        password: 'GAiAdmin2024!'
-      };
-
-      if (username === adminCredentials.username && password === adminCredentials.password) {
-        localStorage.setItem('gai_isAdmin', 'true');
-        localStorage.setItem('gai_adminUser', username);
-        alert('Admin access granted!');
-        window.location.href = 'admin.html';
-      } else {
-        alert('Invalid admin credentials. Access denied.');
-      }
-    }
 
     async function initiateBiometricScan(type) {
       const scanBtn = document.getElementById('scan-btn');
@@ -607,67 +395,18 @@
       }
     }
 
-    async function manualLogin() {
+    function manualLogin() {
       const memberId = document.getElementById('member-id').value;
       const password = document.getElementById('password').value;
       
       if (!memberId || !password) {
-        alert('Please enter both Membership ID (or Email) and Password.');
+        alert('Please enter both Membership ID and Password.');
         return;
       }
       
-      try {
-        let user = null;
-        
-        // Check admin credentials first
-        if (memberId === 'admin' && password === 'GAiAdmin2024!') {
-          localStorage.setItem('gai_isAdmin', 'true');
-          alert('Admin access granted!');
-          window.location.href = 'admin.html';
-          return;
-        }
-        
-        if (supabase.isConfigured) {
-          // Use Supabase for production
-          const { data, error } = await supabase.signIn(memberId, password);
-          
-          if (error) throw error;
-          
-          // Get user from our users table
-          user = await GAiData.findUser(memberId, password);
-          
-          if (user) {
-            localStorage.setItem('gai_supabase_token', data.session.access_token);
-          }
-        } else {
-          // Fallback to localStorage
-          const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
-          user = users.find(u => 
-            (u.id === memberId || u.email === memberId || u.nickname === memberId || u.user_id === memberId) && 
-            (u.password === 'b64:' + btoa(password) || u.password === password)
-          );
-        }
-        
-        if (user) {
-          localStorage.setItem('gai_isLoggedIn', 'true');
-          localStorage.setItem('gai_userId', user.id || user.user_id);
-          localStorage.setItem('gai_username', user.nickname);
-          localStorage.setItem('gai_userTier', user.tier);
-          localStorage.setItem('gai_reg_fullname', user.fullname || '');
-          localStorage.setItem('gai_reg_nickname', user.nickname);
-          localStorage.setItem('gai_reg_email', user.email);
-          localStorage.setItem('gai_reg_dob', user.dob || '');
-          localStorage.setItem('gai_reg_nationality', user.nationality || '');
-          localStorage.setItem('gai_reg_location', user.location || '');
-          
-          alert('Login successful! Welcome back, ' + user.nickname + '!');
-          window.location.href = 'dashboard.html';
-        } else {
-          alert('Invalid credentials. Please check your Membership ID/Email and Password.');
-        }
-        
-      } catch (error) {
-        alert('Login failed: ' + error.message);
+      if (memberId && password) {
+        alert('Login successful! Redirecting to dashboard...');
+        window.location.href = 'dashboard.html';
       }
     }
 
@@ -710,11 +449,11 @@
   <div id="gai-assistant" class="fixed bottom-6 right-6 z-50">
     <button id="gai-toggle" class="w-14 h-14 bg-amber-400 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer relative">
       <span class="material-symbols-outlined filled text-black">chat</span>
-      <img src="https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male-1.png" class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-black" alt="">
+      <img src="https://media.giphy.com/media/3o7TKTDnDWazRjRPZS/giphy.gif" class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-black" alt="">
     </button>
     <div id="gai-chat" class="hidden absolute bottom-16 right-0 w-80 bg-neutral-900 border border-amber-400/30 rounded-lg shadow-2xl overflow-hidden">
       <div class="bg-amber-400 px-4 py-3 flex items-center gap-2">
-        <img src="https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male-1.png" class="w-6 h-6 rounded-full" alt="GAi">
+        <img src="https://media.giphy.com/media/3o7TKTDnDWazRjRPZS/giphy.gif" class="w-6 h-6 rounded-full" alt="GAi">
         <span class="font-headline font-bold text-black">GAi Assistant</span>
         <span class="ml-auto flex items-center gap-1">
           <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>

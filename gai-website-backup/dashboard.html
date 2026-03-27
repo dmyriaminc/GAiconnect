@@ -23,7 +23,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="supabase-client.js"></script>
   <script src="gai-user.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -380,11 +379,11 @@
   <div id="gai-assistant" class="fixed bottom-6 right-6 z-50">
     <button id="gai-toggle" class="w-14 h-14 bg-amber-400 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer relative">
       <span class="material-symbols-outlined filled text-black">chat</span>
-      <img src="https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male-1.png" class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-black" alt="">
+      <img src="https://media.giphy.com/media/3o7TKTDnDWazRjRPZS/giphy.gif" class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-black" alt="">
     </button>
     <div id="gai-chat" class="hidden absolute bottom-16 right-0 w-80 bg-neutral-900 border border-amber-400/30 rounded-lg shadow-2xl overflow-hidden">
       <div class="bg-amber-400 px-4 py-3 flex items-center gap-2">
-        <img src="https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male-1.png" class="w-6 h-6 rounded-full" alt="GAi">
+        <img src="https://media.giphy.com/media/3o7TKTDnDWazRjRPZS/giphy.gif" class="w-6 h-6 rounded-full" alt="GAi">
         <span class="font-headline font-bold text-black">GAi Assistant</span>
         <span class="ml-auto flex items-center gap-1">
           <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -498,9 +497,6 @@
   </div>
   
   <script>
-    // Debug: Verify JavaScript is loading
-    console.log('Dashboard JavaScript loading...');
-    
     // Voice Input
     let isListening = false;
     let recognition = null;

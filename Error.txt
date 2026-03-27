@@ -1,0 +1,93 @@
+Diagnosis
+
+    Relevant log lines show the build failed during dependency install line 18 and npm returned a 404 for the package request line 20 and explicitly states the package is not in the registry line 22. The install step finally fails line 27 and the build aborts line 28.
+
+    Root cause: your project depends on "html-minifier-tocco@^4.1.0", but that package name does not exist on the public npm registry (npm returned 404). The dependency is either misspelled, removed, private, or intended to be installed from a non-npm source.
+
+Solution
+
+    Verify the dependency entry is correct and committed
+
+    Open package.json and package-lock.json (or yarn.lock) and search for "html-minifier-tocco". Confirm the exact dependency string is present and committed to the repo before making other changes.
+        Example local check:
+
+    grep -n "html-minifier-tocco" package.json package-lock.json || true
+
+    If you do not find it, make sure the dependency was not added locally only and was committed/pushed.
+
+    Fix the dependency (pick one of the following based on intent)
+
+Option A — It was a typo: use the correct package name
+
+    If the intended package was html-minifier-terser (common replacement), update package.json to use that package and version, then reinstall, commit and push:
+
+    npm install --save-dev html-minifier-terser@^4.1.0
+    git add package.json package-lock.json
+    git commit -m "Replace misspelled dependency html-minifier-tocco -> html-minifier-terser"
+    git push
+
+    Redeploy on Netlify.
+
+Option B — The package is hosted in a git repo (not published to npm)
+
+    Change package.json to install from the git URL:
+
+    "devDependencies": {
+      "html-minifier-tocco": "git+https://github.com/OWNER/html-minifier-tocco.git"
+    }
+
+    then run npm install locally, commit package.json/package-lock.json, push and redeploy.
+
+Option C — The package is private in a custom registry
+
+    Verify the package actually exists in your private registry. If yes, ensure your build can authenticate to that registry:
+        Add an .npmrc to the repo (or ensure it’s present) pointing to the private registry or using a token variable, e.g.:
+
+//registry.npmjs.org/:_authToken=${NPM_TOKEN} or for a GitHub Packages registry: @OWNER:registry=https://npm.pkg.github.com //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN} ```
+
+    In Netlify UI, add the corresponding secret (NPM_TOKEN or GITHUB_TOKEN) in Site settings → Build & deploy → Environment → Environment variables.
+    Commit .npmrc and redeploy.
+
+    After you fix and commit the change
+
+    Push your changes and trigger a Netlify deploy. The dependency installation step should succeed.
+    If you made a name change, confirm no other packages reference the old misspelled name (check lockfile and node_modules locally).
+
+If you want, paste your package.json here (or the dependency block) and I can point to the exact edit to make.
+Ask ChatGPT
+Need more help? Go to Ask Netlify
+
+Netlify uses AI to analyze and generate solutions to fix deploy failures. It may not always understand the full context or produce a reliable, accurate answer. To learn more, please refer to our docs.
+
+Did you find this helpful? Your feedback helps improve this feature.
+Initializing
+Failed
+12:43:54 AM: build-image version: a0bc76c99cbadd99a168cf193f4d4df9fa7ee94a (noble-new-builds)
+12:43:54 AM: buildbot version: e829aca43ccd434afebc4821663ed0a397d77738
+12:43:54 AM: Fetching cached dependencies
+12:43:54 AM: Failed to fetch cache, continuing with build
+12:43:54 AM: Fetching build zip file
+12:43:54 AM: Starting to prepare the repo for build
+12:43:55 AM: Installing dependencies
+12:43:55 AM: mise ~/.config/mise/config.toml tools: python@3.14.3
+12:43:55 AM: mise ~/.config/mise/config.toml tools: ruby@3.4.8
+12:43:55 AM: mise ~/.config/mise/config.toml tools: go@1.26.1
+12:43:56 AM: Downloading and installing node v22.22.2...
+12:43:56 AM: Downloading https://nodejs.org/dist/v22.22.2/node-v22.22.2-linux-x64.tar.xz...
+12:43:56 AM: Computing checksum with sha256sum
+12:43:56 AM: Checksums matched!
+12:43:58 AM: Now using node v22.22.2 (npm v10.9.7)
+12:43:59 AM: Enabling Node.js Corepack
+12:43:59 AM: No npm workspaces detected
+12:43:59 AM: Installing npm packages using npm version 10.9.7
+12:44:07 AM: Failed during stage 'Install dependencies': dependency_installation script returned non-zero exit code: 1
+12:44:07 AM: npm error code E404
+12:44:07 AM: npm error 404 Not Found - GET https://registry.npmjs.org/html-minifier-tocco - Not found
+12:44:07 AM: npm error 404
+12:44:07 AM: npm error 404  'html-minifier-tocco@^4.1.0' is not in this registry.
+12:44:07 AM: npm error 404
+12:44:07 AM: npm error 404 Note that you can also install from a
+12:44:07 AM: npm error 404 tarball, folder, http url, or git url.
+12:44:07 AM: npm error A complete log of this run can be found in: /opt/buildhome/.npm/_logs/2026-03-27T07_43_59_183Z-debug-0.log
+12:44:07 AM: Error during npm install
+12:44:07 AM: Failing build: Failed to install dependencies
