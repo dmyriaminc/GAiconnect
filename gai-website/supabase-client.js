@@ -590,6 +590,183 @@ const GAiData = {
             created_at: new Date().toISOString()
         });
         localStorage.setItem('gai_messages', JSON.stringify(messages));
+    },
+    
+    // Connections
+    async getConnections(userId) {
+        const localConnections = JSON.parse(localStorage.getItem('gai_connections') || '[]');
+        
+        if (supabase.isConfigured) {
+            try {
+                const { data, error } = await supabase.from('connections').select('*');
+                if (!error && data) {
+                    return data;
+                }
+            } catch (err) {
+                console.warn('Failed to fetch connections from Supabase:', err.message);
+            }
+        }
+        return localConnections;
+    },
+    
+    async addConnection(fromUserId, toUserId, status = 'pending') {
+        const connections = JSON.parse(localStorage.getItem('gai_connections') || '[]');
+        
+        const newConnection = {
+            id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+            from_user_id: fromUserId,
+            to_user_id: toUserId,
+            status: status,
+            created_at: new Date().toISOString()
+        };
+        
+        connections.push(newConnection);
+        localStorage.setItem('gai_connections', JSON.stringify(connections));
+        
+        if (supabase.isConfigured) {
+            try {
+                await supabase.from('connections').insert(newConnection);
+                console.log('Connection synced to Supabase');
+            } catch (err) {
+                console.warn('Failed to sync connection:', err.message);
+            }
+        }
+        
+        return newConnection;
+    },
+    
+    async updateConnectionStatus(connectionId, status) {
+        const connections = JSON.parse(localStorage.getItem('gai_connections') || '[]');
+        const index = connections.findIndex(c => c.id === connectionId);
+        
+        if (index !== -1) {
+            connections[index].status = status;
+            localStorage.setItem('gai_connections', JSON.stringify(connections));
+            
+            if (supabase.isConfigured) {
+                try {
+                    await supabase.from('connections').update({ status }).eq('id', connectionId);
+                } catch (err) {
+                    console.warn('Failed to update connection in Supabase:', err.message);
+                }
+            }
+        }
+    },
+    
+    // Subscriptions/Memberships
+    async getSubscriptions(userId) {
+        const localSubs = JSON.parse(localStorage.getItem('gai_subscriptions') || '[]');
+        
+        if (supabase.isConfigured) {
+            try {
+                const { data, error } = await supabase.from('subscriptions').select('*');
+                if (!error && data) {
+                    return data;
+                }
+            } catch (err) {
+                console.warn('Failed to fetch subscriptions from Supabase:', err.message);
+            }
+        }
+        return localSubs;
+    },
+    
+    async createSubscription(userId, plan, tier) {
+        const subscriptions = JSON.parse(localStorage.getItem('gai_subscriptions') || '[]');
+        
+        const newSub = {
+            id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+            user_id: userId,
+            plan: plan,
+            tier: tier,
+            status: 'active',
+            started_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        };
+        
+        subscriptions.push(newSub);
+        localStorage.setItem('gai_subscriptions', JSON.stringify(subscriptions));
+        
+        if (supabase.isConfigured) {
+            try {
+                await supabase.from('subscriptions').insert(newSub);
+                console.log('Subscription synced to Supabase');
+            } catch (err) {
+                console.warn('Failed to sync subscription:', err.message);
+            }
+        }
+        
+        return newSub;
+    },
+    
+    // Activity logging
+    async logActivity(userId, action, details = {}) {
+        const activities = JSON.parse(localStorage.getItem('gai_activities') || '[]');
+        
+        const newActivity = {
+            id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+            user_id: userId,
+            action: action,
+            details: details,
+            created_at: new Date().toISOString()
+        };
+        
+        activities.unshift(newActivity);
+        if (activities.length > 100) activities.pop();
+        localStorage.setItem('gai_activities', JSON.stringify(activities));
+        
+        if (supabase.isConfigured) {
+            try {
+                await supabase.from('activities').insert(newActivity);
+            } catch (err) {
+                console.warn('Failed to log activity to Supabase:', err.message);
+            }
+        }
+        
+        return newActivity;
+    },
+    
+    // Full data sync - load all from Supabase and cache locally
+    async syncAllData() {
+        if (!supabase.isConfigured) {
+            console.log('Supabase not configured, using local data only');
+            return;
+        }
+        
+        console.log('Syncing all data from Supabase...');
+        
+        try {
+            // Sync users
+            const { data: users } = await supabase.from('users').select('*');
+            if (users && users.length > 0) {
+                localStorage.setItem('gai_users', JSON.stringify(users));
+                console.log('Synced', users.length, 'users');
+            }
+            
+            // Sync services
+            const { data: services } = await supabase.from('services').select('*');
+            if (services && services.length > 0) {
+                localStorage.setItem('gai_services', JSON.stringify(services));
+                console.log('Synced', services.length, 'services');
+            }
+            
+            // Sync messages
+            const { data: messages } = await supabase.from('messages').select('*');
+            if (messages && messages.length > 0) {
+                localStorage.setItem('gai_messages', JSON.stringify(messages));
+                console.log('Synced', messages.length, 'messages');
+            }
+            
+            // Sync connections
+            const { data: connections } = await supabase.from('connections').select('*');
+            if (connections && connections.length > 0) {
+                localStorage.setItem('gai_connections', JSON.stringify(connections));
+                console.log('Synced', connections.length, 'connections');
+            }
+            
+            console.log('Full sync complete!');
+        } catch (err) {
+            console.error('Sync error:', err.message);
+        }
     }
 };
 

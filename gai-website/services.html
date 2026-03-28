@@ -586,12 +586,17 @@
         { title: 'Sports Massage', category: 'Massage Therapist', provider: 'Healing_Hands', price: '100', unit: 'per hour', description: 'Expert sports massage.', reviews: 178, rating: 4.9, location: 'Hoboken, NJ', lat: 40.7440, lng: -74.0324 }
       ];
       
-      // Load user-posted services from localStorage
+      // Load user-posted services from localStorage + Supabase via GAiData
       let userServices = [];
       try {
-        userServices = JSON.parse(localStorage.getItem('gai_services') || '[]');
+        if (typeof GAiData !== 'undefined') {
+          userServices = await GAiData.getServices();
+        } else {
+          userServices = JSON.parse(localStorage.getItem('gai_services') || '[]');
+        }
       } catch (e) {
         console.warn('Failed to load user services:', e);
+        userServices = JSON.parse(localStorage.getItem('gai_services') || '[]');
       }
       
       // Merge default + user services (user services first)
@@ -599,7 +604,7 @@
     }
     
     // Get all services
-    let servicesData = loadAllServices();
+    let servicesData = await loadAllServices();
     
     const gradientColors = [
       'from-pink-500/30 to-rose-500/30',
@@ -1003,9 +1008,13 @@
     }
     
     // Initialize services on page load
-    document.addEventListener('DOMContentLoaded', function() {
-      // Reload services from localStorage
-      servicesData = loadAllServices();
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Sync data from Supabase first
+      if (typeof GAiData !== 'undefined') {
+        await GAiData.syncAllData();
+      }
+      // Reload services from Supabase/localStorage
+      servicesData = await loadAllServices();
       // Detect location and currency on page load
       detectUserLocation().then(() => {
         renderServices('all');

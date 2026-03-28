@@ -1002,7 +1002,11 @@
     }, 10000);
     
     // Initialize on DOMContentLoaded
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Sync all data from Supabase first
+      if (typeof GAiData !== 'undefined') {
+        await GAiData.syncAllData();
+      }
       loadActivityFeed();
       loadOnlineMembers();
     });

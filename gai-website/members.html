@@ -199,8 +199,20 @@
       window.location.href = 'profile.html?id=' + id;
     }
     
-    function connectWithMember(id) {
-      localStorage.setItem('connection_request_' + id, 'true');
+    async function connectWithMember(id) {
+      const currentUserId = localStorage.getItem('gai_userId') || localStorage.getItem('gai_membershipId');
+      if (!currentUserId) {
+        alert('Please login first to connect with members.');
+        return;
+      }
+      
+      // Use GAiData for proper Supabase sync
+      if (typeof GAiData !== 'undefined') {
+        await GAiData.addConnection(currentUserId, id, 'pending');
+      } else {
+        localStorage.setItem('connection_request_' + id, 'true');
+      }
+      
       alert('Connection request sent!\n\nWaiting for acceptance...');
     }
     
@@ -209,6 +221,10 @@
     document.getElementById('filter-status').addEventListener('change', filterMembers);
     
     document.addEventListener('DOMContentLoaded', async function() {
+      // Sync data from Supabase first
+      if (typeof GAiData !== 'undefined') {
+        await GAiData.syncAllData();
+      }
       const members = await loadMembers();
       renderMembers(members);
     });

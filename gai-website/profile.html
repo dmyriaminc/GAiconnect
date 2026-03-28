@@ -956,6 +956,11 @@
       GAiUser.init();
       GAiNearby.init();
       
+      // Sync data from Supabase first
+      if (typeof GAiData !== 'undefined') {
+        await GAiData.syncAllData();
+      }
+      
       // Check if viewing another user's profile
       const urlParams = new URLSearchParams(window.location.search);
       const viewUserId = urlParams.get('id');
