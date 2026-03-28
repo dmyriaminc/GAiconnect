@@ -126,40 +126,21 @@
       </div>
       
       <div id="messages-container" class="flex-1 overflow-y-auto p-6 space-y-6">
-        <div class="flex items-center gap-4">
-          <div class="flex-1 h-px bg-zinc-700/30"></div>
-          <span class="text-[10px] text-zinc-500 uppercase tracking-widest font-headline">Today</span>
-          <div class="flex-1 h-px bg-zinc-700/30"></div>
+        <div id="no-chat-selected" class="flex flex-col items-center justify-center h-full text-center py-12">
+          <span class="material-symbols-outlined text-6xl text-zinc-600 mb-4">chat</span>
+          <p class="text-zinc-400 text-lg font-headline mb-2">Select a conversation</p>
+          <p class="text-zinc-600 text-sm">Choose a member from the list to start chatting</p>
         </div>
-        
-        <div class="flex gap-3">
-          <div class="w-8 h-8 rounded-sm bg-neutral-800 flex items-center justify-center text-xs font-bold text-amber-400 flex-shrink-0">XL</div>
-          <div class="chat-bubble received bg-neutral-700 p-4">
-            <p class="text-sm text-white mb-2">Neural link established. Protocol V4 is ready for synchronization.</p>
-            <div class="flex items-center gap-2"><span class="text-[10px] text-zinc-500">14:22</span><span class="material-symbols-outlined text-amber-400 text-xs filled">done_all</span></div>
-            <div class="flex items-center justify-end gap-2"><span class="text-[10px] text-black/70">14:23</span><span class="material-symbols-outlined text-black text-xs filled">done_all</span></div>
-            <div class="flex items-center gap-2"><span class="text-[10px] text-zinc-500">14:25</span><span class="material-symbols-outlined text-amber-400 text-xs filled">done_all</span></div>
-          </div>
-        </div>
-        
-        <div class="flex gap-3">
-          <div class="w-8 h-8 rounded-sm bg-neutral-800 flex items-center justify-center text-xs font-bold text-amber-400 flex-shrink-0">XL</div>
-          <div class="bg-neutral-700 p-4 rounded-sm">
-            <div class="typing-indicator flex gap-1">
-              <span class="w-2 h-2 bg-zinc-500 rounded-full"></span>
-              <span class="w-2 h-2 bg-zinc-500 rounded-full"></span>
-              <span class="w-2 h-2 bg-zinc-500 rounded-full"></span>
-            </div>
-          </div>
-        </div>
+        <div id="chat-messages" class="hidden space-y-4"></div>
       </div>
       
       <div class="p-4 border-t border-white/5 bg-neutral-900/50">
-        <div class="flex items-end gap-4">
+        <div class="flex items-end gap-2">
           <button class="p-2 text-zinc-400 hover:text-amber-400 transition-colors" onclick="attachFile()" title="Attach File"><span class="material-symbols-outlined filled" aria-hidden="true">attach_file</span></button>
           <button class="p-2 text-zinc-400 hover:text-amber-400 transition-colors" onclick="attachImage()" title="Attach Image"><span class="material-symbols-outlined filled" aria-hidden="true">image</span></button>
+          <button class="p-2 text-zinc-400 hover:text-amber-400 transition-colors" onclick="attachGif()" title="Attach GIF"><span class="material-symbols-outlined filled" aria-hidden="true">gif_box</span></button>
           <div class="flex-1 relative">
-            <input id="message-input" type="text" class="input-cyber w-full pr-12" placeholder="Type a message...">
+            <input id="message-input" type="text" class="input-cyber w-full pr-12" placeholder="Type a message..." onkeypress="if(event.key === 'Enter') sendMessage()">
             <button class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-zinc-400 hover:text-amber-400 transition-colors" onclick="showEmoji()" title="Emoji"><span class="material-symbols-outlined filled" aria-hidden="true">mood</span></button>
           </div>
           <button id="send-btn" class="p-3 bg-amber-400 text-black hover:brightness-110 transition-all" onclick="sendMessage()"><span class="material-symbols-outlined filled" aria-hidden="true">send</span></button>
@@ -559,7 +540,116 @@
     }
     
     function showChatOptions() {
-      alert('Chat Options\n\n• Mute Notifications\n• Search in Chat\n• Wallpaper Settings\n• Disappearing Messages\n• Report');
+      const modal = document.getElementById('chat-options-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+      } else {
+        // Create the modal if it doesn't exist
+        const modalHtml = `
+          <div id="chat-options-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[200] flex items-center justify-center p-4" onclick="if(event.target === this) closeChatOptions()">
+            <div class="bg-neutral-900 border border-amber-400/30 rounded-lg w-full max-w-sm overflow-hidden">
+              <div class="p-4 border-b border-white/10">
+                <h3 class="font-headline text-lg font-bold text-white">Chat Options</h3>
+              </div>
+              <div class="p-2">
+                <button onclick="muteNotifications()" class="w-full flex items-center gap-3 p-3 hover:bg-neutral-800 rounded-lg text-left">
+                  <span class="material-symbols-outlined text-zinc-400">notifications_off</span>
+                  <span class="text-white">Mute Notifications</span>
+                </button>
+                <button onclick="searchInChat()" class="w-full flex items-center gap-3 p-3 hover:bg-neutral-800 rounded-lg text-left">
+                  <span class="material-symbols-outlined text-zinc-400">search</span>
+                  <span class="text-white">Search in Chat</span>
+                </button>
+                <button onclick="wallpaperSettings()" class="w-full flex items-center gap-3 p-3 hover:bg-neutral-800 rounded-lg text-left">
+                  <span class="material-symbols-outlined text-zinc-400">wallpaper</span>
+                  <span class="text-white">Wallpaper Settings</span>
+                </button>
+                <button onclick="disappearingMessages()" class="w-full flex items-center gap-3 p-3 hover:bg-neutral-800 rounded-lg text-left">
+                  <span class="material-symbols-outlined text-zinc-400">timer</span>
+                  <span class="text-white">Disappearing Messages</span>
+                </button>
+                <button onclick="reportChat()" class="w-full flex items-center gap-3 p-3 hover:bg-neutral-800 rounded-lg text-left">
+                  <span class="material-symbols-outlined text-zinc-400">flag</span>
+                  <span class="text-white">Report</span>
+                </button>
+              </div>
+              <div class="p-3 border-t border-white/10">
+                <button onclick="closeChatOptions()" class="w-full py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600">Close</button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+      }
+    }
+    
+    function closeChatOptions() {
+      const modal = document.getElementById('chat-options-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+    
+    function muteNotifications() {
+      alert('Notifications muted for this chat!');
+      closeChatOptions();
+    }
+    
+    function searchInChat() {
+      const searchInput = document.createElement('div');
+      searchInput.innerHTML = `
+        <div id="chat-search-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[250] flex items-start justify-center pt-20 p-4" onclick="if(event.target === this) document.getElementById('chat-search-modal').remove()">
+          <div class="bg-neutral-900 border border-amber-400/30 rounded-lg w-full max-w-lg">
+            <div class="p-4 border-b border-white/10">
+              <input type="text" id="chat-search-input" class="w-full bg-neutral-800 border border-zinc-600 rounded-lg px-4 py-2 text-white placeholder-zinc-500 focus:border-amber-400 outline-none" placeholder="Search messages..." autofocus>
+            </div>
+            <div id="search-results" class="max-h-64 overflow-y-auto p-2"></div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(searchInput);
+      document.getElementById('chat-search-input').focus();
+      closeChatOptions();
+    }
+    
+    function wallpaperSettings() {
+      alert('Wallpaper Settings\n\nChoose a chat background from the available options.');
+      closeChatOptions();
+    }
+    
+    function disappearingMessages() {
+      const options = `
+        <div id="disappearing-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[200] flex items-center justify-center p-4" onclick="if(event.target === this) this.remove()">
+          <div class="bg-neutral-900 border border-amber-400/30 rounded-lg w-full max-w-sm">
+            <div class="p-4 border-b border-white/10">
+              <h3 class="font-headline text-lg font-bold text-white">Disappearing Messages</h3>
+            </div>
+            <div class="p-2">
+              <button onclick="setDisappearing(0)" class="w-full p-3 hover:bg-neutral-800 rounded-lg text-left text-white">Off</button>
+              <button onclick="setDisappearing(30)" class="w-full p-3 hover:bg-neutral-800 rounded-lg text-left text-white">30 seconds</button>
+              <button onclick="setDisappearing(300)" class="w-full p-3 hover:bg-neutral-800 rounded-lg text-left text-white">5 minutes</button>
+              <button onclick="setDisappearing(3600)" class="w-full p-3 hover:bg-neutral-800 rounded-lg text-left text-white">1 hour</button>
+              <button onclick="setDisappearing(86400)" class="w-full p-3 hover:bg-neutral-800 rounded-lg text-left text-white">1 day</button>
+            </div>
+            <div class="p-3 border-t border-white/10">
+              <button onclick="document.getElementById('disappearing-modal').remove()" class="w-full py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600">Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', options);
+      closeChatOptions();
+    }
+    
+    function setDisappearing(seconds) {
+      alert(seconds === 0 ? 'Disappearing messages disabled' : `Messages will disappear after ${seconds} seconds`);
+      document.getElementById('disappearing-modal')?.remove();
+    }
+    
+    function reportChat() {
+      const reason = prompt('Why are you reporting this conversation?\n\n1. Spam\n2. Harassment\n3. Inappropriate content\n4. Other');
+      if (reason) {
+        alert('Report submitted. Thank you for keeping GAi Connect safe!');
+      }
+      closeChatOptions();
     }
     
     function attachFile() {
@@ -567,7 +657,112 @@
     }
     
     function attachImage() {
-      alert('Attach Image\n\nSelect an image to attach.\n\nSupported formats: JPG, PNG, GIF');
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (!currentChatUser) {
+          alert('Please select a member to chat with first.');
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          const imageData = event.target.result;
+          await sendMediaMessage(imageData, 'image');
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+    }
+    
+    function attachGif() {
+      // Show a GIF picker modal with common GIFs
+      const gifModal = document.createElement('div');
+      gifModal.id = 'gif-picker-modal';
+      gifModal.className = 'fixed inset-0 bg-black/90 backdrop-blur-xl z-[200] flex items-center justify-center p-4';
+      gifModal.innerHTML = `
+        <div class="bg-neutral-900 border border-amber-400/30 rounded-lg w-full max-w-md">
+          <div class="p-4 border-b border-white/10 flex justify-between items-center">
+            <h3 class="font-headline text-lg font-bold text-white">Choose a GIF</h3>
+            <button onclick="this.closest('#gif-picker-modal').remove()" class="text-zinc-400 hover:text-white">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="p-4 grid grid-cols-3 gap-2 max-h-80 overflow-y-auto">
+            <button onclick="selectGif('https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif')" class="aspect-square bg-neutral-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-amber-400">
+              <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" class="w-full h-full object-cover">
+            </button>
+            <button onclick="selectGif('https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif')" class="aspect-square bg-neutral-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-amber-400">
+              <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" class="w-full h-full object-cover">
+            </button>
+            <button onclick="selectGif('https://media.giphy.com/media/l41YtZOb9EUABnuqA/giphy.gif')" class="aspect-square bg-neutral-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-amber-400">
+              <img src="https://media.giphy.com/media/l41YtZOb9EUABnuqA/giphy.gif" class="w-full h-full object-cover">
+            </button>
+            <button onclick="selectGif('https://media.giphy.com/media/3oz8xIsloV7zOmt81G/giphy.gif')" class="aspect-square bg-neutral-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-amber-400">
+              <img src="https://media.giphy.com/media/3oz8xIsloV7zOmt81G/giphy.gif" class="w-full h-full object-cover">
+            </button>
+            <button onclick="selectGif('https://media.giphy.com/media/l0MYGb1LuZ3n7dRnO/giphy.gif')" class="aspect-square bg-neutral-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-amber-400">
+              <img src="https://media.giphy.com/media/l0MYGb1LuZ3n7dRnO/giphy.gif" class="w-full h-full object-cover">
+            </button>
+            <button onclick="selectGif('https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.gif')" class="aspect-square bg-neutral-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-amber-400">
+              <img src="https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.gif" class="w-full h-full object-cover">
+            </button>
+          </div>
+          <div class="p-4 border-t border-white/10">
+            <p class="text-zinc-500 text-xs text-center">Powered by GIPHY</p>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(gifModal);
+    }
+    
+    function selectGif(gifUrl) {
+      if (!currentChatUser) {
+        alert('Please select a member to chat with first.');
+        document.getElementById('gif-picker-modal')?.remove();
+        return;
+      }
+      sendMediaMessage(gifUrl, 'gif');
+      document.getElementById('gif-picker-modal')?.remove();
+    }
+    
+    async function sendMediaMessage(mediaUrl, mediaType) {
+      const timestamp = Date.now();
+      const allMessages = JSON.parse(localStorage.getItem('gai_messages') || '{}');
+      const conversationKey = [currentUserId, currentChatUser.id].sort().join('_');
+      
+      if (!allMessages[conversationKey]) {
+        allMessages[conversationKey] = [];
+      }
+      
+      allMessages[conversationKey].push({
+        from: currentUserId,
+        to: currentChatUser.id,
+        media: mediaUrl,
+        mediaType: mediaType,
+        timestamp: timestamp
+      });
+      
+      localStorage.setItem('gai_messages', JSON.stringify(allMessages));
+      
+      // Add to UI
+      const chatMessages = document.getElementById('chat-messages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'flex gap-3 justify-end';
+      messageDiv.innerHTML = `
+        <div class="chat-bubble sent bg-amber-400 p-2 rounded-lg max-w-[70%]">
+          ${mediaType === 'gif' ? `<img src="${mediaUrl}" class="max-w-full rounded-lg">` : `<img src="${mediaUrl}" class="max-w-full rounded-lg">`}
+          <div class="flex items-center justify-end gap-1 mt-1"><span class="text-[10px] text-black/70">Now</span></div>
+        </div>
+      `;
+      chatMessages.appendChild(messageDiv);
+      document.getElementById('no-chat-selected')?.classList.add('hidden');
+      chatMessages.classList.remove('hidden');
+      document.getElementById('messages-container').scrollTop = document.getElementById('messages-container').scrollHeight;
     }
     
     function showEmoji() {

@@ -1615,16 +1615,43 @@
       alert('Connection request sent!\n\nWaiting for acceptance...');
     }
     
-    function loadUserProfile() {
+    async function loadUserProfile() {
       // Load portfolio and stats on profile load
       loadPortfolio();
       loadProfileStats();
       
-      const profile = GAiUser.getProfile();
-      const displayName = GAiUser.getDisplayName();
-      const tier = localStorage.getItem('gai_userTier') || 'Standard';
-      const isVerified = localStorage.getItem('gai_isVerified') === 'true';
-      const joinedDate = localStorage.getItem('gai_joined_date') || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      const userId = localStorage.getItem('gai_userId');
+      let profile = null;
+      
+      // Try to load from Supabase first
+      if (userId) {
+        try {
+          const response = await fetch(`${PROFILE_SUPABASE_URL}/rest/v1/users?id=eq.${userId}`, {
+            headers: {
+              'apikey': PROFILE_SUPABASE_KEY,
+              'Authorization': `Bearer ${PROFILE_SUPABASE_KEY}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.length > 0) {
+              profile = data[0];
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to load profile from Supabase:', e);
+        }
+      }
+      
+      // Fallback to GAiUser and localStorage
+      if (!profile) {
+        profile = GAiUser.getProfile() || {};
+      }
+      
+      const displayName = profile.fullname || profile.nickname || GAiUser.getDisplayName() || 'User';
+      const tier = profile.tier || localStorage.getItem('gai_userTier') || 'Standard';
+      const isVerified = profile.verified || localStorage.getItem('gai_isVerified') === 'true';
+      const joinedDate = profile.created_at ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : (localStorage.getItem('gai_joined_date') || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }));
       
       const displayNameEl = document.getElementById('profile-display-name');
       const avatarEl = document.getElementById('profile-avatar');
@@ -1649,7 +1676,12 @@
         locationEl.textContent = profile.location;
       }
       
-      if (profile.nickname) {
+      // Display actual membership ID from localStorage or Supabase
+      const userId = localStorage.getItem('gai_userId');
+      const membershipId = localStorage.getItem('gai_membershipId') || userId || (profile.user_id);
+      if (membershipId) {
+        idEl.textContent = membershipId.toUpperCase();
+      } else if (profile.nickname) {
         idEl.textContent = 'GAi' + Math.floor(Math.random() * 1000000);
       }
       

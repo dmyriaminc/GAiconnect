@@ -166,10 +166,10 @@
     </div>
     <div class="px-4 space-y-4">
       <div class="border-t border-zinc-900 pt-4 space-y-1">
-        <a class="sidebar-link text-zinc-500 px-4 py-2 flex items-center gap-3 hover:text-white text-xs transition-colors" href="index.html">
+        <button onclick="logoutAdmin()" class="sidebar-link text-zinc-500 px-4 py-2 flex items-center gap-3 hover:text-white text-xs transition-colors w-full text-left">
           <span class="material-symbols-outlined text-sm">logout</span>
           <span>Sign Out</span>
-        </a>
+        </button>
       </div>
     </div>
   </aside>
@@ -1762,8 +1762,8 @@
     
     document.addEventListener('DOMContentLoaded', function() {
       if (!isAdminLoggedIn) {
-        document.getElementById('admin-login-modal').classList.remove('hidden');
-        document.getElementById('admin-login-modal').classList.add('flex');
+        const modal = document.getElementById('admin-login-modal');
+        modal.style.display = 'flex';
         return;
       }
       loadUsersFromStorage();
@@ -1771,19 +1771,27 @@
 
     function handleAdminLogin(event) {
       event.preventDefault();
-      const username = document.getElementById('admin-username').value;
+      const username = document.getElementById('admin-username').value.trim();
       const password = document.getElementById('admin-password').value;
+      
+      console.log('Login attempt:', username);
       
       if (username === adminCredentials.username && password === adminCredentials.password) {
         localStorage.setItem('gai_isAdmin', 'true');
         isAdminLoggedIn = true;
-        document.getElementById('admin-login-modal').classList.add('hidden');
-        document.getElementById('admin-login-modal').classList.remove('flex');
+        document.getElementById('admin-login-modal').style.display = 'none';
         loadUsersFromStorage();
         showToast('Admin access granted!', 'success');
       } else {
-        showToast('Invalid admin credentials.', 'error');
+        showToast('Invalid admin credentials. Use: admin / GAiAdmin2024!', 'error');
       }
+    }
+    
+    function logoutAdmin() {
+      localStorage.removeItem('gai_isAdmin');
+      isAdminLoggedIn = false;
+      document.getElementById('admin-login-modal').style.display = 'flex';
+      showToast('Logged out from admin', 'info');
     }
 
     // User Management with Supabase
