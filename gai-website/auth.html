@@ -324,6 +324,16 @@
     let registrationFaceDescriptor = null;
     let faceCaptureStream = null;
     
+    // Session Management - Redirect logged-in users to dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      const isLoggedIn = localStorage.getItem('gai_isLoggedIn') === 'true';
+      const isAdmin = localStorage.getItem('gai_isAdmin') === 'true';
+      
+      if (isLoggedIn || isAdmin) {
+        window.location.href = isAdmin ? 'admin.html' : 'dashboard.html';
+      }
+    });
+    
     // Initialize Face API
     async function initFaceAPI() {
       try {
@@ -929,12 +939,19 @@
     }
 
     async function manualLogin() {
-      const memberId = document.getElementById('member-id').value;
+      const memberId = document.getElementById('member-id').value.trim();
       const password = document.getElementById('password').value;
       
       if (!memberId || !password) {
         alert('Please enter both Membership ID (or Email) and Password.');
         return;
+      }
+      
+      // Normalize Membership ID (handle different formats)
+      let normalizedMemberId = memberId.toUpperCase();
+      if (!normalizedMemberId.startsWith('GAI') && memberId.match(/^\d+$/)) {
+        // If user entered just numbers, convert to GAi format
+        normalizedMemberId = 'GAI' + String(memberId).padStart(6, '0');
       }
       
       try {
@@ -964,7 +981,7 @@
           // Fallback to localStorage
           const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
           user = users.find(u => 
-            (u.id === memberId || u.email === memberId || u.nickname === memberId || u.user_id === memberId) && 
+            (u.id === normalizedMemberId || u.id === memberId || u.email === memberId || u.nickname === memberId || u.user_id === memberId || u.user_id === normalizedMemberId) && 
             (u.password === 'b64:' + btoa(password) || u.password === password)
           );
         }

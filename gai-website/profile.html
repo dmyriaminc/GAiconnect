@@ -287,7 +287,7 @@
                 </div>
               </div>
               <div class="pt-3 border-t border-white/5">
-                <button onclick="openEditProfile()" class="w-full mt-2 px-4 py-2 bg-neutral-700 text-zinc-400 text-sm rounded-sm hover:bg-neutral-600 hover:text-white transition-colors flex items-center justify-center gap-2">
+                <button onclick="openProfileEditor()" class="w-full mt-2 px-4 py-2 bg-amber-400 text-black font-bold text-sm rounded-sm hover:bg-amber-300 transition-colors flex items-center justify-center gap-2">
                   <span class="material-symbols-outlined filled text-lg">edit</span>
                   Edit Profile
                 </button>
@@ -487,46 +487,80 @@
       <button onclick="stopVoiceInput()" class="text-zinc-400">✕</button>
     </div>
   </div>
-
-  <div class="fixed bottom-6 left-6 z-50">
-    <button class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer" onclick="openMusicPanel()">
-      <span class="material-symbols-outlined filled text-white">music_note</span>
-    </button>
-  </div>
-
-  <!-- Music Panel -->
-  <div id="music-panel" class="fixed bottom-20 left-6 w-96 max-w-[calc(100vw-3rem)] bg-neutral-900 border border-purple-500/30 rounded-lg shadow-2xl z-50 hidden">
-    <div class="bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined filled text-white">music_note</span>
-        <span class="font-headline font-bold text-white">GAi Music Radio</span>
-      </div>
-      <button onclick="closeMusicPanel()" class="text-white/80 hover:text-white">
+  
+  <!-- Profile Edit Modal -->
+  <div id="profile-edit-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[200] hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-lg w-full max-h-[90vh] overflow-y-auto p-8 relative">
+      <button onclick="closeProfileEditor()" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
         <span class="material-symbols-outlined">close</span>
       </button>
-    </div>
-    <div class="p-4 border-b border-zinc-700">
-      <p class="text-xs text-zinc-500 uppercase mb-2">Live Radio Stations</p>
-      <div id="station-list" class="max-h-48 overflow-y-auto space-y-2"></div>
-    </div>
-    <div id="now-playing" class="p-4 border-t border-zinc-700 hidden">
-      <div class="flex items-center gap-3 mb-2">
-        <span class="material-symbols-outlined text-purple-400 animate-pulse">graphic_eq</span>
-        <div><p id="playing-title" class="text-white text-sm font-bold"></p><p id="playing-artist" class="text-zinc-500 text-xs"></p></div>
-      </div>
-      <div class="flex gap-2">
-        <button onclick="togglePlayPause()" class="flex-1 bg-purple-500 text-white text-sm uppercase py-2 rounded-lg">Pause</button>
-        <button onclick="nextStream()" class="p-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600">
-          <span class="material-symbols-outlined filled">skip_next</span>
-        </button>
-        <button onclick="stopMusic()" class="flex-1 bg-red-500/20 text-red-400 text-sm uppercase py-2 rounded-lg">Stop</button>
-      </div>
+      <h2 class="font-headline text-2xl font-bold text-amber-400 mb-6">Edit Profile</h2>
+      
+      <form id="edit-profile-form" onsubmit="saveProfileChanges(event)" class="space-y-4">
+        <div>
+          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Full Name</label>
+          <input type="text" id="edit-fullname" class="w-full bg-neutral-800 border border-zinc-700 text-white px-4 py-3 rounded-sm focus:border-amber-400 outline-none">
+        </div>
+        <div>
+          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Nickname</label>
+          <input type="text" id="edit-nickname" class="w-full bg-neutral-800 border border-zinc-700 text-white px-4 py-3 rounded-sm focus:border-amber-400 outline-none">
+        </div>
+        <div>
+          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Location</label>
+          <input type="text" id="edit-location" class="w-full bg-neutral-800 border border-zinc-700 text-white px-4 py-3 rounded-sm focus:border-amber-400 outline-none">
+        </div>
+        <div>
+          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Nationality</label>
+          <input type="text" id="edit-nationality" class="w-full bg-neutral-800 border border-zinc-700 text-white px-4 py-3 rounded-sm focus:border-amber-400 outline-none">
+        </div>
+        <div>
+          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Date of Birth</label>
+          <input type="date" id="edit-dob" class="w-full bg-neutral-800 border border-zinc-700 text-white px-4 py-3 rounded-sm focus:border-amber-400 outline-none">
+        </div>
+        <div>
+          <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">About / Bio</label>
+          <textarea id="edit-bio" rows="4" class="w-full bg-neutral-800 border border-zinc-700 text-white px-4 py-3 rounded-sm focus:border-amber-400 outline-none resize-none" placeholder="Tell us about yourself..."></textarea>
+        </div>
+        <div class="pt-4">
+          <button type="submit" class="w-full py-3 bg-amber-400 text-black font-bold rounded-sm hover:bg-amber-300 transition-colors">
+            Save Changes
+          </button>
+        </div>
+      </form>
     </div>
   </div>
   
   <script>
-    function openEditProfile() {
-      alert('Profile Editor:\n\nYou can edit: Username, Bio, Location, Expertise, and Profile Picture.\n\nClick the camera icon on your profile picture to upload a new photo.');
+    function openProfileEditor() {
+      document.getElementById('profile-edit-modal').classList.remove('hidden');
+      document.getElementById('profile-edit-modal').classList.add('flex');
+      
+      document.getElementById('edit-fullname').value = localStorage.getItem('gai_reg_fullname') || '';
+      document.getElementById('edit-nickname').value = localStorage.getItem('gai_username') || '';
+      document.getElementById('edit-location').value = localStorage.getItem('gai_reg_location') || '';
+      document.getElementById('edit-nationality').value = localStorage.getItem('gai_reg_nationality') || '';
+      document.getElementById('edit-dob').value = localStorage.getItem('gai_reg_dob') || '';
+    }
+    
+    function closeProfileEditor() {
+      document.getElementById('profile-edit-modal').classList.add('hidden');
+      document.getElementById('profile-edit-modal').classList.remove('flex');
+    }
+    
+    function saveProfileChanges(event) {
+      event.preventDefault();
+      
+      localStorage.setItem('gai_reg_fullname', document.getElementById('edit-fullname').value);
+      localStorage.setItem('gai_username', document.getElementById('edit-nickname').value);
+      localStorage.setItem('gai_reg_location', document.getElementById('edit-location').value);
+      localStorage.setItem('gai_reg_nationality', document.getElementById('edit-nationality').value);
+      localStorage.setItem('gai_reg_dob', document.getElementById('edit-dob').value);
+      
+      // Update profile display
+      loadUserProfile();
+      
+      closeProfileEditor();
+      alert('Profile updated successfully!');
     }
     
     function handleProfilePhotoUpload(event) {
@@ -582,7 +616,31 @@
     }
 
     function connectUser() {
-      alert('Connection Request Sent!\n\nYour connection request has been sent to System Operator.');
+      const connectBtn = event.target.closest('button');
+      const originalHTML = connectBtn.innerHTML;
+      
+      // Change to sent state
+      connectBtn.disabled = true;
+      connectBtn.classList.remove('bg-purple-500', 'hover:bg-purple-400');
+      connectBtn.classList.add('bg-green-500', 'hover:bg-green-400');
+      connectBtn.innerHTML = `
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined filled text-lg">check_circle</span>
+          Request Sent
+        </span>
+      `;
+      
+      // Store in localStorage that request was sent
+      const currentUserId = localStorage.getItem('gai_userId');
+      localStorage.setItem('connection_sent_' + currentUserId, 'true');
+      
+      // Reset after 5 seconds (just for visual feedback)
+      setTimeout(() => {
+        connectBtn.disabled = false;
+        connectBtn.classList.remove('bg-green-500', 'hover:bg-green-400');
+        connectBtn.classList.add('bg-purple-500', 'hover:bg-purple-400');
+        connectBtn.innerHTML = originalHTML;
+      }, 5000);
     }
 
     // Music Feature - Streaming Radio

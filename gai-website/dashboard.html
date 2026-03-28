@@ -274,7 +274,7 @@
                     <span class="font-headline text-xl font-bold text-amber-400">$2.44</span>
                     <span class="text-zinc-500 text-xs">/hr</span>
                   </div>
-                  <button class="px-4 py-2 bg-amber-400 text-black text-xs font-bold rounded-lg hover:bg-amber-300 transition-all">Connect</button>
+                  <button onclick="dashboardConnect(this, 'Xenon_77')" class="px-4 py-2 bg-amber-400 text-black text-xs font-bold rounded-lg hover:bg-amber-300 transition-all">Connect</button>
                 </div>
               </div>
             </div>
@@ -300,7 +300,7 @@
                     <span class="font-headline text-xl font-bold text-amber-400">$8.12</span>
                     <span class="text-zinc-500 text-xs">/session</span>
                   </div>
-                  <button class="px-4 py-2 bg-purple-400 text-white text-xs font-bold rounded-lg hover:bg-purple-300 transition-all">Connect</button>
+                  <button onclick="dashboardConnect(this, 'The_Oracle')" class="px-4 py-2 bg-purple-400 text-white text-xs font-bold rounded-lg hover:bg-purple-300 transition-all">Connect</button>
                 </div>
               </div>
             </div>
@@ -732,6 +732,22 @@
       if (action) {
         alert(`${action.title}\n\n${action.desc}\n\nThis would activate the ${action.agent} in the CEO Dashboard.\n\nTo use full AI capabilities, visit the CEO Dashboard.`);
       }
+    }
+    
+    function dashboardConnect(btn, providerName) {
+      const originalHTML = btn.innerHTML;
+      
+      btn.disabled = true;
+      btn.classList.remove('bg-amber-400', 'hover:bg-amber-300', 'text-black', 'bg-purple-400', 'hover:bg-purple-300', 'text-white');
+      btn.classList.add('bg-green-500', 'text-white');
+      btn.innerHTML = `
+        <span class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">check_circle</span>
+          Request Sent
+        </span>
+      `;
+      
+      localStorage.setItem('service_request_sent_' + providerName, 'true');
     }
 
     const gaiToggle = document.getElementById('gai-toggle');
