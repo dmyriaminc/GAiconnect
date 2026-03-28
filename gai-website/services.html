@@ -829,7 +829,7 @@
     let currentServiceProviderId = null;
     let currentServiceProviderNickname = null;
     
-    async function viewServiceDetails(title, provider, price, description, category, rating, reviews, location, lat, lng, providerId) {
+    function viewServiceDetails(title, provider, price, description, category, rating, reviews, location, lat, lng, providerId) {
       // Store service data in sessionStorage for the details page
       const serviceData = {
         title: decodeURIComponent(title),
@@ -930,10 +930,11 @@
       };
       
       // First check Supabase, then fallback to localStorage
-      const hasExistingRequest = await checkSupabase();
-      if (!hasExistingRequest) {
-        checkLocalStorage();
-      }
+      checkSupabase().then(hasExistingRequest => {
+        if (!hasExistingRequest) {
+          checkLocalStorage();
+        }
+      });
       
       document.getElementById('service-details-modal').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
