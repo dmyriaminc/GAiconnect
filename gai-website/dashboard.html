@@ -116,17 +116,17 @@
           <span class="material-symbols-outlined text-amber-400">waving_hand</span>
         </div>
         <div>
-          <p class="text-sm text-white font-medium">Welcome back, <span class="text-amber-400 font-bold">System Operator</span>!</p>
+          <p class="text-sm text-white font-medium">Welcome back, <span id="welcome-name" class="text-amber-400 font-bold">Loading...</span>!</p>
           <p class="text-xs text-zinc-500">Last login: Today at 9:42 AM</p>
         </div>
       </div>
-      <div class="flex items-center gap-4">
-        <button onclick="toggleQuickActions()" class="flex items-center gap-2 px-3 py-1.5 bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs font-bold rounded-lg hover:bg-amber-400/20 transition-all relative">
+      <div class="flex items-center gap-4 relative">
+        <button onclick="toggleQuickActions()" class="flex items-center gap-2 px-3 py-1.5 bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs font-bold rounded-lg hover:bg-amber-400/20 transition-all cursor-pointer">
           <span class="material-symbols-outlined text-sm">bolt</span>
           Quick Actions
           <span class="material-symbols-outlined text-sm">expand_more</span>
         </button>
-        <div id="quick-actions-menu" class="hidden absolute top-full right-0 mt-2 w-56 bg-neutral-800 border border-amber-400/30 rounded-lg shadow-2xl z-50 overflow-hidden">
+        <div id="quick-actions-menu" class="hidden absolute top-full right-0 mt-2 w-56 bg-neutral-800 border border-amber-400/30 rounded-lg shadow-2xl z-[100] overflow-hidden">
           <div class="p-3 border-b border-white/10">
             <p class="text-xs text-zinc-400">Quick Actions</p>
           </div>
@@ -540,6 +540,41 @@
   <script>
     // Debug: Verify JavaScript is loading
     console.log('Dashboard JavaScript loading...');
+    
+    // Load user data on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUserWelcome();
+      loadSidebarUser();
+    });
+    
+    function loadUserWelcome() {
+      const fullname = localStorage.getItem('gai_reg_fullname');
+      const welcomeNameEl = document.getElementById('welcome-name');
+      if (welcomeNameEl) {
+        if (fullname) {
+          welcomeNameEl.textContent = fullname;
+        } else {
+          const nickname = localStorage.getItem('gai_username');
+          welcomeNameEl.textContent = nickname || 'User';
+        }
+      }
+    }
+    
+    function loadSidebarUser() {
+      const fullname = localStorage.getItem('gai_reg_fullname');
+      const nickname = localStorage.getItem('gai_username');
+      const tier = localStorage.getItem('gai_userTier') || 'Standard';
+      
+      const sidebarName = document.querySelector('.sidebar .font-headline.font-bold.text-white.text-sm');
+      const sidebarTier = document.querySelector('.sidebar .text-\\[10px\\].text-amber-400');
+      
+      if (sidebarName) {
+        sidebarName.textContent = fullname || nickname || 'User';
+      }
+      if (sidebarTier) {
+        sidebarTier.textContent = tier;
+      }
+    }
     
     // Voice Input
     let isListening = false;

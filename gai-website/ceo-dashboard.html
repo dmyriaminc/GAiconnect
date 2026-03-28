@@ -737,6 +737,27 @@
                 <span class="agent-task-count text-xs text-amber-400">Ready</span>
               </div>
             </div>
+            
+            <!-- Music Agent -->
+            <div data-agent="music" class="agent-card glass-panel p-5 rounded-lg cursor-pointer" onclick="openAgentModal('music')">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-pink-400">music_note</span>
+                  </div>
+                  <div>
+                    <h3 class="font-headline font-bold text-white">Music Agent</h3>
+                    <p class="text-[10px] text-zinc-500 uppercase tracking-widest">Entertainment</p>
+                  </div>
+                </div>
+                <div class="agent-status-dot w-3 h-3 rounded-full bg-zinc-500"></div>
+              </div>
+              <p class="text-xs text-zinc-400 mb-3 line-clamp-2">Search music, stream radio, discover songs</p>
+              <div class="flex items-center justify-between">
+                <span class="agent-status-text text-xs text-zinc-500">Idle</span>
+                <span class="agent-task-count text-xs text-amber-400">Ready</span>
+              </div>
+            </div>
           </div>
         </section>
         
@@ -830,6 +851,11 @@
                 <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-orange-500 rounded-full animate-ping"></div>
                 <span class="material-symbols-outlined text-orange-400 text-lg">security</span>
                 <span class="text-[10px] text-orange-400">Security</span>
+              </div>
+              <div class="workflow-step flex flex-col items-center gap-1 p-2 bg-pink-500/10 rounded-lg border border-pink-500/30 hover:border-pink-500/60 transition-all relative">
+                <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-pink-500 rounded-full animate-ping"></div>
+                <span class="material-symbols-outlined text-pink-400 text-lg">music_note</span>
+                <span class="text-[10px] text-pink-400">Music</span>
               </div>
             </div>
             
@@ -1419,7 +1445,7 @@
         const allowedTiers = settings[agentId] || MEMBERSHIP_TIERS;
         const colors = {
           osint: 'red', social: 'cyan', content: 'amber', trading: 'green',
-          data: 'blue', builder: 'purple', security: 'orange', news: 'red'
+          data: 'blue', builder: 'purple', security: 'orange', news: 'red', music: 'pink'
         };
         const color = colors[agentId] || 'amber';
         

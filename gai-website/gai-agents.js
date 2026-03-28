@@ -99,6 +99,18 @@ const GAiCEO = {
       capabilities: ['Football news', 'Tennis updates', 'Basketball scores', 'Sports predictions', 'Live match tracking', 'Transfer news'],
       tools: ['ESPN API', 'FlashScore', 'The Athletic', 'Opta', 'Sportradar'],
       stats: { articles: 0, predictions: 0, accuracy: 0, lastRun: null }
+    },
+    music: {
+      id: 'music',
+      name: 'Music Agent',
+      icon: 'music_note',
+      color: '#ec4899',
+      colorClass: 'pink',
+      status: 'idle',
+      tasks: [],
+      capabilities: ['Search songs', 'Stream radio', 'Discover music', 'Playlist creation', 'Artist info', 'Lyrics lookup'],
+      tools: ['YouTube Music', 'Spotify API', 'SoundCloud', 'Radio Garden', 'Genius Lyrics'],
+      stats: { searches: 0, streams: 0, songs: 0, lastRun: null }
     }
   },
 
@@ -158,6 +170,9 @@ const GAiCEO = {
       }
       if (desc.includes('security') || desc.includes('protect') || desc.includes('scan') || desc.includes('threat') || desc.includes('fraud')) {
         return 'security';
+      }
+      if (desc.includes('music') || desc.includes('song') || desc.includes('play') || desc.includes('radio') || desc.includes('audio') || desc.includes('stream')) {
+        return 'music';
       }
       
       return 'content'; // Default
@@ -219,6 +234,9 @@ const GAiCEO = {
             break;
           case 'security':
             agent.stats.threats++;
+            break;
+          case 'music':
+            agent.stats.searches++;
             break;
         }
       }

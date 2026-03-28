@@ -71,11 +71,15 @@
         <div class="relative -mt-20 mb-6 flex flex-col md:flex-row md:items-end gap-6">
           <div class="relative">
             <div class="avatar-ring w-32 h-32 md:w-40 md:h-40">
-              <div id="profile-avatar" class="w-full h-full rounded-sm bg-neutral-800 flex items-center justify-center">
+              <div id="profile-avatar" class="w-full h-full rounded-sm bg-neutral-800 flex items-center justify-center overflow-hidden">
                 <span class="font-headline text-5xl font-black text-amber-400 glow-text-primary">--</span>
               </div>
             </div>
-            <span class="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-neutral-950"></span>
+            <label class="absolute bottom-2 right-2 w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center cursor-pointer hover:bg-amber-300 transition-colors border-2 border-neutral-950">
+              <input type="file" id="profile-photo-input" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)">
+              <span class="material-symbols-outlined text-black text-sm">camera_alt</span>
+            </label>
+            <span class="absolute bottom-2 left-2 w-6 h-6 bg-green-500 rounded-full border-4 border-neutral-950"></span>
           </div>
           
           <div class="flex-1">
@@ -522,7 +526,40 @@
   
   <script>
     function openEditProfile() {
-      alert('Profile Editor:\n\nYou can edit: Username, Bio, Location, Expertise, and Profile Picture.\n\nThis feature will be fully functional in the next update.');
+      alert('Profile Editor:\n\nYou can edit: Username, Bio, Location, Expertise, and Profile Picture.\n\nClick the camera icon on your profile picture to upload a new photo.');
+    }
+    
+    function handleProfilePhotoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file.');
+        return;
+      }
+      
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size must be less than 5MB.');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const avatarContainer = document.getElementById('profile-avatar');
+        avatarContainer.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" alt="Profile Photo">`;
+        
+        localStorage.setItem('gai_profilePhoto', e.target.result);
+        alert('Profile photo updated successfully!');
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    function loadProfilePhoto() {
+      const savedPhoto = localStorage.getItem('gai_profilePhoto');
+      if (savedPhoto) {
+        const avatarContainer = document.getElementById('profile-avatar');
+        avatarContainer.innerHTML = `<img src="${savedPhoto}" class="w-full h-full object-cover" alt="Profile Photo">`;
+      }
     }
 
     function shareProfile() {
@@ -743,6 +780,7 @@
       GAiUser.init();
       GAiNearby.init();
       loadUserProfile();
+      loadProfilePhoto();
     });
 
     function loadUserProfile() {
