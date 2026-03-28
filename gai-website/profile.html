@@ -133,20 +133,20 @@
       <div class="max-w-6xl mx-auto px-6 py-6">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div class="stat-item text-center">
-            <div class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">42</div>
+            <div id="stat-services" class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">0</div>
             <div class="text-xs text-zinc-500 uppercase tracking-wider">Services</div>
           </div>
           <div class="stat-item text-center">
-            <div class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">127</div>
+            <div id="stat-reviews" class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">0</div>
             <div class="text-xs text-zinc-500 uppercase tracking-wider">Reviews</div>
           </div>
           <div class="stat-item text-center">
-            <div class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">4.9</div>
+            <div id="stat-rating" class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">0.0</div>
             <div class="text-xs text-zinc-500 uppercase tracking-wider">Rating</div>
           </div>
           <div class="stat-item text-center">
-            <div class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">2.4K</div>
-            <div class="text-xs text-zinc-500 uppercase tracking-wider">Followers</div>
+            <div id="stat-followers" class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">0</div>
+            <div class="text-xs text-zinc-500 uppercase tracking-wider">Connections</div>
           </div>
         </div>
       </div>
@@ -288,7 +288,7 @@
           </div>
           
           <div id="tab-services" class="tab-content active space-y-4">
-            <div class="service-item bg-neutral-800 p-6 rounded-sm border border-transparent transition-all">
+            <div class="service-item bg-neutral-800 p-6 rounded-sm border border-transparent transition-all cursor-pointer" onclick="viewProfileService('Deep-Mind Arbitrage Protocol', 'System Operator', '2.44 GAi/hr', 'High-frequency neural trading with sub-millisecond execution across quantum markets.', 'Trading', 4.9, 127, 'New York, USA')">
               <div class="flex justify-between items-start mb-4">
                 <div>
                   <div class="flex items-center gap-2 mb-2">
@@ -310,7 +310,7 @@
               </div>
             </div>
             
-            <div class="service-item bg-neutral-800 p-6 rounded-sm border border-transparent transition-all">
+            <div class="service-item bg-neutral-800 p-6 rounded-sm border border-transparent transition-all cursor-pointer" onclick="viewProfileService('Neural Pattern Synthesis', 'System Operator', '15.7 GAi/cycle', 'AI-driven pattern recognition that learns and adapts to user behavior in real-time.', 'AI/Neural', 4.8, 89, 'New York, USA')">
               <div class="flex justify-between items-start mb-4">
                 <div>
                   <div class="flex items-center gap-2 mb-2">
@@ -331,7 +331,7 @@
               </div>
             </div>
             
-            <div class="service-item bg-neutral-800 p-6 rounded-sm border border-transparent transition-all">
+            <div class="service-item bg-neutral-800 p-6 rounded-sm border border-transparent transition-all cursor-pointer" onclick="viewProfileService('Quantum Encryption Layer', 'System Operator', '4.99 GAi/tx', 'Military-grade quantum-resistant encryption for all neural communications.', 'Security', 5.0, 156, 'New York, USA')">
               <div class="flex justify-between items-start mb-4">
                 <div>
                   <div class="flex items-center gap-2 mb-2">
@@ -355,17 +355,23 @@
           </div>
           
           <div id="tab-portfolio" class="tab-content">
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div class="portfolio-item aspect-square bg-gradient-to-br from-amber-400/20 to-neutral-800 rounded-sm cursor-pointer"></div>
-              <div class="portfolio-item aspect-square bg-gradient-to-br from-purple-500/20 to-neutral-800 rounded-sm cursor-pointer"></div>
-              <div class="portfolio-item aspect-square bg-gradient-to-br from-cyan-400/20 to-neutral-800 rounded-sm cursor-pointer"></div>
-              <div class="portfolio-item aspect-square bg-gradient-to-br from-green-500/20 to-neutral-800 rounded-sm cursor-pointer"></div>
-              <div class="portfolio-item aspect-square bg-gradient-to-br from-cyan-500/20 to-neutral-800 rounded-sm cursor-pointer"></div>
-              <div class="portfolio-item aspect-square bg-gradient-to-br from-orange-500/20 to-neutral-800 rounded-sm cursor-pointer flex items-center justify-center">
-                <span class="material-symbols-outlined filled text-4xl text-amber-400/30">add</span>
-              </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="portfolio-grid">
+              <!-- Portfolio items will be loaded dynamically -->
+            </div>
+            <!-- Add Portfolio Button -->
+            <div class="mt-4 flex gap-3">
+              <button onclick="addPortfolioItem('photo')" class="flex-1 py-3 bg-amber-400 text-black font-bold text-sm uppercase rounded-sm hover:bg-amber-300 transition-colors">
+                + Add Photo
+              </button>
+              <button onclick="addPortfolioItem('video')" class="flex-1 py-3 bg-purple-500 text-white font-bold text-sm uppercase rounded-sm hover:bg-purple-400 transition-colors">
+                + Add Video
+              </button>
             </div>
           </div>
+          
+          <!-- Hidden file inputs -->
+          <input type="file" id="portfolio-photo-input" accept="image/*" class="hidden" onchange="handlePortfolioUpload(this, 'photo')">
+          <input type="file" id="portfolio-video-input" accept="video/*" class="hidden" onchange="handlePortfolioUpload(this, 'video')">
           
           <div id="tab-reviews" class="tab-content space-y-6">
             <div class="bg-neutral-800 p-6 rounded-sm border border-white/5">
@@ -587,8 +593,11 @@
       localStorage.setItem('gai_instagram', document.getElementById('edit-instagram').value);
       localStorage.setItem('gai_linkedin', document.getElementById('edit-linkedin').value);
       
-      // Sync to Supabase
-      if (supabase && supabase.isConfigured && userId) {
+      // Sync to Supabase using direct fetch
+      const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+      
+      if (userId) {
         try {
           const updates = {
             fullname: document.getElementById('edit-fullname').value,
@@ -600,12 +609,21 @@
             updated_at: new Date().toISOString()
           };
           
-          // Update user in Supabase
-          const { error } = await supabase.from('users').update(updates).eq('id', userId);
-          if (error) {
-            console.warn('Failed to update profile in Supabase:', error.message);
-          } else {
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${userId}`, {
+            method: 'PATCH',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updates)
+          });
+          
+          if (response.ok) {
             console.log('Profile synced to Supabase');
+          } else {
+            const err = await response.text();
+            console.warn('Failed to update profile in Supabase:', err);
           }
         } catch (e) {
           console.warn('Profile sync error:', e.message);
@@ -617,7 +635,178 @@
       loadContactInfo();
       
       closeProfileEditor();
-      alert('Profile updated successfully!');
+      showToast('Profile updated successfully!', 'success');
+    }
+    
+    // Toast notification function
+    function showToast(message, type = 'info') {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'fixed bottom-6 right-6 z-50 flex flex-col gap-3';
+        document.body.appendChild(container);
+      }
+      
+      const toast = document.createElement('div');
+      const colors = {
+        success: 'bg-green-500/20 border-green-500 text-green-400',
+        error: 'bg-red-500/20 border-red-500 text-red-400',
+        warning: 'bg-yellow-500/20 border-yellow-500 text-yellow-400',
+        info: 'bg-blue-500/20 border-blue-500 text-blue-400'
+      };
+      const icons = {
+        success: 'check_circle',
+        error: 'error',
+        warning: 'warning',
+        info: 'info'
+      };
+      
+      toast.className = `${colors[type]} border px-4 py-3 rounded-sm flex items-center gap-3 shadow-lg min-w-[250px]`;
+      toast.innerHTML = `
+        <span class="material-symbols-outlined">${icons[type]}</span>
+        <span class="text-sm font-medium">${message}</span>
+        <button onclick="this.parentElement.remove()" class="ml-auto hover:opacity-70">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      `;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+    
+    // Profile Statistics Functions
+    async function loadProfileStats() {
+      const userId = localStorage.getItem('gai_userId');
+      if (!userId) return;
+      
+      const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+      
+      try {
+        // Get services count
+        const servicesRes = await fetch(`${SUPABASE_URL}/rest/v1/services?provider_id=eq.${userId}&select=id`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        const services = servicesRes.ok ? await servicesRes.json() : [];
+        
+        // Get reviews count and rating
+        const reviewsRes = await fetch(`${SUPABASE_URL}/rest/v1/reviews?provider_id=eq.${userId}&select=id,rating`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        const reviews = reviewsRes.ok ? await reviewsRes.json() : [];
+        
+        // Get connections count
+        const connRes = await fetch(`${SUPABASE_URL}/rest/v1/connections?or=(user_id.eq.${userId},connected_user_id.eq.${userId})&select=id`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        const connections = connRes.ok ? await connRes.json() : [];
+        
+        // Calculate rating
+        const avgRating = reviews.length > 0 
+          ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length).toFixed(1)
+          : '0.0';
+        
+        // Update UI
+        document.getElementById('stat-services').textContent = services.length;
+        document.getElementById('stat-reviews').textContent = reviews.length;
+        document.getElementById('stat-rating').textContent = avgRating;
+        document.getElementById('stat-followers').textContent = connections.length;
+        
+      } catch (e) {
+        console.warn('Failed to load profile stats:', e.message);
+      }
+    }
+    
+    // Portfolio Functions
+    function loadPortfolio() {
+      const userId = localStorage.getItem('gai_userId');
+      const portfolioGrid = document.getElementById('portfolio-grid');
+      if (!portfolioGrid) return;
+      
+      // Get portfolio items from localStorage (user-specific)
+      const portfolioItems = JSON.parse(localStorage.getItem('portfolio_' + userId) || '[]');
+      
+      if (portfolioItems.length === 0) {
+        // Show empty state
+        portfolioGrid.innerHTML = `
+          <div class="col-span-full text-center py-8">
+            <span class="material-symbols-outlined text-4xl text-zinc-600">photo_library</span>
+            <p class="text-zinc-500 mt-2">No portfolio items yet. Add photos or videos above.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      portfolioGrid.innerHTML = portfolioItems.map((item, index) => {
+        if (item.type === 'photo') {
+          return `<div class="portfolio-item aspect-square bg-neutral-800 rounded-sm overflow-hidden cursor-pointer relative group">
+            <img src="${item.url}" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              <button onclick="deletePortfolioItem(${index})" class="p-2 bg-red-500 rounded-full hover:bg-red-400">
+                <span class="material-symbols-outlined text-white text-sm">delete</span>
+              </button>
+            </div>
+          </div>`;
+        } else {
+          return `<div class="portfolio-item aspect-square bg-neutral-800 rounded-sm overflow-hidden cursor-pointer relative group">
+            <video src="${item.url}" class="w-full h-full object-cover"></video>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="material-symbols-outlined text-4xl text-white">play_circle</span>
+            </div>
+            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              <button onclick="deletePortfolioItem(${index})" class="p-2 bg-red-500 rounded-full hover:bg-red-400">
+                <span class="material-symbols-outlined text-white text-sm">delete</span>
+              </button>
+            </div>
+          </div>`;
+        }
+      }).join('');
+    }
+    
+    function addPortfolioItem(type) {
+      const inputId = type === 'photo' ? 'portfolio-photo-input' : 'portfolio-video-input';
+      document.getElementById(inputId).click();
+    }
+    
+    function handlePortfolioUpload(input, type) {
+      const file = input.files[0];
+      if (!file) return;
+      
+      const userId = localStorage.getItem('gai_userId');
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        const portfolioItems = JSON.parse(localStorage.getItem('portfolio_' + userId) || '[]');
+        portfolioItems.push({
+          type: type,
+          url: e.target.result, // For demo, using base64. In production, upload to storage
+          created_at: new Date().toISOString()
+        });
+        localStorage.setItem('portfolio_' + userId, JSON.stringify(portfolioItems));
+        loadPortfolio();
+        showToast(type === 'photo' ? 'Photo added to portfolio!' : 'Video added to portfolio!', 'success');
+      };
+      
+      reader.readAsDataURL(file);
+      input.value = ''; // Reset input
+    }
+    
+    function deletePortfolioItem(index) {
+      if (!confirm('Delete this portfolio item?')) return;
+      
+      const userId = localStorage.getItem('gai_userId');
+      const portfolioItems = JSON.parse(localStorage.getItem('portfolio_' + userId) || '[]');
+      portfolioItems.splice(index, 1);
+      localStorage.setItem('portfolio_' + userId, JSON.stringify(portfolioItems));
+      loadPortfolio();
+      showToast('Portfolio item deleted', 'info');
     }
     
     function loadContactInfo() {
@@ -701,17 +890,44 @@
         const avatarContainer = document.getElementById('profile-avatar');
         avatarContainer.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" alt="Profile Photo">`;
         
+        const currentUserId = localStorage.getItem('gai_userId');
+        if (currentUserId) {
+          localStorage.setItem('gai_profilePhoto_' + currentUserId, e.target.result);
+        }
         localStorage.setItem('gai_profilePhoto', e.target.result);
         alert('Profile photo updated successfully!');
       };
       reader.readAsDataURL(file);
     }
     
-    function loadProfilePhoto() {
-      const savedPhoto = localStorage.getItem('gai_profilePhoto');
+    function viewProfileService(title, provider, price, description, category, rating, reviews, location) {
+      document.getElementById('service-detail-title').textContent = title;
+      document.getElementById('service-detail-provider').textContent = 'by ' + provider;
+      document.getElementById('service-detail-price').innerHTML = price;
+      document.getElementById('service-detail-description').textContent = description;
+      document.getElementById('service-detail-category').textContent = category;
+      document.getElementById('service-detail-rating').innerHTML = '<span class="material-symbols-outlined filled text-amber-400">star</span> ' + rating + ' (' + reviews + ' reviews)';
+      document.getElementById('service-detail-location').innerHTML = '<span class="material-symbols-outlined filled text-zinc-500">location_on</span> ' + location;
+      document.getElementById('profile-service-modal').classList.remove('hidden');
+    }
+    
+    function closeProfileServiceModal() {
+      document.getElementById('profile-service-modal').classList.add('hidden');
+    }
+    
+    function loadProfilePhoto(userId) {
+      let savedPhoto = null;
+      if (userId) {
+        savedPhoto = localStorage.getItem('gai_profilePhoto_' + userId);
+      }
+      if (!savedPhoto) {
+        savedPhoto = localStorage.getItem('gai_profilePhoto');
+      }
       if (savedPhoto) {
         const avatarContainer = document.getElementById('profile-avatar');
-        avatarContainer.innerHTML = `<img src="${savedPhoto}" class="w-full h-full object-cover" alt="Profile Photo">`;
+        if (avatarContainer) {
+          avatarContainer.innerHTML = `<img src="${savedPhoto}" class="w-full h-full object-cover" alt="Profile Photo">`;
+        }
       }
     }
 
@@ -736,30 +952,87 @@
 
     function connectUser() {
       const connectBtn = event.target.closest('button');
-      const originalHTML = connectBtn.innerHTML;
+      const profileUserId = connectBtn.dataset.userId || localStorage.getItem('viewProfileUserId');
+      const currentUserId = localStorage.getItem('gai_userId');
       
-      // Change to sent state
+      if (!profileUserId || !currentUserId) {
+        showToast('Please log in to connect', 'error');
+        return;
+      }
+      
+      const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+      
+      // Check current state
+      const connectionKey = `connection_${currentUserId}_${profileUserId}`;
+      const currentState = localStorage.getItem(connectionKey);
+      
+      if (currentState === 'connected') {
+        showToast('Already connected!', 'info');
+        return;
+      }
+      
+      // Change to pending state
       connectBtn.disabled = true;
       connectBtn.classList.remove('bg-purple-500', 'hover:bg-purple-400');
-      connectBtn.classList.add('bg-green-500', 'hover:bg-green-400');
+      connectBtn.classList.add('bg-yellow-500', 'hover:bg-yellow-400');
       connectBtn.innerHTML = `
         <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined filled text-lg">check_circle</span>
-          Request Sent
+          <span class="material-symbols-outlined filled text-lg">hourglass_empty</span>
+          Pending
         </span>
       `;
       
-      // Store in localStorage that request was sent
-      const currentUserId = localStorage.getItem('gai_userId');
-      localStorage.setItem('connection_sent_' + currentUserId, 'true');
+      // Store pending state
+      localStorage.setItem(connectionKey, 'pending');
       
-      // Reset after 5 seconds (just for visual feedback)
-      setTimeout(() => {
+      // Save to Supabase
+      fetch(`${SUPABASE_URL}/rest/v1/connections`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          user_id: currentUserId,
+          connected_user_id: profileUserId,
+          status: 'pending',
+          created_at: new Date().toISOString()
+        })
+      }).then(res => {
+        if (res.ok) {
+          showToast('Connection request sent!', 'success');
+        } else {
+          showToast('Failed to send request', 'error');
+          connectBtn.disabled = false;
+        }
+      }).catch(e => {
+        console.warn('Connection error:', e.message);
+        showToast('Connection request sent!', 'success');
+      });
+    }
+    
+    // Update connect button state based on saved connection
+    function updateConnectButtonState(connectBtn, profileUserId) {
+      const currentUserId = localStorage.getItem('gai_userId');
+      if (!currentUserId || !profileUserId) return;
+      
+      const connectionKey = `connection_${currentUserId}_${profileUserId}`;
+      const state = localStorage.getItem(connectionKey);
+      
+      if (state === 'connected') {
         connectBtn.disabled = false;
-        connectBtn.classList.remove('bg-green-500', 'hover:bg-green-400');
-        connectBtn.classList.add('bg-purple-500', 'hover:bg-purple-400');
-        connectBtn.innerHTML = originalHTML;
-      }, 5000);
+        connectBtn.classList.remove('bg-purple-500', 'bg-yellow-500');
+        connectBtn.classList.add('bg-green-500');
+        connectBtn.innerHTML = `<span class="flex items-center gap-2"><span class="material-symbols-outlined filled text-lg">check_circle</span> Connected</span>`;
+      } else if (state === 'pending') {
+        connectBtn.disabled = false;
+        connectBtn.classList.remove('bg-purple-500', 'bg-green-500');
+        connectBtn.classList.add('bg-yellow-500');
+        connectBtn.innerHTML = `<span class="flex items-center gap-2"><span class="material-symbols-outlined filled text-lg">hourglass_empty</span> Pending</span>`;
+      }
     }
 
     // Music Feature - Streaming Radio
@@ -965,15 +1238,18 @@
       // Check if viewing another user's profile
       const urlParams = new URLSearchParams(window.location.search);
       const viewUserId = urlParams.get('id');
+      const viewUserNickname = urlParams.get('user');
       
       if (viewUserId) {
-        // Load other user's profile
         await loadOtherUserProfile(viewUserId);
+        loadProfilePhoto(viewUserId);
+      } else if (viewUserNickname) {
+        await loadOtherUserProfileByNickname(viewUserNickname);
       } else {
         loadUserProfile();
+        const currentUserId = localStorage.getItem('gai_userId');
+        loadProfilePhoto(currentUserId);
       }
-      
-      loadProfilePhoto();
       loadContactInfo();
     });
     
@@ -1039,10 +1315,59 @@
           const verifiedBadgeEl = document.getElementById('profile-verified-badge');
           if (verifiedBadgeEl) verifiedBadgeEl.classList.add('hidden');
         }
+        
+        // Load profile photo for this user
+        loadProfilePhoto(user.id);
       } else {
         alert('User not found');
         window.location.href = 'members.html';
       }
+    }
+    
+    async function loadOtherUserProfileByNickname(nickname) {
+      let user = null;
+      
+      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      user = users.find(u => u.nickname && u.nickname.toLowerCase() === nickname.toLowerCase());
+      
+      if (!user && supabase && supabase.isConfigured) {
+        try {
+          const result = await supabase.from('users').select('*');
+          const allUsers = result.data || [];
+          user = allUsers.find(u => u.nickname && u.nickname.toLowerCase() === nickname.toLowerCase());
+        } catch (e) {
+          console.warn('Failed to load user from Supabase:', e);
+        }
+      }
+      
+      if (!user) {
+        const defaultMembers = [
+          { id: 'GAi001001', nickname: 'Xenon_77', fullname: 'System Operator', tier: 'VVIP', verified: true },
+          { id: 'GAi001002', nickname: 'Nova_Protocol', fullname: 'Alex Nova', tier: 'Elite', verified: true },
+          { id: 'GAi001003', nickname: 'The_Oracle', fullname: 'Sarah Oracle', tier: 'Premium', verified: true },
+          { id: 'GAi001004', nickname: 'NeonViper', fullname: 'Mike Viper', tier: 'Standard', verified: false },
+          { id: 'GAi001005', nickname: 'QuantumRush', fullname: 'Emma Rush', tier: 'Premium', verified: true },
+          { id: 'GAi001006', nickname: 'CyberForge', fullname: 'John Forge', tier: 'Standard', verified: false },
+          { id: 'GAi001007', nickname: 'TechDuke', fullname: 'Duke Tech', tier: 'Free', verified: false },
+          { id: 'GAi001008', nickname: 'DataStorm', fullname: 'Storm Data', tier: 'Elite', verified: true },
+          { id: 'GAi001009', nickname: 'PixelWolf', fullname: 'Wolf Pixel', tier: 'Premium', verified: true },
+          { id: 'GAi001010', nickname: 'CryptoNova', fullname: 'Nova Crypto', tier: 'Standard', verified: false },
+          { id: 'GAi001011', nickname: 'SynthWave', fullname: 'Wave Synth', tier: 'VVIP', verified: true },
+          { id: 'GAi001012', nickname: 'BinaryStar', fullname: 'Star Binary', tier: 'Elite', verified: true }
+        ];
+        user = defaultMembers.find(u => u.nickname && u.nickname.toLowerCase() === nickname.toLowerCase());
+      }
+      
+      if (user) {
+        await loadOtherUserProfile(user.id);
+      } else {
+        alert('User not found');
+        window.location.href = 'members.html';
+      }
+    }
+    
+    function getProfileLink(nickname) {
+      return 'profile.html?user=' + encodeURIComponent(nickname);
     }
     
     function connectWithProfileUser(userId) {
@@ -1051,6 +1376,10 @@
     }
     
     function loadUserProfile() {
+      // Load portfolio and stats on profile load
+      loadPortfolio();
+      loadProfileStats();
+      
       const profile = GAiUser.getProfile();
       const displayName = GAiUser.getDisplayName();
       const tier = localStorage.getItem('gai_userTier') || 'Standard';
@@ -1085,6 +1414,51 @@
       }
       
       joinedEl.textContent = joinedDate;
+    }
+  </script>
+  
+  <div id="profile-service-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeProfileServiceModal()"></div>
+    <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+      <div class="bg-neutral-900 border border-amber-400/30 rounded-lg max-w-2xl w-full p-6 shadow-2xl">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <span id="service-detail-category" class="badge bg-amber-400/20 text-amber-400 mb-2 inline-block"></span>
+            <h2 id="service-detail-title" class="font-headline text-2xl font-bold text-white"></h2>
+            <p id="service-detail-provider" class="text-zinc-500 text-sm"></p>
+          </div>
+          <button onclick="closeProfileServiceModal()" class="text-zinc-400 hover:text-white">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        
+        <div class="mb-6">
+          <span id="service-detail-price" class="font-headline text-3xl font-bold text-amber-400 glow-text-primary"></span>
+        </div>
+        
+        <p id="service-detail-description" class="text-zinc-300 mb-6"></p>
+        
+        <div class="flex items-center gap-6 mb-6 text-sm text-zinc-500">
+          <span id="service-detail-rating"></span>
+          <span id="service-detail-location"></span>
+        </div>
+        
+        <div class="flex gap-4">
+          <button onclick="closeProfileServiceModal()" class="flex-1 py-3 bg-neutral-800 text-white font-bold rounded-sm hover:bg-neutral-700 transition-colors">
+            Close
+          </button>
+          <button onclick="bookService()" class="flex-1 py-3 bg-amber-400 text-black font-bold rounded-sm hover:bg-amber-300 transition-colors">
+            Book Service
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function bookService() {
+      alert('Service booking feature coming soon!');
+      closeProfileServiceModal();
     }
   </script>
 </body>

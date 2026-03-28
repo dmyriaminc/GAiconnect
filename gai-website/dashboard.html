@@ -88,12 +88,12 @@
     <div class="space-y-6">
       <div class="px-6 mb-8">
         <a href="profile.html" class="flex items-center gap-3 p-3 bg-zinc-900/50 rounded-sm border-l-2 border-amber-400 hover:bg-zinc-900 transition-colors">
-          <div class="w-10 h-10 rounded-sm bg-gradient-to-br from-amber-400/30 to-amber-600/20 border border-amber-400/30 flex items-center justify-center">
+          <div class="w-10 h-10 rounded-sm bg-gradient-to-br from-amber-400/30 to-amber-600/20 border border-amber-400/30 flex items-center justify-center overflow-hidden sidebar-user-avatar">
             <span class="material-symbols-outlined text-amber-400 text-lg">person</span>
           </div>
           <div class="overflow-hidden">
-            <p class="font-headline font-bold text-white text-sm truncate">System Operator</p>
-            <p class="text-[10px] text-amber-400 uppercase tracking-widest">Premium</p>
+            <p class="font-headline font-bold text-white text-sm truncate sidebar-user-name">User</p>
+            <p class="text-[10px] text-amber-400 uppercase tracking-widest sidebar-user-tier">Standard</p>
           </div>
         </a>
         <a href="telegram-login.html" class="flex items-center gap-2 p-2 mt-2 bg-blue-500/10 border border-blue-500/30 rounded-sm hover:bg-blue-500/20 transition-colors">
@@ -387,7 +387,7 @@
           <h2 class="font-headline text-sm font-bold uppercase tracking-widest text-white mb-4">Neural Logs</h2>
           <div class="space-y-4">
             <div class="flex gap-4"><div class="mt-1 w-1 h-1 rounded-full bg-amber-400 shadow-[0_0_5px_#ffc563]"></div><p class="text-xs text-zinc-400"><span class="text-white font-bold">14:22:</span> Node AH-9 link established. Protocol: EXCLUSIVES_V4</p></div>
-            <div class="flex gap-4"><div class="mt-1 w-1 h-1 rounded-full bg-zinc-700"></div><p class="text-xs text-zinc-400"><span class="text-white font-bold">12:05:</span> Biometric sync completed for System Operator.</p></div>
+            <div class="flex gap-4"><div class="mt-1 w-1 h-1 rounded-full bg-zinc-700"></div><p class="text-xs text-zinc-400"><span class="text-white font-bold">12:05:</span> Biometric sync completed for <span class="dynamic-username">User</span>.</p></div>
             <div class="flex gap-4"><div class="mt-1 w-1 h-1 rounded-full bg-red-400"></div><p class="text-xs text-zinc-400"><span class="text-white font-bold">09:12:</span> Unauthorized query blocked in Sector 7.</p></div>
           </div>
         </div>
@@ -472,16 +472,43 @@
       const fullname = localStorage.getItem('gai_reg_fullname');
       const nickname = localStorage.getItem('gai_username');
       const tier = localStorage.getItem('gai_userTier') || 'Standard';
+      const userId = localStorage.getItem('gai_userId');
+      const isVerified = localStorage.getItem('gai_isVerified') === 'true';
       
-      const sidebarName = document.querySelector('.sidebar .font-headline.font-bold.text-white.text-sm');
-      const sidebarTier = document.querySelector('.sidebar .text-\\[10px\\].text-amber-400');
+      // Update sidebar name
+      const sidebarNameEl = document.querySelector('.sidebar-user-name');
+      if (sidebarNameEl) {
+        sidebarNameEl.textContent = fullname || nickname || 'User';
+      }
       
-      if (sidebarName) {
-        sidebarName.textContent = fullname || nickname || 'User';
+      // Update sidebar tier
+      const sidebarTierEl = document.querySelector('.sidebar-user-tier');
+      if (sidebarTierEl) {
+        let tierText = tier;
+        if (isVerified) tierText += ' • Verified';
+        sidebarTierEl.textContent = tierText;
       }
-      if (sidebarTier) {
-        sidebarTier.textContent = tier;
+      
+      // Update sidebar user ID
+      const sidebarIdEl = document.querySelector('.sidebar-user-id');
+      if (sidebarIdEl && userId) {
+        sidebarIdEl.textContent = userId;
       }
+      
+      // Load profile photo
+      const profilePhoto = userId ? localStorage.getItem('gai_profilePhoto_' + userId) : localStorage.getItem('gai_profilePhoto');
+      if (profilePhoto) {
+        const avatarEl = document.querySelector('.sidebar-user-avatar');
+        if (avatarEl) {
+          avatarEl.innerHTML = `<img src="${profilePhoto}" class="w-full h-full object-cover" alt="Profile">`;
+        }
+      }
+      
+      // Update dynamic username elements throughout the page
+      const userName = fullname || nickname || 'User';
+      document.querySelectorAll('.dynamic-username').forEach(el => {
+        el.textContent = userName;
+      });
     }
     
     // Voice Input
@@ -561,7 +588,8 @@
         } else if (lower.includes('help')) {
           res = "🆘 I can help with: dashboard stats, services, memberships, analytics, connections, CEO features, music, and security. Just ask!";
         } else if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
-          res = "👋 Hello, System Operator! I'm GAi, your personal concierge. How may I assist you today?";
+          const userName = localStorage.getItem('gai_reg_fullname') || localStorage.getItem('gai_username') || 'User';
+          res = "👋 Hello, " + userName + "! I'm GAi, your personal concierge. How may I assist you today?";
         }
         
         const aiMsg = document.createElement('div');

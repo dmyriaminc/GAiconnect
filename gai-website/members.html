@@ -150,12 +150,17 @@
         const isOnline = member.status === 'online';
         const color = member.color || 'amber';
         
+        const profilePhoto = localStorage.getItem('gai_profilePhoto_' + member.id);
+        const avatarContent = profilePhoto 
+          ? `<img src="${profilePhoto}" class="w-full h-full object-cover" alt="${member.nickname}">`
+          : member.initials;
+        
         return `
           <div class="glass-panel rounded-lg p-6 hover:border-amber-400/30 transition-all cursor-pointer" onclick="viewMember('${member.id}')">
             <div class="flex flex-col items-center text-center">
               <div class="relative mb-4">
-                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-${color}-400/30 to-neutral-800 border-2 border-${color}-400/50 flex items-center justify-center text-xl font-bold text-${color}-400">
-                  ${member.initials}
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-${color}-400/30 to-neutral-800 border-2 border-${color}-400/50 flex items-center justify-center text-xl font-bold text-${color}-400 overflow-hidden">
+                  ${avatarContent}
                 </div>
                 <span class="absolute -bottom-1 -right-1 w-5 h-5 ${isOnline ? 'bg-green-500' : 'bg-zinc-500'} rounded-full border-4 border-neutral-950"></span>
               </div>
