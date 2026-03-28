@@ -1774,18 +1774,35 @@
       event.preventDefault();
       const username = document.getElementById('admin-username').value.trim();
       const password = document.getElementById('admin-password').value;
+      const loginBtn = event.target.querySelector('button[type="submit"]');
       
       console.log('Login attempt:', username);
       
-      if (username === adminCredentials.username && password === adminCredentials.password) {
-        localStorage.setItem('gai_isAdmin', 'true');
-        isAdminLoggedIn = true;
-        document.getElementById('admin-login-modal').style.display = 'none';
-        loadUsersFromStorage();
-        showToast('Admin access granted!', 'success');
-      } else {
-        showToast('Invalid admin credentials. Use: admin / GAiAdmin2024!', 'error');
-      }
+      // Show loading state
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Checking...';
+      
+      setTimeout(() => {
+        if (username === adminCredentials.username && password === adminCredentials.password) {
+          localStorage.setItem('gai_isAdmin', 'true');
+          isAdminLoggedIn = true;
+          
+          // Hide modal properly
+          const modal = document.getElementById('admin-login-modal');
+          modal.style.display = 'none';
+          modal.classList.add('hidden');
+          
+          loadUsersFromStorage();
+          showToast('Admin access granted!', 'success');
+          
+          // Remove modal from DOM after animation
+          setTimeout(() => modal.remove(), 300);
+        } else {
+          showToast('Invalid admin credentials. Use: admin / GAiAdmin2024!', 'error');
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Login as Admin';
+        }
+      }, 500); // Small delay for better UX
     }
     
     function logoutAdmin() {

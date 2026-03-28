@@ -129,11 +129,34 @@
       </div>
     </div>
     
+    <div class="bg-neutral-800 border-y border-white/5">
+      <div class="max-w-6xl mx-auto px-6 py-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div class="stat-item text-center">
+            <div id="stat-services" class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">0</div>
+            <div class="text-xs text-zinc-500 uppercase tracking-wider">Services</div>
+          </div>
+          <div class="stat-item text-center">
+            <div id="stat-reviews" class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">0</div>
+            <div class="text-xs text-zinc-500 uppercase tracking-wider">Reviews</div>
+          </div>
+          <div class="stat-item text-center">
+            <div id="stat-rating" class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">0.0</div>
+            <div class="text-xs text-zinc-500 uppercase tracking-wider">Rating</div>
+          </div>
+          <div class="stat-item text-center">
+            <div id="stat-followers" class="font-headline text-3xl font-black text-amber-400 glow-text-primary mb-1">0</div>
+            <div class="text-xs text-zinc-500 uppercase tracking-wider">Connections</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div class="max-w-6xl mx-auto px-6 py-8">
       <div class="flex flex-col lg:flex-row gap-8">
         <div class="lg:w-1/3 space-y-8">
           <div class="bg-neutral-800 p-6 rounded-sm border border-white/5">
-            <h3 class="font-headline text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4">Bio / Contact</h3>
+            <h3 class="font-headline text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4">About</h3>
             <p class="text-zinc-400 leading-relaxed mb-4">
               Presidential tier operator specializing in neural network architecture and quantum encryption protocols. Leading developer of the Exclusives_V4 authentication system.
             </p>
@@ -256,30 +279,15 @@
         </div>
         
         <div class="lg:w-2/3">
-          <!-- Portfolio Section - Always Visible -->
-          <div class="bg-neutral-800 p-6 rounded-sm border border-white/5 mb-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="font-headline text-lg font-bold text-white">Portfolio</h3>
-              <div class="flex gap-2">
-                <button onclick="addPortfolioItem('photo')" class="px-3 py-1 bg-amber-400 text-black text-xs font-bold rounded-sm hover:bg-amber-300">
-                  + Photo
-                </button>
-                <button onclick="addPortfolioItem('video')" class="px-3 py-1 bg-purple-500 text-white text-xs font-bold rounded-sm hover:bg-purple-400">
-                  + Video
-                </button>
-              </div>
+          <div class="border-b border-white/5 mb-6">
+            <div class="flex gap-8">
+              <button class="tab-btn active pb-4 font-headline text-sm uppercase tracking-wider text-white" data-tab="services">Services</button>
+              <button class="tab-btn pb-4 font-headline text-sm uppercase tracking-wider text-zinc-500" data-tab="portfolio">Portfolio</button>
+              <button class="tab-btn pb-4 font-headline text-sm uppercase tracking-wider text-zinc-500" data-tab="reviews">Reviews</button>
             </div>
-            <div id="portfolio-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <!-- Portfolio items loaded dynamically -->
-              <p class="text-zinc-500 text-sm col-span-full text-center py-8">No portfolio items yet. Add photos or videos to showcase your work.</p>
-            </div>
-            <input type="file" id="portfolio-photo-input" accept="image/*" class="hidden" onchange="handlePortfolioUpload(this, 'photo')">
-            <input type="file" id="portfolio-video-input" accept="video/*" class="hidden" onchange="handlePortfolioUpload(this, 'video')">
           </div>
           
-          <!-- Services Section -->
-          <h3 class="font-headline text-lg font-bold text-white mb-4">Services</h3>
-          <div id="services-list" class="space-y-4">
+          <div id="tab-services" class="tab-content active space-y-4">
             <div class="service-item bg-neutral-800 p-6 rounded-sm border border-transparent transition-all cursor-pointer" onclick="viewProfileService('Deep-Mind Arbitrage Protocol', 'System Operator', '2.44 GAi/hr', 'High-frequency neural trading with sub-millisecond execution across quantum markets.', 'Trading', 4.9, 127, 'New York, USA')">
               <div class="flex justify-between items-start mb-4">
                 <div>
@@ -346,14 +354,26 @@
             </div>
           </div>
           
-          <!-- Portfolio is now shown at top of right column -->
+          <div id="tab-portfolio" class="tab-content">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="portfolio-grid">
+              <!-- Portfolio items will be loaded dynamically -->
+            </div>
+            <!-- Add Portfolio Button -->
+            <div class="mt-4 flex gap-3">
+              <button onclick="addPortfolioItem('photo')" class="flex-1 py-3 bg-amber-400 text-black font-bold text-sm uppercase rounded-sm hover:bg-amber-300 transition-colors">
+                + Add Photo
+              </button>
+              <button onclick="addPortfolioItem('video')" class="flex-1 py-3 bg-purple-500 text-white font-bold text-sm uppercase rounded-sm hover:bg-purple-400 transition-colors">
+                + Add Video
+              </button>
+            </div>
+          </div>
           
           <!-- Hidden file inputs -->
           <input type="file" id="portfolio-photo-input" accept="image/*" class="hidden" onchange="handlePortfolioUpload(this, 'photo')">
           <input type="file" id="portfolio-video-input" accept="video/*" class="hidden" onchange="handlePortfolioUpload(this, 'video')">
           
-          <!-- Reviews Section - Hidden, accessible via button if needed -->
-          <div id="tab-reviews" class="hidden tab-content space-y-6">
+          <div id="tab-reviews" class="tab-content space-y-6">
             <div class="bg-neutral-800 p-6 rounded-sm border border-white/5">
               <div class="flex items-start gap-4 mb-4">
                 <div class="avatar-ring">
