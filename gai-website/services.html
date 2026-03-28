@@ -695,8 +695,16 @@
         btn.classList.remove('border-amber-400', 'bg-amber-400', 'text-black');
         btn.classList.add('border-zinc-700', 'text-zinc-400');
       });
-      event.target.classList.remove('border-zinc-700', 'text-zinc-400');
-      event.target.classList.add('border-amber-400', 'bg-amber-400', 'text-black');
+      
+      // Find and update the clicked button
+      const clickedBtn = Array.from(document.querySelectorAll('.filter-btn')).find(b => 
+        b.textContent.toLowerCase().includes(category.replace('-', ' ').split(' ')[0]) ||
+        (category === 'all' && b.textContent.includes('All'))
+      );
+      if (clickedBtn) {
+        clickedBtn.classList.remove('border-zinc-700', 'text-zinc-400');
+        clickedBtn.classList.add('border-amber-400', 'bg-amber-400', 'text-black');
+      }
     }
     
     function getUserLocation() {
