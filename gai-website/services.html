@@ -603,8 +603,8 @@
       return [...userServices, ...defaultServices];
     }
     
-    // Get all services
-    let servicesData = await loadAllServices();
+    // Services data - will be loaded on page init
+    let servicesData = [];
     
     const gradientColors = [
       'from-pink-500/30 to-rose-500/30',
@@ -917,7 +917,7 @@
       localStorage.setItem('gai_services', JSON.stringify(userServices));
       
       // Reload all services
-      servicesData = loadAllServices();
+      servicesData = await loadAllServices();
       renderServices(currentFilter);
       
       // Sync to Supabase
