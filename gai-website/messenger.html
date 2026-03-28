@@ -202,8 +202,12 @@
     let currentChatUser = null;
     let currentUserId;
     
+    // Supabase config
+    const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+    
     // Initialize after DOM is ready
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
       messageInput = document.getElementById('message-input');
       sendBtn = document.getElementById('send-btn');
       messagesContainer = document.getElementById('messages-container');
@@ -221,21 +225,46 @@
           }
         });
       }
+      
+      // Load members from Supabase first
+      await loadMembers();
     });
     
-    // Initialize members list
-    function loadMembers() {
+    // Initialize members list - load from Supabase first
+    async function loadMembers() {
       // Ensure DOM elements are loaded
       if (!membersList) {
         membersList = document.getElementById('members-list');
       }
       if (!membersList) return;
       
-      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      let users = [];
       const currentUser = localStorage.getItem('gai_username');
+      const currentUserId = localStorage.getItem('gai_userId');
+      
+      // Try to load from Supabase first
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/users?select=*`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+        if (response.ok) {
+          users = await response.json();
+          console.log('Loaded members from Supabase:', users.length);
+        }
+      } catch (e) {
+        console.warn('Failed to load from Supabase:', e);
+      }
+      
+      // Fallback to localStorage if no users from Supabase
+      if (users.length === 0) {
+        users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      }
       
       // Filter out current user
-      const otherUsers = users.filter(u => u.nickname !== currentUser);
+      const otherUsers = users.filter(u => u.id !== currentUserId && u.nickname !== currentUser);
       
       if (otherUsers.length === 0) {
         membersList.innerHTML = `
@@ -248,39 +277,76 @@
         return;
       }
       
-      membersList.innerHTML = otherUsers.map((user, index) => {
-        const initials = user.nickname.substring(0, 2).toUpperCase();
-        const colors = ['amber', 'blue', 'purple', 'green', 'red'];
-        const color = colors[index % colors.length];
-        const badge = user.tier || 'Standard';
+      // Map user data correctly (handle both Supabase and localStorage formats)
+      const mappedUsers = otherUsers.map((user, index) => {
+        const nickname = user.nickname || user.fullname || user.email || 'User';
+        const userId = user.id || user.user_id || Math.random().toString(36).substr(2, 9);
+        const tier = user.tier || 'Standard';
         
-        return `
-          <div class="contact-item p-3 flex items-center gap-3 cursor-pointer rounded-sm" onclick="openChat('${user.id}', '${user.nickname}', '${initials}', '${color}', '${badge}')" data-user-id="${user.id}">
-            <div class="relative">
-              <div class="w-12 h-12 rounded-full bg-gradient-to-br from-${color}-400/30 to-neutral-800 border border-${color}-400/30 flex items-center justify-center text-sm font-bold text-${color}-400">${initials}</div>
-              <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center justify-between"><p class="font-bold text-white text-sm truncate">${user.nickname}</p></div>
-              <p class="text-xs text-zinc-500 truncate">${user.tier || 'Standard'} Member</p>
-            </div>
-            <span class="bg-${color}-400 text-black text-[8px] font-black px-2 py-0.5 uppercase rounded-sm">${badge}</span>
+        return {
+          id: userId,
+          nickname: nickname,
+          initials: nickname.substring(0, 2).toUpperCase(),
+          tier: tier,
+          color: ['amber', 'blue', 'purple', 'green', 'red'][index % 5]
+        };
+      });
+      
+      if (mappedUsers.length === 0) {
+        membersList.innerHTML = `
+          <div class="p-4 text-center">
+            <span class="material-symbols-outlined text-4xl text-zinc-600 mb-2">group_off</span>
+            <p class="text-zinc-500 text-sm">No other members yet</p>
+            <p class="text-zinc-600 text-xs mt-1">Connect with other members to start chatting</p>
           </div>
         `;
-      }).join('');
+        return;
+      }
+      
+      membersList.innerHTML = mappedUsers.map((user) => `
+        <div class="contact-item p-3 flex items-center gap-3 cursor-pointer rounded-sm hover:bg-neutral-800" onclick="openChat('${user.id}', '${user.nickname}', '${user.initials}', '${user.color}', '${user.tier}')" data-user-id="${user.id}">
+          <div class="relative">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-${user.color}-400/30 to-neutral-800 border border-${user.color}-400/30 flex items-center justify-center text-sm font-bold text-${user.color}-400">${user.initials}</div>
+            <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between"><p class="font-bold text-white text-sm truncate">${user.nickname}</p></div>
+            <p class="text-xs text-zinc-500 truncate">${user.tier} Member</p>
+          </div>
+          <span class="bg-${user.color}-400 text-black text-[8px] font-black px-2 py-0.5 uppercase rounded-sm">${user.tier}</span>
+        </div>
+      `).join('');
     }
     
     function openChat(userId, nickname, initials, color, badge) {
+      console.log('Opening chat with:', userId, nickname);
       currentChatUser = { id: userId, nickname, initials, color, badge };
       
-      // Update header
-      document.getElementById('chat-avatar').textContent = initials;
-      document.getElementById('chat-avatar').className = `w-12 h-12 rounded-full bg-gradient-to-br from-${color}-400/30 to-neutral-800 border border-${color}-400/30 flex items-center justify-center text-sm font-bold text-${color}-400`;
-      document.getElementById('chat-name').textContent = nickname;
-      document.getElementById('chat-badge').textContent = badge;
-      document.getElementById('chat-badge').className = `bg-${color}-400 text-black text-[8px] font-black px-2 py-0.5 uppercase rounded-sm`;
-      document.getElementById('chat-status').textContent = 'Online';
-      document.getElementById('chat-status').className = 'text-xs text-green-500';
+      // Update header with null checks
+      const chatAvatar = document.getElementById('chat-avatar');
+      const chatName = document.getElementById('chat-name');
+      const chatBadge = document.getElementById('chat-badge');
+      const chatStatus = document.getElementById('chat-status');
+      
+      if (chatAvatar) {
+        chatAvatar.textContent = initials;
+        chatAvatar.className = `w-12 h-12 rounded-full bg-gradient-to-br from-${color}-400/30 to-neutral-800 border border-${color}-400/30 flex items-center justify-center text-sm font-bold text-${color}-400`;
+      }
+      if (chatName) chatName.textContent = nickname;
+      if (chatBadge) {
+        chatBadge.textContent = badge;
+        chatBadge.className = `bg-${color}-400 text-black text-[8px] font-black px-2 py-0.5 uppercase rounded-sm`;
+      }
+      if (chatStatus) {
+        chatStatus.textContent = 'Online';
+        chatStatus.className = 'text-xs text-green-500';
+      }
+      
+      // Show messages container, hide no-chat message
+      const noChatMsg = document.getElementById('no-chat-selected');
+      const chatMessages = document.getElementById('chat-messages');
+      if (noChatMsg) noChatMsg.classList.add('hidden');
+      if (chatMessages) chatMessages.classList.remove('hidden');
       
       // Load messages for this chat
       loadMessages(userId);
