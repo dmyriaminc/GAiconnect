@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Details | GAi Connect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="supabase-client.js"></script>
+  <script src="gai-user.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Manrope', sans-serif; }
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    .material-symbols-outlined { font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; }
+    .glow-text-primary { text-shadow: 0 0 20px rgba(255, 197, 99, 0.5); }
+  </style>
+</head>
+<body class="bg-neutral-950 min-h-screen">
+  
+  <header class="bg-black/80 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/10 h-16 flex items-center">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between w-full">
+      <a href="services.html" class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-amber-400">arrow_back</span>
+        <span class="font-headline text-xl font-bold text-white">Back to Services</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <button onclick="shareService()" class="text-zinc-400 hover:text-amber-400">
+          <span class="material-symbols-outlined">share</span>
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <main class="pt-20 pb-12 px-6">
+    <div class="max-w-4xl mx-auto">
+      <!-- Loading State -->
+      <div id="loading" class="text-center py-20">
+        <span class="material-symbols-outlined text-6xl text-amber-400 animate-pulse">hourglass_empty</span>
+        <p class="text-zinc-400 mt-4">Loading service details...</p>
+      </div>
+      
+      <!-- Service Details -->
+      <div id="service-content" class="hidden">
+        <!-- Cover Image -->
+        <div id="cover-image" class="h-64 bg-gradient-to-br from-pink-500/30 to-rose-500/30 rounded-t-lg flex items-center justify-center">
+          <span class="material-symbols-outlined text-8xl text-white/20">work</span>
+        </div>
+        
+        <!-- Content -->
+        <div class="bg-neutral-900 border border-t-0 border-white/10 rounded-b-lg p-8">
+          <!-- Category Badge -->
+          <span id="category-badge" class="badge bg-amber-400/20 text-amber-400 px-3 py-1 rounded-sm text-xs font-bold uppercase">Category</span>
+          
+          <!-- Title -->
+          <h1 id="service-title" class="font-headline text-4xl font-bold text-white mt-4">Service Title</h1>
+          
+          <!-- Provider Info -->
+          <div class="flex items-center gap-4 mt-6">
+            <div id="provider-avatar" class="w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-2xl font-bold text-white overflow-hidden">
+              <span id="provider-initials">PR</span>
+              <img id="provider-photo" class="hidden w-full h-full object-cover" src="" alt="Provider">
+            </div>
+            <div>
+              <p class="text-zinc-400 text-sm">Posted by</p>
+              <p id="provider-name" class="text-white font-bold text-lg cursor-pointer hover:text-amber-400" onclick="viewProviderProfile()">Provider Name</p>
+            </div>
+          </div>
+          
+          <!-- Rating & Reviews -->
+          <div class="flex items-center gap-6 mt-6">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">star</span>
+              <span id="service-rating" class="text-white font-bold">5.0</span>
+              <span id="service-reviews" class="text-zinc-400">(0 reviews)</span>
+            </div>
+            <div class="flex items-center gap-2 text-zinc-400">
+              <span class="material-symbols-outlined text-sm">location_on</span>
+              <span id="service-location">Location</span>
+            </div>
+          </div>
+          
+          <!-- Price -->
+          <div class="mt-8 p-6 bg-neutral-800 rounded-lg">
+            <p class="text-zinc-400 text-sm mb-1">Service Price</p>
+            <p id="service-price" class="font-headline text-5xl font-bold text-amber-400 glow-text-primary">$0</p>
+            <p id="service-unit" class="text-zinc-500"></p>
+          </div>
+          
+          <!-- Description -->
+          <div class="mt-8">
+            <h2 class="font-headline text-xl font-bold text-white mb-4">Description</h2>
+            <p id="service-description" class="text-zinc-300 leading-relaxed">Description goes here...</p>
+          </div>
+          
+          <!-- Map Link -->
+          <div class="mt-8">
+            <a id="map-link" href="#" target="_blank" class="flex items-center gap-4 p-4 bg-neutral-800 rounded-lg hover:bg-neutral-700 transition-colors">
+              <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-blue-400">map</span>
+              </div>
+              <div>
+                <p class="text-white font-bold">View on Map</p>
+                <p id="coordinates" class="text-zinc-500 text-sm">0.0000, 0.0000</p>
+              </div>
+            </a>
+          </div>
+          
+          <!-- Actions -->
+          <div class="flex gap-4 mt-8">
+            <button onclick="goBack()" class="flex-1 py-4 border border-zinc-700 text-white font-bold rounded-lg hover:border-amber-400 hover:text-amber-400 transition-all">
+              Back
+            </button>
+            <button onclick="connectWithProvider()" id="connect-btn" class="flex-1 py-4 bg-amber-400 text-black font-bold rounded-lg hover:bg-amber-300 transition-colors">
+              Connect Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    let currentService = null;
+    let currentProviderId = null;
+    
+    function loadServiceDetails() {
+      const serviceData = sessionStorage.getItem('currentService');
+      
+      if (!serviceData) {
+        document.getElementById('loading').innerHTML = `
+          <span class="material-symbols-outlined text-6xl text-red-400">error</span>
+          <p class="text-zinc-400 mt-4">Service not found. <a href="services.html" class="text-amber-400">Go back to services</a></p>
+        `;
+        return;
+      }
+      
+      currentService = JSON.parse(serviceData);
+      currentProviderId = currentService.providerId;
+      
+      // Hide loading, show content
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('service-content').classList.remove('hidden');
+      
+      // Populate fields
+      document.getElementById('service-title').textContent = currentService.title;
+      document.getElementById('provider-name').textContent = currentService.provider;
+      document.getElementById('service-price').textContent = currentService.price;
+      document.getElementById('service-description').textContent = currentService.description;
+      document.getElementById('service-rating').textContent = currentService.rating;
+      document.getElementById('service-reviews').textContent = `(${currentService.reviews} reviews)`;
+      document.getElementById('service-location').textContent = currentService.location;
+      document.getElementById('coordinates').textContent = `${currentService.lat.toFixed(4)}, ${currentService.lng.toFixed(4)}`;
+      document.getElementById('map-link').href = `https://www.google.com/maps?q=${currentService.lat},${currentService.lng}`;
+      
+      // Category badge
+      const categoryBadge = document.getElementById('category-badge');
+      categoryBadge.textContent = currentService.category;
+      
+      // Provider initials
+      const initials = currentService.provider.substring(0, 2).toUpperCase();
+      document.getElementById('provider-initials').textContent = initials;
+      
+      // Load provider photo
+      const providerPhoto = currentProviderId ? localStorage.getItem('gai_profilePhoto_' + currentProviderId) : null;
+      if (providerPhoto) {
+        document.getElementById('provider-initials').classList.add('hidden');
+        const photoEl = document.getElementById('provider-photo');
+        photoEl.src = providerPhoto;
+        photoEl.classList.remove('hidden');
+      }
+      
+      // Set cover gradient based on category
+      const categoryColors = {
+        'Female Escort': 'from-pink-500/30 to-rose-500/30',
+        'Male Escort': 'from-blue-500/30 to-cyan-500/30',
+        'Model': 'from-purple-500/30 to-violet-500/30',
+        'Hostess': 'from-amber-500/30 to-orange-500/30',
+        'Vixen': 'from-red-500/30 to-pink-500/30',
+        'Massage Therapist': 'from-green-500/30 to-emerald-500/30',
+        'Hairstylist': 'from-cyan-500/30 to-blue-500/30'
+      };
+      const coverEl = document.getElementById('cover-image');
+      coverEl.className = `h-64 rounded-t-lg flex items-center justify-center ${categoryColors[currentService.category] || 'from-amber-500/30 to-orange-500/30'}`;
+    }
+    
+    function goBack() {
+      window.location.href = 'services.html';
+    }
+    
+    function viewProviderProfile() {
+      if (currentProviderId) {
+        window.location.href = 'profile.html?id=' + currentProviderId;
+      } else if (currentService && currentService.provider) {
+        window.location.href = 'profile.html?user=' + encodeURIComponent(currentService.provider);
+      }
+    }
+    
+    function connectWithProvider() {
+      if (!currentService) return;
+      
+      const provider = currentService.provider;
+      localStorage.setItem('service_request_sent_' + provider, 'true');
+      
+      const btn = document.getElementById('connect-btn');
+      btn.disabled = true;
+      btn.classList.remove('bg-amber-400');
+      btn.classList.add('bg-green-500', 'text-white');
+      btn.innerHTML = '<span class="flex items-center justify-center gap-2"><span class="material-symbols-outlined">check_circle</span> Request Sent</span>';
+      
+      alert(`Connection request sent to ${provider}!\n\nWaiting for acceptance...`);
+    }
+    
+    function shareService() {
+      const url = window.location.href;
+      if (navigator.share) {
+        navigator.share({
+          title: currentService.title + ' - GAi Connect',
+          text: `Check out this service: ${currentService.title} by ${currentService.provider}`,
+          url: url
+        });
+      } else {
+        navigator.clipboard.writeText(url).then(() => {
+          alert('Link copied to clipboard!');
+        });
+      }
+    }
+    
+    // Load on page load
+    document.addEventListener('DOMContentLoaded', loadServiceDetails);
+  </script>
+</body>
+</html>
