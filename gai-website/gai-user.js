@@ -9,6 +9,67 @@ const GAiUser = {
     locationCoords: JSON.parse(localStorage.getItem('gai_locationCoords') || 'null')
   },
 
+  // User Status Management
+  onlineMembers: JSON.parse(localStorage.getItem('gai_online_members') || '[]'),
+  sessionTimeout: null,
+
+  setOnline() {
+    if (!this.state.isLoggedIn) return;
+    const username = this.state.username;
+    const now = Date.now();
+    
+    // Add or update user in online list
+    this.onlineMembers = this.onlineMembers.filter(m => m.username !== username);
+    this.onlineMembers.push({
+      username: username,
+      displayName: this.getDisplayName(),
+      tier: this.state.userTier,
+      lastSeen: now,
+      status: 'online'
+    });
+    
+    localStorage.setItem('gai_online_members', JSON.stringify(this.onlineMembers));
+    
+    // Set inactive after 5 minutes of no activity
+    this.resetInactivityTimer();
+  },
+
+  setOffline() {
+    if (!this.state.isLoggedIn) return;
+    const username = this.state.username;
+    
+    this.onlineMembers = this.onlineMembers.map(m => 
+      m.username === username ? { ...m, status: 'offline', lastSeen: Date.now() } : m
+    );
+    
+    localStorage.setItem('gai_online_members', JSON.stringify(this.onlineMembers));
+  },
+
+  resetInactivityTimer() {
+    if (this.sessionTimeout) clearTimeout(this.sessionTimeout);
+    
+    this.sessionTimeout = setTimeout(() => {
+      this.setOffline();
+    }, 5 * 60 * 1000); // 5 minutes
+  },
+
+  getOnlineMembers() {
+    // Filter to only show members active in last 5 minutes
+    const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+    return this.onlineMembers.filter(m => 
+      m.status === 'online' || (m.status === 'offline' && m.lastSeen > fiveMinutesAgo)
+    );
+  },
+
+  refreshOnlineStatus() {
+    const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+    this.onlineMembers = this.onlineMembers.map(m => 
+      (m.status === 'offline' && m.lastSeen < fiveMinutesAgo) ? { ...m, status: 'away' } : m
+    );
+    localStorage.setItem('gai_online_members', JSON.stringify(this.onlineMembers));
+  },
+
+
   // Get display name - prioritizes nickname
   getDisplayName() {
     return localStorage.getItem('gai_display_name') || localStorage.getItem('gai_reg_nickname') || localStorage.getItem('gai_username') || 'User';
@@ -29,7 +90,19 @@ const GAiUser = {
 
   init() {
     this.loadState();
+    this.refreshOnlineStatus();
+    if (this.state.isLoggedIn) {
+      this.setOnline();
+    }
     this.updateUI();
+    
+    // Track user activity
+    ['click', 'mousemove', 'keypress'].forEach(event => {
+      document.addEventListener(event, () => this.resetInactivityTimer(), { passive: true });
+    });
+    
+    // Track when user leaves
+    window.addEventListener('beforeunload', () => this.setOffline());
   },
 
   loadState() {
@@ -50,10 +123,12 @@ const GAiUser = {
     localStorage.setItem('gai_isVerified', verified.toString());
     localStorage.setItem('gai_userTier', tier);
     localStorage.setItem('gai_username', username);
+    this.setOnline();
     this.updateUI();
   },
 
   logout() {
+    this.setOffline();
     this.state.isLoggedIn = false;
     this.state.isVerified = false;
     this.state.userTier = 'guest';

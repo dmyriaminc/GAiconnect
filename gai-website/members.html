@@ -93,6 +93,7 @@
     };
     
     function loadMembers() {
+      // Load registered users from localStorage
       const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
       const registeredUsers = users.map(u => ({
         id: u.id || u.user_id,
@@ -106,7 +107,13 @@
         color: 'amber'
       }));
       
-      const allMembers = [...registeredUsers, ...defaultMembers.filter(dm => !registeredUsers.find(r => r.id === dm.id))];
+      // Get current logged-in user
+      const currentUserId = localStorage.getItem('gai_userId');
+      
+      // Filter out current user and combine with defaults
+      const filteredDefaults = defaultMembers.filter(dm => dm.id !== currentUserId && !registeredUsers.find(r => r.id === dm.id));
+      const allMembers = [...registeredUsers, ...filteredDefaults];
+      
       return allMembers;
     }
     
@@ -126,12 +133,13 @@
       grid.innerHTML = members.map(member => {
         const colors = tierColors[member.tier] || tierColors['Standard'];
         const isOnline = member.status === 'online';
+        const color = member.color || 'amber';
         
         return `
           <div class="glass-panel rounded-lg p-6 hover:border-amber-400/30 transition-all cursor-pointer" onclick="viewMember('${member.id}')">
             <div class="flex flex-col items-center text-center">
               <div class="relative mb-4">
-                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-${member.color}-400/30 to-neutral-800 border-2 border-${member.color}-400/50 flex items-center justify-center text-xl font-bold text-${member.color}-400">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-${color}-400/30 to-neutral-800 border-2 border-${color}-400/50 flex items-center justify-center text-xl font-bold text-${color}-400">
                   ${member.initials}
                 </div>
                 <span class="absolute -bottom-1 -right-1 w-5 h-5 ${isOnline ? 'bg-green-500' : 'bg-zinc-500'} rounded-full border-4 border-neutral-950"></span>
