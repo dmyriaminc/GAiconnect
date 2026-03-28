@@ -455,25 +455,53 @@
       loadSidebarUser();
     });
     
-    function loadUserWelcome() {
-      const fullname = localStorage.getItem('gai_reg_fullname');
+    // Supabase config
+    const DASHBOARD_SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+    const DASHBOARD_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+    
+    async function loadUserFromSupabase(userId) {
+      if (!userId) return null;
+      try {
+        const response = await fetch(`${DASHBOARD_SUPABASE_URL}/rest/v1/users?id=eq.${userId}&select=*`, {
+          headers: {
+            'apikey': DASHBOARD_SUPABASE_KEY,
+            'Authorization': `Bearer ${DASHBOARD_SUPABASE_KEY}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          return data.length > 0 ? data[0] : null;
+        }
+      } catch (e) {
+        console.warn('Failed to load user from Supabase:', e);
+      }
+      return null;
+    }
+    
+    async function loadUserWelcome() {
+      const userId = localStorage.getItem('gai_userId');
+      const profile = await loadUserFromSupabase(userId);
+      
+      const fullname = profile?.fullname || localStorage.getItem('gai_reg_fullname');
       const welcomeNameEl = document.getElementById('welcome-name');
       if (welcomeNameEl) {
         if (fullname) {
           welcomeNameEl.textContent = fullname;
         } else {
-          const nickname = localStorage.getItem('gai_username');
+          const nickname = profile?.nickname || localStorage.getItem('gai_username');
           welcomeNameEl.textContent = nickname || 'User';
         }
       }
     }
     
-    function loadSidebarUser() {
-      const fullname = localStorage.getItem('gai_reg_fullname');
-      const nickname = localStorage.getItem('gai_username');
-      const tier = localStorage.getItem('gai_userTier') || 'Standard';
+    async function loadSidebarUser() {
       const userId = localStorage.getItem('gai_userId');
-      const isVerified = localStorage.getItem('gai_isVerified') === 'true';
+      const profile = await loadUserFromSupabase(userId);
+      
+      const fullname = profile?.fullname || localStorage.getItem('gai_reg_fullname');
+      const nickname = profile?.nickname || localStorage.getItem('gai_username');
+      const tier = profile?.tier || localStorage.getItem('gai_userTier') || 'Standard';
+      const isVerified = profile?.verified || localStorage.getItem('gai_isVerified') === 'true';
       
       // Update sidebar name
       const sidebarNameEl = document.querySelector('.sidebar-user-name');
@@ -495,8 +523,8 @@
         sidebarIdEl.textContent = userId;
       }
       
-      // Load profile photo
-      const profilePhoto = userId ? localStorage.getItem('gai_profilePhoto_' + userId) : localStorage.getItem('gai_profilePhoto');
+      // Load profile photo from Supabase
+      const profilePhoto = profile?.avatar_url || localStorage.getItem('gai_profilePhoto_' + userId) || localStorage.getItem('gai_profilePhoto');
       if (profilePhoto) {
         const avatarEl = document.querySelector('.sidebar-user-avatar');
         if (avatarEl) {

@@ -573,39 +573,70 @@
       return `${currentCurrency.symbol}${price}`;
     }
     
-    // Load services from localStorage + defaults
+    // Supabase config
+    const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+    
+    // Default/sample services
+    const defaultServices = [
+      { title: 'Elite Companion', category: 'Female Escort', provider: 'Luna_Star', price: '150', unit: 'per hour', description: 'Premium companionship for discerning gentlemen.', reviews: 89, rating: 4.9, location: 'Manhattan, NY', lat: 40.7831, lng: -73.9712 },
+      { title: 'Luxury Male Companion', category: 'Male Escort', provider: 'Alex_Diamond', price: '200', unit: 'per hour', description: 'Sophisticated male companion for social events.', reviews: 45, rating: 4.7, location: 'Brooklyn, NY', lat: 40.6782, lng: -73.9442 },
+      { title: 'Fashion Model', category: 'Model', provider: 'Mia_Vogue', price: '300', unit: 'per hour', description: 'Professional fashion and promotional model.', reviews: 124, rating: 5.0, location: 'SoHo, NY', lat: 40.7233, lng: -74.0030 },
+      { title: 'VIP Hostess', category: 'Hostess', provider: 'Crystal_Night', price: '250', unit: 'per session', description: 'Elegant hostess for corporate events.', reviews: 67, rating: 4.8, location: 'Midtown, NY', lat: 40.7549, lng: -73.9840 },
+      { title: 'Exclusive Vixen', category: 'Vixen', provider: 'Ruby_Nights', price: '180', unit: 'per hour', description: 'Private companionship for special experiences.', reviews: 156, rating: 4.9, location: 'Chelsea, NY', lat: 40.7465, lng: -74.0014 },
+      { title: 'Professional Masseuse', category: 'Massage Therapist', provider: 'Zen_Master', price: '120', unit: 'per hour', description: 'Therapeutic and relaxing massage services.', reviews: 203, rating: 4.9, location: 'Upper East Side, NY', lat: 40.7736, lng: -73.9566 },
+      { title: 'Celebrity Hairstylist', category: 'Hairstylist', provider: 'Style_Queen', price: '200', unit: 'per visit', description: 'Professional hairstyling for events.', reviews: 312, rating: 5.0, location: 'Tribeca, NY', lat: 40.7163, lng: -74.0086 },
+      { title: 'Elite Female Companion', category: 'Female Escort', provider: 'Sophia_Luxe', price: '250', unit: 'per hour', description: 'High-class companion for dinner dates.', reviews: 78, rating: 4.8, location: 'Queens, NY', lat: 40.7282, lng: -73.7949 },
+      { title: 'Male Model', category: 'Model', provider: 'Jason_Storm', price: '175', unit: 'per hour', description: 'Fitness and fashion model.', reviews: 56, rating: 4.6, location: 'Harlem, NY', lat: 40.8116, lng: -73.9465 },
+      { title: 'Party Hostess', category: 'Hostess', provider: 'Glamour_Girl', price: '180', unit: 'per session', description: 'Fun hostess for parties.', reviews: 89, rating: 4.7, location: 'Bronx, NY', lat: 40.8448, lng: -73.8648 },
+      { title: 'Sensual Vixen', category: 'Vixen', provider: 'Jade_Pearl', price: '220', unit: 'per hour', description: 'Private companionship.', reviews: 134, rating: 4.8, location: 'Jersey City, NJ', lat: 40.7178, lng: -74.0431 },
+      { title: 'Sports Massage', category: 'Massage Therapist', provider: 'Healing_Hands', price: '100', unit: 'per hour', description: 'Expert sports massage.', reviews: 178, rating: 4.9, location: 'Hoboken, NJ', lat: 40.7440, lng: -74.0324 }
+    ];
+    
+    // Load services from Supabase with provider avatars
     async function loadAllServices() {
-      // Default/sample services
-      const defaultServices = [
-        { title: 'Elite Companion', category: 'Female Escort', provider: 'Luna_Star', price: '150', unit: 'per hour', description: 'Premium companionship for discerning gentlemen.', reviews: 89, rating: 4.9, location: 'Manhattan, NY', lat: 40.7831, lng: -73.9712 },
-        { title: 'Luxury Male Companion', category: 'Male Escort', provider: 'Alex_Diamond', price: '200', unit: 'per hour', description: 'Sophisticated male companion for social events.', reviews: 45, rating: 4.7, location: 'Brooklyn, NY', lat: 40.6782, lng: -73.9442 },
-        { title: 'Fashion Model', category: 'Model', provider: 'Mia_Vogue', price: '300', unit: 'per hour', description: 'Professional fashion and promotional model.', reviews: 124, rating: 5.0, location: 'SoHo, NY', lat: 40.7233, lng: -74.0030 },
-        { title: 'VIP Hostess', category: 'Hostess', provider: 'Crystal_Night', price: '250', unit: 'per session', description: 'Elegant hostess for corporate events.', reviews: 67, rating: 4.8, location: 'Midtown, NY', lat: 40.7549, lng: -73.9840 },
-        { title: 'Exclusive Vixen', category: 'Vixen', provider: 'Ruby_Nights', price: '180', unit: 'per hour', description: 'Private companionship for special experiences.', reviews: 156, rating: 4.9, location: 'Chelsea, NY', lat: 40.7465, lng: -74.0014 },
-        { title: 'Professional Masseuse', category: 'Massage Therapist', provider: 'Zen_Master', price: '120', unit: 'per hour', description: 'Therapeutic and relaxing massage services.', reviews: 203, rating: 4.9, location: 'Upper East Side, NY', lat: 40.7736, lng: -73.9566 },
-        { title: 'Celebrity Hairstylist', category: 'Hairstylist', provider: 'Style_Queen', price: '200', unit: 'per visit', description: 'Professional hairstyling for events.', reviews: 312, rating: 5.0, location: 'Tribeca, NY', lat: 40.7163, lng: -74.0086 },
-        { title: 'Elite Female Companion', category: 'Female Escort', provider: 'Sophia_Luxe', price: '250', unit: 'per hour', description: 'High-class companion for dinner dates.', reviews: 78, rating: 4.8, location: 'Queens, NY', lat: 40.7282, lng: -73.7949 },
-        { title: 'Male Model', category: 'Model', provider: 'Jason_Storm', price: '175', unit: 'per hour', description: 'Fitness and fashion model.', reviews: 56, rating: 4.6, location: 'Harlem, NY', lat: 40.8116, lng: -73.9465 },
-        { title: 'Party Hostess', category: 'Hostess', provider: 'Glamour_Girl', price: '180', unit: 'per session', description: 'Fun hostess for parties.', reviews: 89, rating: 4.7, location: 'Bronx, NY', lat: 40.8448, lng: -73.8648 },
-        { title: 'Sensual Vixen', category: 'Vixen', provider: 'Jade_Pearl', price: '220', unit: 'per hour', description: 'Private companionship.', reviews: 134, rating: 4.8, location: 'Jersey City, NJ', lat: 40.7178, lng: -74.0431 },
-        { title: 'Sports Massage', category: 'Massage Therapist', provider: 'Healing_Hands', price: '100', unit: 'per hour', description: 'Expert sports massage.', reviews: 178, rating: 4.9, location: 'Hoboken, NJ', lat: 40.7440, lng: -74.0324 }
-      ];
+      let supabaseServices = [];
       
-      // Load user-posted services from localStorage + Supabase via GAiData
-      let userServices = [];
+      // Try to load from Supabase
       try {
-        if (typeof GAiData !== 'undefined') {
-          userServices = await GAiData.getServices();
-        } else {
-          userServices = JSON.parse(localStorage.getItem('gai_services') || '[]');
+        const response = await fetch(SUPABASE_URL + '/rest/v1/services?status=eq.active&select=*', {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_KEY
+          }
+        });
+        if (response.ok) {
+          supabaseServices = await response.json();
+          console.log('Loaded services from Supabase:', supabaseServices.length);
+          
+          // Fetch provider avatars
+          const providerIds = [...new Set(supabaseServices.map(s => s.provider_id).filter(Boolean))];
+          if (providerIds.length > 0) {
+            const usersResponse = await fetch(SUPABASE_URL + '/rest/v1/users?select=id,avatar_url', {
+              headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_KEY
+              }
+            });
+            if (usersResponse.ok) {
+              const users = await usersResponse.json();
+              const userAvatars = {};
+              users.forEach(u => { userAvatars[u.id] = u.avatar_url; });
+              
+              // Add avatar to each service
+              supabaseServices = supabaseServices.map(s => ({
+                ...s,
+                provider_avatar: s.provider_id ? userAvatars[s.provider_id] : null
+              }));
+            }
+          }
         }
       } catch (e) {
-        console.warn('Failed to load user services:', e);
-        userServices = JSON.parse(localStorage.getItem('gai_services') || '[]');
+        console.warn('Failed to load from Supabase:', e);
       }
       
-      // Merge default + user services (user services first)
-      return [...userServices, ...defaultServices];
+      // Merge Supabase services + default services
+      return [...supabaseServices, ...defaultServices];
     }
     
     // Services data - will be loaded on page init
@@ -664,8 +695,8 @@
         const lat = s.lat || 0;
         const lng = s.lng || 0;
         
-        // Load provider photo from localStorage
-        const providerPhoto = providerId ? localStorage.getItem('gai_profilePhoto_' + providerId) : null;
+        // Get provider photo from Supabase or service data
+        const providerPhoto = s.provider_avatar || s.avatar_url || null;
         const avatarContent = providerPhoto 
           ? `<img src="${providerPhoto}" class="w-full h-full object-cover" alt="${provider}">`
           : `<span>${provider.substring(0,2).toUpperCase()}</span>`;
@@ -705,7 +736,7 @@
             </div>
             <div class="flex items-center justify-between pt-4 border-t border-white/5">
               <span class="font-headline text-2xl font-bold text-amber-400">${formatPrice(price)}<span class="text-sm text-zinc-500">${unit}</span></span>
-              <button class="btn-primary text-xs" onclick="event.stopPropagation(); connectService('${provider}', this)">Connect</button>
+              <button class="btn-primary text-xs" onclick="event.stopPropagation(); connectService('${provider}', this, '${providerId}')">Connect</button>
             </div>
           </div>
         </div>
@@ -851,16 +882,57 @@
       categoryBadge.className = `absolute bottom-4 left-4 bg-gradient-to-r ${categoryColors[category] || 'from-amber-500 to-orange-500'} text-white text-xs font-bold px-3 py-1 uppercase rounded-sm`;
       
       const checkBtn = document.getElementById('details-connect-btn');
-      if (localStorage.getItem('service_request_sent_' + provider)) {
-        checkBtn.disabled = true;
-        checkBtn.classList.remove('bg-amber-400');
-        checkBtn.classList.add('bg-green-500', 'text-white');
-        checkBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><span class="material-symbols-outlined">check_circle</span> Request Sent</span>';
-      } else {
-        checkBtn.disabled = false;
-        checkBtn.classList.remove('bg-green-500', 'text-white');
-        checkBtn.classList.add('bg-amber-400');
-        checkBtn.innerHTML = 'Connect Now';
+      const currentUserId = localStorage.getItem('gai_userId');
+      
+      // Check Supabase for existing service request
+      const checkSupabase = async () => {
+        if (currentUserId && currentServiceProviderId) {
+          try {
+            const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/connections?user_id=eq.${currentUserId}&connected_user_id=eq.${currentServiceProviderId}&select=status`, {
+              headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+              }
+            });
+            if (checkRes.ok) {
+              const existingConnections = await checkRes.json();
+              if (existingConnections.length > 0) {
+                const status = existingConnections[0].status;
+                if (status === 'connected' || status === 'pending') {
+                  checkBtn.disabled = true;
+                  checkBtn.classList.remove('bg-amber-400');
+                  checkBtn.classList.add('bg-green-500', 'text-white');
+                  checkBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><span class="material-symbols-outlined">check_circle</span> Request Sent</span>';
+                  return true;
+                }
+              }
+            }
+          } catch (e) {
+            console.warn('Failed to check Supabase for service request:', e);
+          }
+        }
+        return false;
+      };
+      
+      // Check localStorage as fallback
+      const checkLocalStorage = () => {
+        if (localStorage.getItem('service_request_sent_' + provider)) {
+          checkBtn.disabled = true;
+          checkBtn.classList.remove('bg-amber-400');
+          checkBtn.classList.add('bg-green-500', 'text-white');
+          checkBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><span class="material-symbols-outlined">check_circle</span> Request Sent</span>';
+        } else {
+          checkBtn.disabled = false;
+          checkBtn.classList.remove('bg-green-500', 'text-white');
+          checkBtn.classList.add('bg-amber-400');
+          checkBtn.innerHTML = 'Connect Now';
+        }
+      };
+      
+      // First check Supabase, then fallback to localStorage
+      const hasExistingRequest = await checkSupabase();
+      if (!hasExistingRequest) {
+        checkLocalStorage();
       }
       
       document.getElementById('service-details-modal').classList.remove('hidden');
@@ -882,7 +954,7 @@
     
     function connectServiceDetails() {
       if (!currentServiceProvider) return;
-      connectService(currentServiceProvider, document.getElementById('details-connect-btn'));
+      connectService(currentServiceProvider, document.getElementById('details-connect-btn'), currentServiceProviderId);
       closeServiceDetails();
     }
     
@@ -983,19 +1055,17 @@
         lng: userLng || 0
       };
       
-      // Save to localStorage first
-      let userServices = JSON.parse(localStorage.getItem('gai_services') || '[]');
-      userServices.unshift(newService);
-      localStorage.setItem('gai_services', JSON.stringify(userServices));
-      
-      // Reload all services
-      servicesData = await loadAllServices();
-      renderServices(currentFilter);
-      
-      // Sync to Supabase
-      if (supabase.isConfigured) {
-        try {
-          await supabase.from('services').insert({
+      // Save directly to Supabase
+      try {
+        const response = await fetch(SUPABASE_URL + '/rest/v1/services', {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
             title: title,
             category: category,
             description: description,
@@ -1010,12 +1080,18 @@
             provider_id: currentUserId,
             provider_name: currentFullname,
             provider_nickname: currentNickname
-          });
-          console.log('Service synced to Supabase');
-        } catch (err) {
-          console.warn('Failed to sync service to Supabase:', err.message);
+          })
+        });
+        if (response.ok) {
+          console.log('Service saved to Supabase');
         }
+      } catch (err) {
+        console.warn('Failed to save service to Supabase:', err.message);
       }
+      
+      // Reload all services
+      servicesData = await loadAllServices();
+      renderServices(currentFilter);
       
       alert(`Service "${title}" posted successfully!\n\nCategory: ${category}\nPrice: ${price} ${unit}\nLocation: ${location}\n\nYour service is now visible in the marketplace.`);
       closePostModal();
@@ -1053,10 +1129,12 @@
       );
     }
     
-    function connectService(providerName, button) {
+    async function connectService(providerName, button, providerId) {
       // Change button state
       const btn = button || event.target;
       const originalText = btn.innerHTML;
+      
+      const currentUserId = localStorage.getItem('gai_userId');
       
       btn.disabled = true;
       btn.classList.remove('bg-amber-400', 'hover:bg-amber-300', 'text-black');
@@ -1070,6 +1148,30 @@
       
       // Store in localStorage
       localStorage.setItem('service_request_sent_' + providerName, 'true');
+      
+      // Save to Supabase if user is logged in and we have provider ID
+      if (currentUserId && providerId) {
+        try {
+          await fetch(`${SUPABASE_URL}/rest/v1/connections`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+              user_id: currentUserId,
+              connected_user_id: providerId,
+              status: 'pending',
+              created_at: new Date().toISOString()
+            })
+          });
+          console.log('Service connection request saved to Supabase');
+        } catch (e) {
+          console.warn('Failed to save connection to Supabase:', e);
+        }
+      }
       
       // Show confirmation
       setTimeout(() => {

@@ -92,21 +92,28 @@
       'VVIP': { bg: 'bg-pink-500/20', text: 'text-pink-400', border: 'border-pink-500/30' }
     };
     
+    // Supabase config
+    const MEMBERS_SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+    const MEMBERS_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+    
     async function loadMembers() {
       // Try to fetch from Supabase first
-      let users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      let users = [];
       
-      if (typeof supabase !== 'undefined' && supabase.isConfigured) {
-        try {
-          const { data, error } = await supabase.from('users').select('*');
-          if (!error && data && data.length > 0) {
-            users = data;
-            // Update localStorage cache
-            localStorage.setItem('gai_users', JSON.stringify(users));
+      try {
+        const response = await fetch(MEMBERS_SUPABASE_URL + '/rest/v1/users?select=*', {
+          headers: {
+            'apikey': MEMBERS_SUPABASE_KEY,
+            'Authorization': 'Bearer ' + MEMBERS_SUPABASE_KEY
           }
-        } catch (e) {
-          console.warn('Failed to fetch users from Supabase:', e.message);
+        });
+        if (response.ok) {
+          users = await response.json();
+          console.log('Loaded from Supabase:', users.length);
         }
+      } catch (e) {
+        console.warn('Failed to fetch from Supabase:', e.message);
+        users = JSON.parse(localStorage.getItem('gai_users') || '[]');
       }
       
       const registeredUsers = users.map(u => ({
@@ -114,11 +121,12 @@
         nickname: u.nickname || u.fullname || 'User',
         fullname: u.fullname || u.nickname || 'User',
         tier: u.tier || 'Standard',
-        status: 'online', // All registered users are considered online
+        status: 'online',
         role: u.nationality || 'Member',
         location: u.location || u.reg_location || 'Unknown',
         initials: (u.nickname || u.fullname || 'U').substring(0, 2).toUpperCase(),
-        color: 'amber'
+        color: 'amber',
+        avatar_url: u.avatar_url || null
       }));
       
       // Get current logged-in user
@@ -150,7 +158,8 @@
         const isOnline = member.status === 'online';
         const color = member.color || 'amber';
         
-        const profilePhoto = localStorage.getItem('gai_profilePhoto_' + member.id);
+        // Use avatar_url from Supabase or fall back to localStorage
+        const profilePhoto = member.avatar_url || localStorage.getItem('gai_profilePhoto_' + member.id);
         const avatarContent = profilePhoto 
           ? `<img src="${profilePhoto}" class="w-full h-full object-cover" alt="${member.nickname}">`
           : member.initials;

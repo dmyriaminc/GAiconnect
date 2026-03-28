@@ -124,7 +124,7 @@
     let currentService = null;
     let currentProviderId = null;
     
-    function loadServiceDetails() {
+    async function loadServiceDetails() {
       const serviceData = sessionStorage.getItem('currentService');
       
       if (!serviceData) {
@@ -161,13 +161,34 @@
       const initials = currentService.provider.substring(0, 2).toUpperCase();
       document.getElementById('provider-initials').textContent = initials;
       
-      // Load provider photo
-      const providerPhoto = currentProviderId ? localStorage.getItem('gai_profilePhoto_' + currentProviderId) : null;
+      // Load provider photo from service data or Supabase
+      const providerPhoto = currentService.provider_avatar || currentService.avatar_url;
       if (providerPhoto) {
         document.getElementById('provider-initials').classList.add('hidden');
         const photoEl = document.getElementById('provider-photo');
         photoEl.src = providerPhoto;
         photoEl.classList.remove('hidden');
+      } else if (currentProviderId) {
+        // Try to fetch from Supabase
+        try {
+          const response = await fetch('https://pumfhtsdpevfxxycnjot.supabase.co/rest/v1/users?id=eq.' + currentProviderId + '&select=avatar_url', {
+            headers: {
+              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU'
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.length > 0 && data[0].avatar_url) {
+              document.getElementById('provider-initials').classList.add('hidden');
+              const photoEl = document.getElementById('provider-photo');
+              photoEl.src = data[0].avatar_url;
+              photoEl.classList.remove('hidden');
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to load provider photo:', e);
+        }
       }
       
       // Set cover gradient based on category
@@ -182,6 +203,31 @@
       };
       const coverEl = document.getElementById('cover-image');
       coverEl.className = `h-64 rounded-t-lg flex items-center justify-center ${categoryColors[currentService.category] || 'from-amber-500/30 to-orange-500/30'}`;
+      
+      // Check for existing connection request
+      const currentUserId = localStorage.getItem('gai_userId');
+      if (currentUserId && currentProviderId) {
+        try {
+          const checkRes = await fetch('https://pumfhtsdpevfxxycnjot.supabase.co/rest/v1/connections?or=(and(user_id.eq.' + currentUserId + ',connected_user_id.eq.' + currentProviderId + '),and(user_id.eq.' + currentProviderId + ',connected_user_id.eq.' + currentUserId + '))&select=status', {
+            headers: {
+              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU'
+            }
+          });
+          if (checkRes.ok) {
+            const connections = await checkRes.json();
+            if (connections.length > 0) {
+              const btn = document.getElementById('connect-btn');
+              btn.disabled = true;
+              btn.classList.remove('bg-amber-400');
+              btn.classList.add('bg-green-500', 'text-white');
+              btn.innerHTML = '<span class="flex items-center justify-center gap-2"><span class="material-symbols-outlined">check_circle</span> Request Sent</span>';
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to check connection status:', e);
+        }
+      }
     }
     
     function goBack() {
@@ -196,10 +242,13 @@
       }
     }
     
-    function connectWithProvider() {
+    async function connectWithProvider() {
       if (!currentService) return;
       
       const provider = currentService.provider;
+      const currentUserId = localStorage.getItem('gai_userId');
+      
+      // Store in localStorage
       localStorage.setItem('service_request_sent_' + provider, 'true');
       
       const btn = document.getElementById('connect-btn');
@@ -207,6 +256,30 @@
       btn.classList.remove('bg-amber-400');
       btn.classList.add('bg-green-500', 'text-white');
       btn.innerHTML = '<span class="flex items-center justify-center gap-2"><span class="material-symbols-outlined">check_circle</span> Request Sent</span>';
+      
+      // Save to Supabase
+      if (currentUserId && currentProviderId) {
+        try {
+          await fetch('https://pumfhtsdpevfxxycnjot.supabase.co/rest/v1/connections', {
+            method: 'POST',
+            headers: {
+              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU',
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+              user_id: currentUserId,
+              connected_user_id: currentProviderId,
+              status: 'pending',
+              created_at: new Date().toISOString()
+            })
+          });
+          console.log('Connection request saved to Supabase');
+        } catch (e) {
+          console.warn('Failed to save connection to Supabase:', e);
+        }
+      }
       
       alert(`Connection request sent to ${provider}!\n\nWaiting for acceptance...`);
     }

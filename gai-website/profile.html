@@ -552,22 +552,49 @@
   </div>
   
   <script>
-    function openProfileEditor() {
+    // Supabase config
+    const PROFILE_SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+    const PROFILE_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+    
+    async function loadProfileFromSupabase(userId) {
+      if (!userId) return null;
+      try {
+        const response = await fetch(`${PROFILE_SUPABASE_URL}/rest/v1/users?id=eq.${userId}&select=*`, {
+          headers: {
+            'apikey': PROFILE_SUPABASE_KEY,
+            'Authorization': `Bearer ${PROFILE_SUPABASE_KEY}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          return data.length > 0 ? data[0] : null;
+        }
+      } catch (e) {
+        console.warn('Failed to load profile from Supabase:', e);
+      }
+      return null;
+    }
+    
+    async function openProfileEditor() {
+      const userId = localStorage.getItem('gai_userId');
+      const profile = await loadProfileFromSupabase(userId);
+      
       document.getElementById('profile-edit-modal').classList.remove('hidden');
       document.getElementById('profile-edit-modal').classList.add('flex');
       
-      document.getElementById('edit-fullname').value = localStorage.getItem('gai_reg_fullname') || '';
-      document.getElementById('edit-nickname').value = localStorage.getItem('gai_username') || '';
-      document.getElementById('edit-location').value = localStorage.getItem('gai_reg_location') || '';
-      document.getElementById('edit-nationality').value = localStorage.getItem('gai_reg_nationality') || '';
-      document.getElementById('edit-dob').value = localStorage.getItem('gai_reg_dob') || '';
-      document.getElementById('edit-whatsapp').value = localStorage.getItem('gai_whatsapp') || '';
-      document.getElementById('edit-phone').value = localStorage.getItem('gai_phone') || '';
-      document.getElementById('edit-email').value = localStorage.getItem('gai_reg_email') || '';
-      document.getElementById('edit-portfolio').value = localStorage.getItem('gai_portfolio') || '';
-      document.getElementById('edit-twitter').value = localStorage.getItem('gai_twitter') || '';
-      document.getElementById('edit-instagram').value = localStorage.getItem('gai_instagram') || '';
-      document.getElementById('edit-linkedin').value = localStorage.getItem('gai_linkedin') || '';
+      // Load from Supabase first, fallback to localStorage
+      document.getElementById('edit-fullname').value = profile?.fullname || localStorage.getItem('gai_reg_fullname') || '';
+      document.getElementById('edit-nickname').value = profile?.nickname || localStorage.getItem('gai_username') || '';
+      document.getElementById('edit-location').value = profile?.location || localStorage.getItem('gai_reg_location') || '';
+      document.getElementById('edit-nationality').value = profile?.nationality || localStorage.getItem('gai_reg_nationality') || '';
+      document.getElementById('edit-dob').value = profile?.dob || localStorage.getItem('gai_reg_dob') || '';
+      document.getElementById('edit-whatsapp').value = profile?.whatsapp || localStorage.getItem('gai_whatsapp') || '';
+      document.getElementById('edit-phone').value = profile?.phone || localStorage.getItem('gai_phone') || '';
+      document.getElementById('edit-email').value = profile?.email || localStorage.getItem('gai_reg_email') || '';
+      document.getElementById('edit-portfolio').value = profile?.portfolio || localStorage.getItem('gai_portfolio') || '';
+      document.getElementById('edit-twitter').value = profile?.twitter || localStorage.getItem('gai_twitter') || '';
+      document.getElementById('edit-instagram').value = profile?.instagram || localStorage.getItem('gai_instagram') || '';
+      document.getElementById('edit-linkedin').value = profile?.linkedin || localStorage.getItem('gai_linkedin') || '';
     }
     
     function closeProfileEditor() {
@@ -725,13 +752,37 @@
     }
     
     // Portfolio Functions
-    function loadPortfolio() {
+    async function loadPortfolio() {
       const userId = localStorage.getItem('gai_userId');
       const portfolioGrid = document.getElementById('portfolio-grid');
       if (!portfolioGrid) return;
       
-      // Get portfolio items from localStorage (user-specific)
-      const portfolioItems = JSON.parse(localStorage.getItem('portfolio_' + userId) || '[]');
+      let portfolioItems = [];
+      
+      // Try to load from Supabase first
+      if (userId) {
+        try {
+          const response = await fetch(`${PROFILE_SUPABASE_URL}/rest/v1/users?id=eq.${userId}&select=portfolio_items`, {
+            headers: {
+              'apikey': PROFILE_SUPABASE_KEY,
+              'Authorization': `Bearer ${PROFILE_SUPABASE_KEY}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.length > 0 && data[0].portfolio_items) {
+              portfolioItems = data[0].portfolio_items;
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to load portfolio from Supabase:', e);
+        }
+      }
+      
+      // Fallback to localStorage if empty
+      if (portfolioItems.length === 0) {
+        portfolioItems = JSON.parse(localStorage.getItem('portfolio_' + userId) || '[]');
+      }
       
       if (portfolioItems.length === 0) {
         // Show empty state
@@ -775,21 +826,47 @@
       document.getElementById(inputId).click();
     }
     
-    function handlePortfolioUpload(input, type) {
+    async function handlePortfolioUpload(input, type) {
       const file = input.files[0];
       if (!file) return;
       
       const userId = localStorage.getItem('gai_userId');
       const reader = new FileReader();
       
-      reader.onload = function(e) {
-        const portfolioItems = JSON.parse(localStorage.getItem('portfolio_' + userId) || '[]');
+      reader.onload = async function(e) {
+        let portfolioItems = JSON.parse(localStorage.getItem('portfolio_' + userId) || '[]');
         portfolioItems.push({
           type: type,
-          url: e.target.result, // For demo, using base64. In production, upload to storage
+          url: e.target.result,
           created_at: new Date().toISOString()
         });
+        
+        // Save to localStorage
         localStorage.setItem('portfolio_' + userId, JSON.stringify(portfolioItems));
+        
+        // Also save to Supabase
+        if (userId) {
+          try {
+            const response = await fetch(`${PROFILE_SUPABASE_URL}/rest/v1/users?id=eq.${userId}`, {
+              method: 'PATCH',
+              headers: {
+                'apikey': PROFILE_SUPABASE_KEY,
+                'Authorization': `Bearer ${PROFILE_SUPABASE_KEY}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                portfolio_items: portfolioItems,
+                updated_at: new Date().toISOString()
+              })
+            });
+            if (response.ok) {
+              console.log('Portfolio synced to Supabase');
+            }
+          } catch (e) {
+            console.warn('Failed to sync portfolio to Supabase:', e);
+          }
+        }
+        
         loadPortfolio();
         showToast(type === 'photo' ? 'Photo added to portfolio!' : 'Video added to portfolio!', 'success');
       };
@@ -798,25 +875,82 @@
       input.value = ''; // Reset input
     }
     
-    function deletePortfolioItem(index) {
+    async function deletePortfolioItem(index) {
       if (!confirm('Delete this portfolio item?')) return;
       
       const userId = localStorage.getItem('gai_userId');
-      const portfolioItems = JSON.parse(localStorage.getItem('portfolio_' + userId) || '[]');
+      let portfolioItems = JSON.parse(localStorage.getItem('portfolio_' + userId) || '[]');
       portfolioItems.splice(index, 1);
+      
+      // Update localStorage
       localStorage.setItem('portfolio_' + userId, JSON.stringify(portfolioItems));
+      
+      // Also update Supabase
+      if (userId) {
+        try {
+          const response = await fetch(`${PROFILE_SUPABASE_URL}/rest/v1/users?id=eq.${userId}`, {
+            method: 'PATCH',
+            headers: {
+              'apikey': PROFILE_SUPABASE_KEY,
+              'Authorization': `Bearer ${PROFILE_SUPABASE_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              portfolio_items: portfolioItems,
+              updated_at: new Date().toISOString()
+            })
+          });
+          if (response.ok) {
+            console.log('Portfolio deleted in Supabase');
+          }
+        } catch (e) {
+          console.warn('Failed to update portfolio in Supabase:', e);
+        }
+      }
+      
       loadPortfolio();
       showToast('Portfolio item deleted', 'info');
     }
     
-    function loadContactInfo() {
-      const whatsapp = localStorage.getItem('gai_whatsapp');
-      const phone = localStorage.getItem('gai_phone');
-      const email = localStorage.getItem('gai_reg_email');
-      const portfolio = localStorage.getItem('gai_portfolio');
-      const twitter = localStorage.getItem('gai_twitter');
-      const instagram = localStorage.getItem('gai_instagram');
-      const linkedin = localStorage.getItem('gai_linkedin');
+    async function loadContactInfo() {
+      const userId = localStorage.getItem('gai_userId');
+      let whatsapp = '', phone = '', email = '', portfolio = '', twitter = '', instagram = '', linkedin = '';
+      
+      // Try to load from Supabase first
+      if (userId) {
+        try {
+          const response = await fetch(`${PROFILE_SUPABASE_URL}/rest/v1/users?id=eq.${userId}&select=whatsapp,phone,email,portfolio,twitter,instagram,linkedin`, {
+            headers: {
+              'apikey': PROFILE_SUPABASE_KEY,
+              'Authorization': `Bearer ${PROFILE_SUPABASE_KEY}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.length > 0) {
+              const profile = data[0];
+              whatsapp = profile.whatsapp || '';
+              phone = profile.phone || '';
+              email = profile.email || '';
+              portfolio = profile.portfolio || '';
+              twitter = profile.twitter || '';
+              instagram = profile.instagram || '';
+              linkedin = profile.linkedin || '';
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to load contact info from Supabase:', e);
+        }
+      }
+      
+      // Fallback to localStorage if any field is empty
+      whatsapp = whatsapp || localStorage.getItem('gai_whatsapp') || '';
+      phone = phone || localStorage.getItem('gai_phone') || '';
+      email = email || localStorage.getItem('gai_reg_email') || '';
+      portfolio = portfolio || localStorage.getItem('gai_portfolio') || '';
+      twitter = twitter || localStorage.getItem('gai_twitter') || '';
+      instagram = instagram || localStorage.getItem('gai_instagram') || '';
+      linkedin = linkedin || localStorage.getItem('gai_linkedin') || '';
       
       // Update contact section visibility
       const contactSection = document.getElementById('contact-section');
@@ -871,6 +1005,10 @@
       }
     }
     
+    // Supabase config
+    const PROFILE_SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+    const PROFILE_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+    
     function handleProfilePhotoUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -886,15 +1024,35 @@
       }
       
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         const avatarContainer = document.getElementById('profile-avatar');
         avatarContainer.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" alt="Profile Photo">`;
         
         const currentUserId = localStorage.getItem('gai_userId');
+        
+        // Save to Supabase
         if (currentUserId) {
-          localStorage.setItem('gai_profilePhoto_' + currentUserId, e.target.result);
+          try {
+            const response = await fetch(`${PROFILE_SUPABASE_URL}/rest/v1/users?id=eq.${currentUserId}`, {
+              method: 'PATCH',
+              headers: {
+                'apikey': PROFILE_SUPABASE_KEY,
+                'Authorization': `Bearer ${PROFILE_SUPABASE_KEY}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                avatar_url: e.target.result,
+                updated_at: new Date().toISOString()
+              })
+            });
+            if (response.ok) {
+              console.log('Profile photo synced to Supabase');
+            }
+          } catch (err) {
+            console.warn('Failed to sync photo to Supabase:', err);
+          }
         }
-        localStorage.setItem('gai_profilePhoto', e.target.result);
+        
         alert('Profile photo updated successfully!');
       };
       reader.readAsDataURL(file);
@@ -915,14 +1073,37 @@
       document.getElementById('profile-service-modal').classList.add('hidden');
     }
     
-    function loadProfilePhoto(userId) {
+    async function loadProfilePhoto(userId) {
       let savedPhoto = null;
+      
+      // Try to load from Supabase first
       if (userId) {
+        try {
+          const response = await fetch(`${PROFILE_SUPABASE_URL}/rest/v1/users?id=eq.${userId}&select=avatar_url`, {
+            headers: {
+              'apikey': PROFILE_SUPABASE_KEY,
+              'Authorization': `Bearer ${PROFILE_SUPABASE_KEY}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.length > 0 && data[0].avatar_url) {
+              savedPhoto = data[0].avatar_url;
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to load photo from Supabase:', e);
+        }
+      }
+      
+      // Fallback to localStorage
+      if (!savedPhoto && userId) {
         savedPhoto = localStorage.getItem('gai_profilePhoto_' + userId);
       }
       if (!savedPhoto) {
         savedPhoto = localStorage.getItem('gai_profilePhoto');
       }
+      
       if (savedPhoto) {
         const avatarContainer = document.getElementById('profile-avatar');
         if (avatarContainer) {
@@ -950,7 +1131,7 @@
       window.location.href = 'messenger.html';
     }
 
-    function connectUser() {
+    async function connectUser() {
       const connectBtn = event.target.closest('button');
       const profileUserId = connectBtn.dataset.userId || localStorage.getItem('viewProfileUserId');
       const currentUserId = localStorage.getItem('gai_userId');
@@ -963,12 +1144,36 @@
       const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
       
-      // Check current state
+      // Check Supabase first for existing connection
+      try {
+        const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/connections?or=(and(user_id.eq.${currentUserId},connected_user_id.eq.${profileUserId}),and(user_id.eq.${profileUserId},connected_user_id.eq.${currentUserId}))}&select=status`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+        if (checkRes.ok) {
+          const existingConnections = await checkRes.json();
+          if (existingConnections.length > 0) {
+            const existing = existingConnections[0];
+            if (existing.status === 'connected') {
+              showToast('Already connected!', 'info');
+              return;
+            } else if (existing.status === 'pending') {
+              showToast('Connection request already pending!', 'info');
+              return;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to check connection status:', e);
+      }
+      
+      // Fallback to localStorage check
       const connectionKey = `connection_${currentUserId}_${profileUserId}`;
       const currentState = localStorage.getItem(connectionKey);
-      
-      if (currentState === 'connected') {
-        showToast('Already connected!', 'info');
+      if (currentState === 'connected' || currentState === 'pending') {
+        showToast(currentState === 'connected' ? 'Already connected!' : 'Connection request already pending!', 'info');
         return;
       }
       
@@ -1015,10 +1220,45 @@
     }
     
     // Update connect button state based on saved connection
-    function updateConnectButtonState(connectBtn, profileUserId) {
+    async function updateConnectButtonState(connectBtn, profileUserId) {
       const currentUserId = localStorage.getItem('gai_userId');
       if (!currentUserId || !profileUserId) return;
       
+      const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+      
+      // Try Supabase first
+      try {
+        const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/connections?or=(and(user_id.eq.${currentUserId},connected_user_id.eq.${profileUserId}),and(user_id.eq.${profileUserId},connected_user_id.eq.${currentUserId}))}&select=status`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+        if (checkRes.ok) {
+          const connections = await checkRes.json();
+          if (connections.length > 0) {
+            const state = connections[0].status;
+            if (state === 'connected') {
+              connectBtn.disabled = false;
+              connectBtn.classList.remove('bg-purple-500', 'bg-yellow-500');
+              connectBtn.classList.add('bg-green-500');
+              connectBtn.innerHTML = `<span class="flex items-center gap-2"><span class="material-symbols-outlined filled text-lg">check_circle</span> Connected</span>`;
+              return;
+            } else if (state === 'pending') {
+              connectBtn.disabled = false;
+              connectBtn.classList.remove('bg-purple-500', 'bg-green-500');
+              connectBtn.classList.add('bg-yellow-500');
+              connectBtn.innerHTML = `<span class="flex items-center gap-2"><span class="material-symbols-outlined filled text-lg">hourglass_empty</span> Pending</span>`;
+              return;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to check Supabase connection state:', e);
+      }
+      
+      // Fallback to localStorage
       const connectionKey = `connection_${currentUserId}_${profileUserId}`;
       const state = localStorage.getItem(connectionKey);
       
