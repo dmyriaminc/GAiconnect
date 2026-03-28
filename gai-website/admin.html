@@ -17,6 +17,14 @@
       0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 197, 99, 0.6)); }
       50% { filter: drop-shadow(0 0 20px rgba(255, 197, 99, 0.9)); }
     }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(100%); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
     .glow-text-primary { text-shadow: 0 0 20px rgba(255, 197, 99, 0.5); }
     .scanline-overlay {
@@ -52,6 +60,44 @@
 </head>
 <body class="bg-neutral-950 min-h-screen">
   <div class="scanline-overlay"></div>
+  
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-[300] flex flex-col gap-3"></div>
+  
+  <!-- Generic Modal Container -->
+  <div id="generic-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[250] hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-lg w-full rounded-sm max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="p-4 border-b border-white/10 flex items-center justify-between">
+        <h3 id="generic-modal-title" class="font-headline text-lg font-bold text-white">Modal Title</h3>
+        <button onclick="closeGenericModal()" class="text-zinc-400 hover:text-white p-1">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div id="generic-modal-body" class="p-4 overflow-y-auto flex-1">
+        <!-- Dynamic content -->
+      </div>
+      <div id="generic-modal-footer" class="p-4 border-t border-white/10 flex justify-end gap-3">
+        <!-- Dynamic buttons -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- Confirm Dialog -->
+  <div id="confirm-dialog" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[250] hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-md w-full rounded-sm">
+      <div class="p-6 text-center">
+        <div id="confirm-icon" class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-red-400 text-3xl">warning</span>
+        </div>
+        <h3 id="confirm-title" class="font-headline text-xl font-bold text-white mb-2">Confirm Action</h3>
+        <p id="confirm-message" class="text-zinc-400 mb-6">Are you sure you want to proceed?</p>
+        <div class="flex justify-center gap-3">
+          <button id="confirm-cancel" class="px-6 py-2 bg-neutral-700 text-white font-bold rounded-sm hover:bg-neutral-600 transition-colors">Cancel</button>
+          <button id="confirm-ok" class="px-6 py-2 bg-red-500 text-white font-bold rounded-sm hover:bg-red-400 transition-colors">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
   
   <header class="bg-black/80 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/10 h-16 flex items-center">
     <div class="max-w-7xl mx-auto px-6 flex items-center justify-between w-full">
@@ -173,28 +219,53 @@
         </div>
       </div>
       
-      <div class="flex gap-4 mb-6 border-b border-white/5 pb-4 flex-wrap">
-        <button class="tab-btn active px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-white" data-tab="users">
+      <div class="flex gap-4 mb-6 border-b border-white/5 pb-4 flex-wrap overflow-x-auto">
+        <button class="tab-btn active px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-white whitespace-nowrap" data-tab="users">
           <span class="flex items-center gap-2">
             <span class="material-symbols-outlined text-lg">group</span> Users
           </span>
         </button>
-        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400" data-tab="services">
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400 whitespace-nowrap" data-tab="services">
           <span class="flex items-center gap-2">
             <span class="material-symbols-outlined text-lg">work</span> Services
           </span>
         </button>
-        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400" data-tab="workflow">
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400 whitespace-nowrap" data-tab="bookings">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">event</span> Bookings
+          </span>
+        </button>
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400 whitespace-nowrap" data-tab="reviews">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">star</span> Reviews
+          </span>
+        </button>
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400 whitespace-nowrap" data-tab="messaging">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">chat</span> Messaging
+          </span>
+        </button>
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400 whitespace-nowrap" data-tab="analytics">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">analytics</span> Analytics
+          </span>
+        </button>
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400 whitespace-nowrap" data-tab="security">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">security</span> Security
+          </span>
+        </button>
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400 whitespace-nowrap" data-tab="workflow">
           <span class="flex items-center gap-2">
             <span class="material-symbols-outlined text-lg">account_tree</span> Workflow
           </span>
         </button>
-        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400" data-tab="categories">
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400 whitespace-nowrap" data-tab="ai-agents">
           <span class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-lg">category</span> Categories
+            <span class="material-symbols-outlined text-lg">psychology</span> AI Agents
           </span>
         </button>
-        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400" data-tab="settings">
+        <button class="tab-btn px-6 py-3 border border-zinc-800 font-headline text-sm uppercase tracking-wider rounded-sm text-zinc-400 whitespace-nowrap" data-tab="settings">
           <span class="flex items-center gap-2">
             <span class="material-symbols-outlined text-lg">settings</span> Settings
           </span>
@@ -835,25 +906,302 @@
           </div>
         </div>
       </div>
+
+      <!-- BOOKINGS TAB -->
+      <div id="tab-bookings" class="tab-content">
+        <div class="bg-neutral-800 rounded-sm overflow-hidden border border-white/5">
+          <div class="p-4 border-b border-white/5 flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-lg">search</span>
+                <input type="text" id="booking-search" class="pl-10 pr-4 py-2 bg-neutral-900 border border-zinc-700 text-sm w-64 rounded-sm outline-none focus:border-amber-400 text-white placeholder-zinc-500" placeholder="Search bookings...">
+              </div>
+              <select id="booking-status-filter" class="bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-amber-400 text-white">
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            <button onclick="refreshBookings()" class="px-5 py-2.5 bg-amber-400 text-black font-headline font-bold text-sm uppercase tracking-widest hover:bg-amber-300 transition-colors active:scale-95 rounded-sm cursor-pointer">
+              Refresh
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-white/5 text-left">
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Service</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Customer</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Provider</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Date</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Status</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="bookings-table-body">
+                <tr class="border-b border-white/5"><td colspan="6" class="p-8 text-center text-zinc-500">Loading bookings...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEWS TAB -->
+      <div id="tab-reviews" class="tab-content">
+        <div class="bg-neutral-800 rounded-sm overflow-hidden border border-white/5">
+          <div class="p-4 border-b border-white/5 flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-lg">search</span>
+                <input type="text" id="review-search" class="pl-10 pr-4 py-2 bg-neutral-900 border border-zinc-700 text-sm w-64 rounded-sm outline-none focus:border-amber-400 text-white placeholder-zinc-500" placeholder="Search reviews...">
+              </div>
+              <select id="review-status-filter" class="bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-amber-400 text-white">
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <button onclick="refreshReviews()" class="px-5 py-2.5 bg-amber-400 text-black font-headline font-bold text-sm uppercase tracking-widest hover:bg-amber-300 transition-colors active:scale-95 rounded-sm cursor-pointer">
+              Refresh
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-white/5 text-left">
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Service</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">User</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Rating</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Comment</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Status</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="reviews-table-body">
+                <tr class="border-b border-white/5"><td colspan="6" class="p-8 text-center text-zinc-500">Loading reviews...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MESSAGING TAB -->
+      <div id="tab-messaging" class="tab-content">
+        <div class="bg-neutral-800 rounded-sm overflow-hidden border border-white/5">
+          <div class="p-4 border-b border-white/5 flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-lg">search</span>
+                <input type="text" id="message-search" class="pl-10 pr-4 py-2 bg-neutral-900 border border-zinc-700 text-sm w-64 rounded-sm outline-none focus:border-amber-400 text-white placeholder-zinc-500" placeholder="Search messages...">
+              </div>
+              <button onclick="showBroadcastModal()" class="px-4 py-2 bg-purple-500/20 text-purple-400 text-sm font-bold rounded-sm hover:bg-purple-500/30 cursor-pointer flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">campaign</span> Broadcast
+              </button>
+            </div>
+            <button onclick="refreshMessages()" class="px-5 py-2.5 bg-amber-400 text-black font-headline font-bold text-sm uppercase tracking-widest hover:bg-amber-300 transition-colors active:scale-95 rounded-sm cursor-pointer">
+              Refresh
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-white/5 text-left">
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">From</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">To</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Message</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Date</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="messages-table-body">
+                <tr class="border-b border-white/5"><td colspan="5" class="p-8 text-center text-zinc-500">Loading messages...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS TAB -->
+      <div id="tab-analytics" class="tab-content">
+        <div class="space-y-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-neutral-800 p-4 rounded-sm border border-white/5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-amber-400">group</span>
+                <span class="text-xs text-zinc-500 uppercase">Total Users</span>
+              </div>
+              <div id="analytics-users" class="font-headline text-2xl font-bold text-white">-</div>
+            </div>
+            <div class="bg-neutral-800 p-4 rounded-sm border border-white/5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-green-400">trending_up</span>
+                <span class="text-xs text-zinc-500 uppercase">Active Users</span>
+              </div>
+              <div id="analytics-active" class="font-headline text-2xl font-bold text-white">-</div>
+            </div>
+            <div class="bg-neutral-800 p-4 rounded-sm border border-white/5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-purple-400">work</span>
+                <span class="text-xs text-zinc-500 uppercase">Services</span>
+              </div>
+              <div id="analytics-services" class="font-headline text-2xl font-bold text-white">-</div>
+            </div>
+            <div class="bg-neutral-800 p-4 rounded-sm border border-white/5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-cyan-400">chat</span>
+                <span class="text-xs text-zinc-500 uppercase">Messages</span>
+              </div>
+              <div id="analytics-messages" class="font-headline text-2xl font-bold text-white">-</div>
+            </div>
+          </div>
+          <div class="bg-neutral-800 p-6 rounded-sm border border-white/5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-headline text-lg font-bold text-white">Platform Overview</h3>
+              <button onclick="loadAnalytics()" class="px-4 py-2 bg-amber-400 text-black text-sm font-bold rounded-sm hover:bg-amber-300">Refresh</button>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="bg-neutral-900 p-4 rounded-sm">
+                <span class="text-xs text-zinc-500 uppercase">Bookings</span>
+                <div id="analytics-bookings" class="font-headline text-xl font-bold text-white">-</div>
+              </div>
+              <div class="bg-neutral-900 p-4 rounded-sm">
+                <span class="text-xs text-zinc-500 uppercase">Reviews</span>
+                <div id="analytics-reviews" class="font-headline text-xl font-bold text-white">-</div>
+              </div>
+              <div class="bg-neutral-900 p-4 rounded-sm">
+                <span class="text-xs text-zinc-500 uppercase">Online Now</span>
+                <div id="analytics-online" class="font-headline text-xl font-bold text-green-400">-</div>
+              </div>
+              <div class="bg-neutral-900 p-4 rounded-sm">
+                <span class="text-xs text-zinc-500 uppercase">Pending Approvals</span>
+                <div id="analytics-pending" class="font-headline text-xl font-bold text-amber-400">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECURITY TAB -->
+      <div id="tab-security" class="tab-content">
+        <div class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-neutral-800 rounded-sm border border-white/5">
+              <div class="p-4 border-b border-white/5 flex items-center justify-between">
+                <h3 class="font-headline text-lg font-bold text-white">IP Blacklist</h3>
+                <button onclick="showAddIPModal()" class="px-3 py-1 bg-red-500/20 text-red-400 text-xs font-bold rounded-sm hover:bg-red-500/30">+ Add IP</button>
+              </div>
+              <div class="p-4 max-h-64 overflow-y-auto" id="ip-blacklist">
+                <p class="text-zinc-500 text-sm">Loading...</p>
+              </div>
+            </div>
+            <div class="bg-neutral-800 rounded-sm border border-white/5">
+              <div class="p-4 border-b border-white/5">
+                <h3 class="font-headline text-lg font-bold text-white">User Blacklist</h3>
+              </div>
+              <div class="p-4 max-h-64 overflow-y-auto" id="user-blacklist">
+                <p class="text-zinc-500 text-sm">Loading...</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4">Security Actions</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <button onclick="exportAllUserData()" class="p-4 bg-neutral-900 rounded-sm border border-white/5 hover:border-amber-400/50 transition-colors">
+                <span class="material-symbols-outlined text-amber-400 text-2xl mb-2">download</span>
+                <p class="text-sm text-white">Export All Data (GDPR)</p>
+              </button>
+              <button onclick="showActivityLog()" class="p-4 bg-neutral-900 rounded-sm border border-white/5 hover:border-purple-400/50 transition-colors">
+                <span class="material-symbols-outlined text-purple-400 text-2xl mb-2">history</span>
+                <p class="text-sm text-white">View Activity Log</p>
+              </button>
+              <button onclick="refreshSecurityData()" class="p-4 bg-neutral-900 rounded-sm border border-white/5 hover:border-cyan-400/50 transition-colors">
+                <span class="material-symbols-outlined text-cyan-400 text-2xl mb-2">refresh</span>
+                <p class="text-sm text-white">Refresh Security</p>
+              </button>
+              <button onclick="showSecuritySettings()" class="p-4 bg-neutral-900 rounded-sm border border-white/5 hover:border-green-400/50 transition-colors">
+                <span class="material-symbols-outlined text-green-400 text-2xl mb-2">settings</span>
+                <p class="text-sm text-white">Security Settings</p>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI AGENTS TAB -->
+      <div id="tab-ai-agents" class="tab-content">
+        <div class="bg-neutral-800 rounded-sm overflow-hidden border border-white/5">
+          <div class="p-4 border-b border-white/5 flex items-center justify-between">
+            <h3 class="font-headline text-lg font-bold text-white">AI Agents</h3>
+            <button onclick="showAddAIAgentModal()" class="px-5 py-2.5 bg-purple-500 text-white font-headline font-bold text-sm uppercase tracking-widest hover:bg-purple-400 transition-colors active:scale-95 rounded-sm cursor-pointer">
+              + Add Agent
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-white/5 text-left">
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Name</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Type</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Status</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Created</th>
+                  <th class="p-4 font-headline text-xs uppercase tracking-widest text-zinc-500">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ai-agents-table-body">
+                <tr class="border-b border-white/5"><td colspan="5" class="p-8 text-center text-zinc-500">Loading AI agents...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
       
       <script>
         function openAddCategory() {
-          const name = prompt('Enter category name:');
-          if (name && name.trim()) {
-            const list = document.getElementById('categories-list');
-            const initial = name.charAt(0).toUpperCase();
-            const colors = ['pink', 'blue', 'purple', 'green', 'amber', 'cyan', 'red'];
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            const div = document.createElement('div');
-            div.className = 'flex items-center justify-between p-3 bg-neutral-900 rounded-sm border border-white/5';
-            div.innerHTML = '<div class=\"flex items-center gap-3\"><span class=\"w-8 h-8 bg-' + color + '-500/20 rounded-full flex items-center justify-center text-' + color + '-400\">' + initial + '</span><span class=\"text-white\">' + name + '</span></div><div class=\"flex gap-2\"><button class=\"text-zinc-400 hover:text-white p-1\"><span class=\"material-symbols-outlined text-sm\">edit</span></button><button class=\"text-red-400 hover:text-white p-1\"><span class=\"material-symbols-outlined text-sm\">delete</span></button></div>';
-            list.appendChild(div);
-            alert('Category added!');
-          }
+          const formContent = `
+            <form class="space-y-4">
+              <div>
+                <label class="block text-xs text-zinc-400 mb-2">Category Name *</label>
+                <input type="text" id="new-category-name" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="Enter category name">
+              </div>
+            </form>
+          `;
+          
+          openGenericModal('Add Category', formContent, [
+            { text: 'Cancel', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' },
+            { 
+              text: 'Add Category', 
+              class: 'px-4 py-2 bg-amber-400 text-black font-bold rounded-sm hover:bg-amber-300',
+              onclick: function() {
+                const name = document.getElementById('new-category-name').value.trim();
+                if (!name) {
+                  showToast('Please enter a category name', 'error');
+                  return true;
+                }
+                const list = document.getElementById('categories-list');
+                const initial = name.charAt(0).toUpperCase();
+                const colors = ['pink', 'blue', 'purple', 'green', 'amber', 'cyan', 'red'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-3 bg-neutral-900 rounded-sm border border-white/5';
+                div.innerHTML = '<div class="flex items-center gap-3"><span class="w-8 h-8 bg-' + color + '-500/20 rounded-full flex items-center justify-center text-' + color + '-400">' + initial + '</span><span class="text-white">' + name + '</span></div><div class="flex gap-2"><button class="text-zinc-400 hover:text-white p-1"><span class="material-symbols-outlined text-sm">edit</span></button><button class="text-red-400 hover:text-white p-1"><span class="material-symbols-outlined text-sm">delete</span></button></div>';
+                list.appendChild(div);
+                closeGenericModal();
+                showToast('Category added!', 'success');
+              },
+              keepOpen: true
+            }
+          ]);
         }
+        
         function saveSettings() {
-          localStorage.setItem('gai_settings', JSON.stringify({ siteName: document.getElementById('setting-site-name').value, maintenance: document.getElementById('setting-maintenance').value }));
-          alert('Settings saved!');
+          localStorage.setItem('gai_settings', JSON.stringify({ 
+            siteName: document.getElementById('setting-site-name').value, 
+            maintenance: document.getElementById('setting-maintenance').value 
+          }));
+          showToast('Settings saved!', 'success');
         }
         async function loadDatabaseStats() {
           try {
@@ -1072,12 +1420,152 @@
   </div>
    
   <script>
-    // Admin Authentication Check
+    // ============================================
+    // TOAST NOTIFICATION SYSTEM
+    // ============================================
+    
+    function showToast(message, type = 'info', duration = 4000) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const icons = {
+        success: 'check_circle',
+        error: 'error',
+        warning: 'warning',
+        info: 'info'
+      };
+      
+      const colors = {
+        success: 'bg-green-500/20 border-green-500 text-green-400',
+        error: 'bg-red-500/20 border-red-500 text-red-400',
+        warning: 'bg-yellow-500/20 border-yellow-500 text-yellow-400',
+        info: 'bg-blue-500/20 border-blue-500 text-blue-400'
+      };
+      
+      toast.className = `${colors[type]} border px-4 py-3 rounded-sm flex items-center gap-3 shadow-lg animate-[slideIn_0.3s_ease] min-w-[280px] max-w-md`;
+      toast.innerHTML = `
+        <span class="material-symbols-outlined">${icons[type]}</span>
+        <span class="text-sm font-medium flex-1">${message}</span>
+        <button onclick="this.parentElement.remove()" class="hover:opacity-70">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      `;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+
+    // ============================================
+    // GENERIC MODAL SYSTEM
+    // ============================================
+    
+    let currentModalCallback = null;
+    
+    function openGenericModal(title, bodyContent, footerButtons = []) {
+      document.getElementById('generic-modal-title').textContent = title;
+      document.getElementById('generic-modal-body').innerHTML = bodyContent;
+      
+      const footer = document.getElementById('generic-modal-footer');
+      footer.innerHTML = '';
+      
+      footerButtons.forEach(btn => {
+        const button = document.createElement('button');
+        button.className = btn.class || 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600';
+        button.textContent = btn.text;
+        button.onclick = () => {
+          if (btn.onclick) btn.onclick();
+          if (!btn.keepOpen) closeGenericModal();
+        };
+        footer.appendChild(button);
+      });
+      
+      document.getElementById('generic-modal').classList.remove('hidden');
+      document.getElementById('generic-modal').classList.add('flex');
+    }
+    
+    function closeGenericModal() {
+      document.getElementById('generic-modal').classList.add('hidden');
+      document.getElementById('generic-modal').classList.remove('flex');
+      currentModalCallback = null;
+    }
+    
+    // Close modal on backdrop click
+    document.getElementById('generic-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeGenericModal();
+    });
+    
+    // Close modal on ESC
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeGenericModal();
+    });
+
+    // ============================================
+    // CONFIRM DIALOG
+    // ============================================
+    
+    let confirmCallback = null;
+    
+    function showConfirm(title, message, iconType = 'warning', onConfirm) {
+      document.getElementById('confirm-title').textContent = title;
+      document.getElementById('confirm-message').textContent = message;
+      
+      const iconColors = {
+        warning: 'bg-red-500/20 text-red-400',
+        success: 'bg-green-500/20 text-green-400',
+        info: 'bg-blue-500/20 text-blue-400'
+      };
+      
+      const icons = {
+        warning: 'warning',
+        success: 'check_circle',
+        info: 'info'
+      };
+      
+      const iconEl = document.getElementById('confirm-icon');
+      iconEl.className = `w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${iconColors[iconType]}`;
+      iconEl.innerHTML = `<span class="material-symbols-outlined text-3xl">${icons[iconType]}</span>`;
+      
+      const okBtn = document.getElementById('confirm-ok');
+      okBtn.className = iconType === 'warning' ? 
+        'px-6 py-2 bg-red-500 text-white font-bold rounded-sm hover:bg-red-400 transition-colors' :
+        'px-6 py-2 bg-green-500 text-white font-bold rounded-sm hover:bg-green-400 transition-colors';
+      
+      confirmCallback = onConfirm;
+      
+      document.getElementById('confirm-dialog').classList.remove('hidden');
+      document.getElementById('confirm-dialog').classList.add('flex');
+      
+      document.getElementById('confirm-cancel').onclick = closeConfirm;
+      document.getElementById('confirm-ok').onclick = () => {
+        if (confirmCallback) confirmCallback();
+        closeConfirm();
+      };
+    }
+    
+    function closeConfirm() {
+      document.getElementById('confirm-dialog').classList.add('hidden');
+      document.getElementById('confirm-dialog').classList.remove('flex');
+      confirmCallback = null;
+    }
+    
+    document.getElementById('confirm-dialog').addEventListener('click', function(e) {
+      if (e.target === this) closeConfirm();
+    });
+
+    // ============================================
+    // ADMIN AUTHENTICATION
+    // ============================================
+    
     const adminCredentials = { username: 'admin', password: 'GAiAdmin2024!' };
     let isAdminLoggedIn = localStorage.getItem('gai_isAdmin') === 'true';
     let pendingDeleteUserId = null;
     
-    // Check admin login on page load
     document.addEventListener('DOMContentLoaded', function() {
       if (!isAdminLoggedIn) {
         document.getElementById('admin-login-modal').classList.remove('hidden');
@@ -1098,9 +1586,9 @@
         document.getElementById('admin-login-modal').classList.add('hidden');
         document.getElementById('admin-login-modal').classList.remove('flex');
         loadUsersFromStorage();
-        alert('Admin access granted!');
+        showToast('Admin access granted!', 'success');
       } else {
-        alert('Invalid admin credentials.');
+        showToast('Invalid admin credentials.', 'error');
       }
     }
 
@@ -1228,7 +1716,7 @@
       const users = await getUsers();
       const user = users.find(u => u.id === userId || u.user_id === userId);
       if (!user) {
-        alert('User not found.');
+        showToast('User not found.', 'error');
         return;
       }
       
@@ -1251,7 +1739,7 @@
 ╚══════════════════════════════════════════════╝
       `.replace(/║/g, '\n').replace(/╔|╗|╚|╝|═|╣|╠/g, '').trim();
       
-      alert('USER DETAILS\n\n' + userDetails + '\n\nFor full details, click Edit.');
+      showToast('User details loaded', 'info');
     }
 
     async function editUser(userId) {
@@ -1294,7 +1782,7 @@
       renderUsersTable(users);
       closeDeleteModal();
       pendingDeleteUserId = null;
-      alert('User deleted successfully.');
+      showToast('User deleted successfully.', 'success');
     }
 
     async function handleUserSubmit(event) {
@@ -1315,11 +1803,11 @@
       
       // Check for duplicate email/nickname (except for the user being edited)
       if (users.find(u => u.email === userData.email && u.id !== editId && u.user_id !== editId)) {
-        alert('Email already exists. Please use a different email.');
+        showToast('Email already exists. Please use a different email.', 'error');
         return;
       }
       if (users.find(u => u.nickname.toLowerCase() === userData.nickname.toLowerCase() && u.id !== editId && u.user_id !== editId)) {
-        alert('Nickname already taken. Please choose a different nickname.');
+        showToast('Nickname already taken. Please choose a different nickname.', 'error');
         return;
       }
       
@@ -1331,7 +1819,7 @@
         if (newPassword) {
           await GAiData.updateUser(editId, { password: 'b64:' + btoa(newPassword) });
         }
-        alert('User updated successfully!');
+        showToast('User updated successfully!', 'success');
       } else {
         // Create new user
         await GAiData.createUser({
@@ -1341,7 +1829,7 @@
           verified: false,
           createdAt: new Date().toISOString()
         });
-        alert('User created successfully!');
+        showToast('User created successfully!', 'success');
       }
       
       const updatedUsers = await getUsers();
@@ -1582,73 +2070,211 @@
 
     // CRUD Operations
     function createNewProject() {
-      const name = prompt('Enter project name:');
-      if (name) {
-        const newProject = {
-          id: Date.now(),
-          name: name,
-          status: 'planning',
-          tasks: 0,
-          progress: 0,
-          created: new Date().toISOString().split('T')[0]
-        };
-        workflowData.projects.push(newProject);
-        renderProjects();
-        addActivity('project', `New project "${name}" created`, 'add_circle');
-        populateProjectFilter();
-      }
+      const formContent = `
+        <form class="space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Project Name *</label>
+            <input type="text" id="new-project-name" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="Enter project name">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Status</label>
+            <select id="new-project-status" class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+              <option value="planning">Planning</option>
+              <option value="active">Active</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </form>
+      `;
+      
+      openGenericModal('Create New Project', formContent, [
+        { text: 'Cancel', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' },
+        { 
+          text: 'Create Project', 
+          class: 'px-4 py-2 bg-amber-400 text-black font-bold rounded-sm hover:bg-amber-300',
+          onclick: function() {
+            const name = document.getElementById('new-project-name').value.trim();
+            if (!name) {
+              showToast('Please enter a project name', 'error');
+              return true;
+            }
+            const newProject = {
+              id: Date.now(),
+              name: name,
+              status: document.getElementById('new-project-status').value,
+              tasks: 0,
+              progress: 0,
+              created: new Date().toISOString().split('T')[0]
+            };
+            workflowData.projects.push(newProject);
+            renderProjects();
+            addActivity('project', `New project "${name}" created`, 'add_circle');
+            populateProjectFilter();
+            closeGenericModal();
+            showToast('Project created!', 'success');
+          },
+          keepOpen: true
+        }
+      ]);
     }
 
     function createNewTask() {
-      const title = prompt('Enter task title:');
-      if (title) {
-        const newTask = {
-          id: Date.now(),
-          projectId: workflowData.projects[0]?.id || 1,
-          title: title,
-          status: 'pending',
-          priority: 'medium',
-          assignee: 'System Operator',
-          due: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-        };
-        workflowData.tasks.push(newTask);
-        renderTasks();
-        addActivity('task', `New task "${title}" created`, 'task_alt');
-      }
+      const projectOptions = workflowData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      
+      const formContent = `
+        <form class="space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Task Title *</label>
+            <input type="text" id="new-task-title" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="Enter task title">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Project</label>
+            <select id="new-task-project" class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+              ${projectOptions}
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Priority</label>
+            <select id="new-task-priority" class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </form>
+      `;
+      
+      openGenericModal('Create New Task', formContent, [
+        { text: 'Cancel', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' },
+        { 
+          text: 'Create Task', 
+          class: 'px-4 py-2 bg-amber-400 text-black font-bold rounded-sm hover:bg-amber-300',
+          onclick: function() {
+            const title = document.getElementById('new-task-title').value.trim();
+            if (!title) {
+              showToast('Please enter a task title', 'error');
+              return true;
+            }
+            const newTask = {
+              id: Date.now(),
+              projectId: document.getElementById('new-task-project').value,
+              title: title,
+              status: 'pending',
+              priority: document.getElementById('new-task-priority').value,
+              assignee: 'System Operator',
+              due: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+            };
+            workflowData.tasks.push(newTask);
+            renderTasks();
+            addActivity('task', `New task "${title}" created`, 'task_alt');
+            closeGenericModal();
+            showToast('Task created!', 'success');
+          },
+          keepOpen: true
+        }
+      ]);
     }
 
     function createNewAutomation() {
-      const name = prompt('Enter automation rule name:');
-      if (name) {
-        const newAutomation = {
-          id: Date.now(),
-          name: name,
-          trigger: 'Manual',
-          action: 'Custom Action',
-          status: 'paused',
-          runs: 0
-        };
-        workflowData.automations.push(newAutomation);
-        renderAutomations();
-        addActivity('automation', `New automation "${name}" created`, 'auto_awesome');
-      }
+      const formContent = `
+        <form class="space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Automation Name *</label>
+            <input type="text" id="new-automation-name" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="Enter automation name">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Trigger Event</label>
+            <select id="new-automation-trigger" class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+              <option value="user_registered">User Registered</option>
+              <option value="service_approved">Service Approved</option>
+              <option value="new_booking">New Booking</option>
+              <option value="manual">Manual</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Action</label>
+            <select id="new-automation-action" class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+              <option value="send_email">Send Email</option>
+              <option value="send_notification">Send Notification</option>
+              <option value="update_status">Update Status</option>
+              <option value="custom">Custom Action</option>
+            </select>
+          </div>
+        </form>
+      `;
+      
+      openGenericModal('Create New Automation', formContent, [
+        { text: 'Cancel', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' },
+        { 
+          text: 'Create Automation', 
+          class: 'px-4 py-2 bg-amber-400 text-black font-bold rounded-sm hover:bg-amber-300',
+          onclick: function() {
+            const name = document.getElementById('new-automation-name').value.trim();
+            if (!name) {
+              showToast('Please enter an automation name', 'error');
+              return true;
+            }
+            const newAutomation = {
+              id: Date.now(),
+              name: name,
+              trigger: document.getElementById('new-automation-trigger').value,
+              action: document.getElementById('new-automation-action').value,
+              status: 'paused',
+              runs: 0
+            };
+            workflowData.automations.push(newAutomation);
+            renderAutomations();
+            addActivity('automation', `New automation "${name}" created`, 'auto_awesome');
+            closeGenericModal();
+            showToast('Automation created!', 'success');
+          },
+          keepOpen: true
+        }
+      ]);
     }
 
     function addMembershipTier() {
-      const name = prompt('Enter tier name:');
-      const price = prompt('Enter price (e.g., $29/mo):');
-      if (name && price) {
-        const newTier = {
-          id: Date.now(),
-          name: name,
-          price: price,
-          users: 0,
-          features: ['Custom Features'],
-          status: 'active'
-        };
-        workflowData.memberships.push(newTier);
-        renderMemberships();
-      }
+      const formContent = `
+        <form class="space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Tier Name *</label>
+            <input type="text" id="new-tier-name" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="e.g., Premium">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Price *</label>
+            <input type="text" id="new-tier-price" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="$29/mo">
+          </div>
+        </form>
+      `;
+      
+      openGenericModal('Add Membership Tier', formContent, [
+        { text: 'Cancel', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' },
+        { 
+          text: 'Add Tier', 
+          class: 'px-4 py-2 bg-amber-400 text-black font-bold rounded-sm hover:bg-amber-300',
+          onclick: function() {
+            const name = document.getElementById('new-tier-name').value.trim();
+            const price = document.getElementById('new-tier-price').value.trim();
+            if (!name || !price) {
+              showToast('Please fill in all required fields', 'error');
+              return true;
+            }
+            const newTier = {
+              id: Date.now(),
+              name: name,
+              price: price,
+              users: 0,
+              features: ['Custom Features'],
+              status: 'active'
+            };
+            workflowData.memberships.push(newTier);
+            renderMemberships();
+            closeGenericModal();
+            showToast('Membership tier added!', 'success');
+          },
+          keepOpen: true
+        }
+      ]);
     }
 
     function addActivity(type, message, icon) {
@@ -1679,11 +2305,12 @@
     }
 
     function deleteProject(id) {
-      if (confirm('Delete this project?')) {
+      showConfirm('Delete Project', 'Are you sure you want to delete this project?', 'warning', function() {
         workflowData.projects = workflowData.projects.filter(p => p.id !== id);
         renderProjects();
         populateProjectFilter();
-      }
+        showToast('Project deleted!', 'success');
+      });
     }
 
     function deleteTask(id) {
@@ -1692,27 +2319,36 @@
     }
 
     function deleteMembership(id) {
-      if (confirm('Delete this membership tier?')) {
+      showConfirm('Delete Membership Tier', 'Are you sure you want to delete this membership tier?', 'warning', function() {
         workflowData.memberships = workflowData.memberships.filter(m => m.id !== id);
         renderMemberships();
-      }
+        showToast('Membership tier deleted!', 'success');
+      });
     }
 
     function viewProject(id) {
       const project = workflowData.projects.find(p => p.id === id);
-      alert(`Project: ${project.name}\nStatus: ${project.status}\nProgress: ${project.progress}%\nTasks: ${project.tasks}`);
+      openGenericModal('Project Details', `
+        <div class="space-y-4">
+          <div><span class="text-zinc-400">Name:</span> <span class="text-white ml-2">${project.name}</span></div>
+          <div><span class="text-zinc-400">Status:</span> <span class="text-white ml-2">${project.status}</span></div>
+          <div><span class="text-zinc-400">Progress:</span> <span class="text-white ml-2">${project.progress}%</span></div>
+          <div><span class="text-zinc-400">Tasks:</span> <span class="text-white ml-2">${project.tasks}</span></div>
+          <div><span class="text-zinc-400">Created:</span> <span class="text-white ml-2">${project.created}</span></div>
+        </div>
+      `, [{ text: 'Close', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' }]);
     }
 
     function editProject(id) {
-      alert('Edit project modal would open here');
+      showToast('Edit project modal would open here', 'info');
     }
 
     function editAutomation(id) {
-      alert('Edit automation modal would open here');
+      showToast('Edit automation modal would open here', 'info');
     }
 
     function editMembership(id) {
-      alert('Edit membership modal would open here');
+      showToast('Edit membership modal would open here', 'info');
     }
 
     function clearActivityLog() {
@@ -1721,11 +2357,35 @@
     }
 
     function openWorkflowGenerator() {
-      const prompt = window.prompt('Describe the platform or feature you want to generate:\n\nExample: "Create a user authentication system with OAuth2"');
-      if (prompt) {
-        alert('AI Generator\n\nPrompt: ' + prompt + '\n\nIn production, this would use AI to generate code and create the platform/features automatically.');
-        addActivity('system', `AI Generator ran: "${prompt.substring(0, 30)}..."`, 'auto_awesome');
-      }
+      const formContent = `
+        <form class="space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Describe what you want to generate</label>
+            <textarea id="ai-generator-prompt" rows="4" class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="Example: Create a user authentication system with OAuth2"></textarea>
+          </div>
+          <p class="text-xs text-zinc-500">In production, this would use AI to generate code and create the platform/features automatically.</p>
+        </form>
+      `;
+      
+      openGenericModal('AI Generator', formContent, [
+        { text: 'Cancel', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' },
+        { 
+          text: 'Generate', 
+          class: 'px-4 py-2 bg-purple-500 text-white font-bold rounded-sm hover:bg-purple-400',
+          onclick: function() {
+            const promptVal = document.getElementById('ai-generator-prompt').value.trim();
+            if (promptVal) {
+              closeGenericModal();
+              showToast('AI Generator feature - Ready for implementation', 'info');
+              addActivity('system', `AI Generator ran: "${promptVal.substring(0, 30)}..."`, 'auto_awesome');
+            } else {
+              showToast('Please enter a prompt', 'error');
+              return true;
+            }
+          },
+          keepOpen: true
+        }
+      ]);
     }
     
     function openGaiWorkflowAssistant() {
@@ -1758,7 +2418,7 @@
         }
       }
       
-      alert('GAi Workflow Assistant:\n\n' + response);
+      showToast('GAi Workflow Assistant: ' + response.substring(0, 50) + '...', 'info');
       
       // Track in memory
       if (typeof MemorySystem !== 'undefined') {
@@ -1770,14 +2430,14 @@
     }
 
     function openPostCreator() {
-      alert('Post Creator\n\nIn production, this would open a rich text editor for creating scheduled posts across platforms.');
+      showToast('Post Creator feature - Ready for implementation', 'info');
     }
 
     function saveAISettings() {
       const model = document.getElementById('ai-model-select').value;
       const tokens = document.getElementById('ai-max-tokens').value;
       const temp = document.getElementById('ai-temperature').value / 100;
-      alert(`AI Settings Saved\n\nModel: ${model}\nMax Tokens: ${tokens}\nTemperature: ${temp}`);
+      showToast('AI Settings Saved!', 'success');
       addActivity('system', `AI settings updated: ${model}`, 'psychology');
     }
 
@@ -1805,22 +2465,32 @@
 
     // User Management Functions
     function editUser(name, memberId) {
-      alert(`Edit User\n\nName: ${name}\nMember ID: ${memberId}\n\nIn a production environment, this would open an edit form.`);
+      openGenericModal('Edit User', `
+        <div class="space-y-4">
+          <div><span class="text-zinc-400">Name:</span> <span class="text-white ml-2">${name}</span></div>
+          <div><span class="text-zinc-400">Member ID:</span> <span class="text-white ml-2">${memberId}</span></div>
+          <p class="text-zinc-500 text-sm">Use the main Users tab to edit user details.</p>
+        </div>
+      `, [{ text: 'Close', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' }]);
     }
 
     function deleteUser(name, memberId) {
-      const confirmed = confirm(`Are you sure you want to delete user "${name}" (${memberId})?\n\nThis action cannot be undone.`);
-      if (confirmed) {
-        alert(`User "${name}" has been removed from the system.`);
-      }
+      showConfirm(
+        'Delete User', 
+        `Are you sure you want to delete user "${name}" (${memberId})? This action cannot be undone.`,
+        'warning',
+        function() {
+          showToast(`User "${name}" has been removed from the system.`, 'success');
+        }
+      );
     }
 
     function addNewUser() {
-      alert('Add New User\n\nIn a production environment, this would open a form to create a new user with:\n- Email/ID\n- Membership plan\n- Initial permissions');
+      showToast('Use the Users tab to add new users', 'info');
     }
 
     function changePage(pageNum) {
-      alert(`Navigating to page ${pageNum}\n\nIn a production environment, this would load the next page of users.`);
+      showToast(`Navigating to page ${pageNum}`, 'info');
     }
 
     const tabBtns = document.querySelectorAll('.tab-btn');
@@ -1885,58 +2555,725 @@
 
     function viewService(id) {
       const service = servicesData.find(s => s.id === id);
-      alert(`SERVICE DETAILS\n\nName: ${service.name}\nProvider: ${service.provider}\nCategory: ${service.category}\nPrice: ${service.price}\nStatus: ${service.status}\n\nClick Edit to modify this service.`);
+      openGenericModal('Service Details', `
+  <div class="space-y-4">
+    <div><span class="text-zinc-400">Name:</span> <span class="text-white ml-2">${service.name}</span></div>
+    <div><span class="text-zinc-400">Provider:</span> <span class="text-white ml-2">${service.provider}</span></div>
+    <div><span class="text-zinc-400">Category:</span> <span class="text-white ml-2">${service.category}</span></div>
+    <div><span class="text-zinc-400">Price:</span> <span class="text-white ml-2">${service.price}</span></div>
+    <div><span class="text-zinc-400">Status:</span> <span class="text-white ml-2">${service.status}</span></div>
+  </div>
+`, [{ text: 'Edit', class: 'px-4 py-2 bg-amber-400 text-black font-bold rounded-sm hover:bg-amber-300', onclick: function() { closeGenericModal(); editService(service.id); }, keepOpen: true }, { text: 'Close', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' }]);
     }
 
     function editService(id) {
       const service = servicesData.find(s => s.id === id);
-      const newName = prompt('Edit Service Name:', service.name);
-      const newPrice = prompt('Edit Service Price:', service.price);
-      const newStatus = prompt('Edit Status (active/pending/inactive):', service.status);
+      const formContent = `
+        <form id="edit-service-form" class="space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Service Name *</label>
+            <input type="text" id="edit-service-name" value="${service.name}" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Provider *</label>
+            <input type="text" id="edit-service-provider" value="${service.provider}" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Category *</label>
+            <select id="edit-service-category" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+              <option value="AI Services" ${service.category === 'AI Services' ? 'selected' : ''}>AI Services</option>
+              <option value="Trading" ${service.category === 'Trading' ? 'selected' : ''}>Trading</option>
+              <option value="Security" ${service.category === 'Security' ? 'selected' : ''}>Security</option>
+              <option value="Data Analysis" ${service.category === 'Data Analysis' ? 'selected' : ''}>Data Analysis</option>
+              <option value="Content Creation" ${service.category === 'Content Creation' ? 'selected' : ''}>Content Creation</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Price *</label>
+            <input type="text" id="edit-service-price" value="${service.price}" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Status</label>
+            <select id="edit-service-status" class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+              <option value="active" ${service.status === 'active' ? 'selected' : ''}>Active</option>
+              <option value="pending" ${service.status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="inactive" ${service.status === 'inactive' ? 'selected' : ''}>Inactive</option>
+            </select>
+          </div>
+        </form>
+      `;
       
-      if (newName) service.name = newName;
-      if (newPrice) service.price = newPrice;
-      if (newStatus) service.status = newStatus;
-      
-      renderServices();
-      alert('Service updated successfully!');
+      openGenericModal('Edit Service', formContent, [
+        { text: 'Cancel', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' },
+        { 
+          text: 'Save Changes', 
+          class: 'px-4 py-2 bg-amber-400 text-black font-bold rounded-sm hover:bg-amber-300',
+          onclick: function() {
+            service.name = document.getElementById('edit-service-name').value;
+            service.provider = document.getElementById('edit-service-provider').value;
+            service.category = document.getElementById('edit-service-category').value;
+            service.price = document.getElementById('edit-service-price').value;
+            service.status = document.getElementById('edit-service-status').value;
+            renderServices();
+            showToast('Service updated successfully!', 'success');
+          },
+          keepOpen: true
+        }
+      ]);
     }
 
     function deleteService(id) {
-      if (confirm('Are you sure you want to delete this service?\n\nThis action cannot be undone.')) {
-        const index = servicesData.findIndex(s => s.id === id);
-        if (index > -1) {
-          servicesData.splice(index, 1);
-          renderServices();
-          alert('Service deleted successfully!');
+      const service = servicesData.find(s => s.id === id);
+      showConfirm(
+        'Delete Service',
+        `Are you sure you want to delete "${service.name}"? This action cannot be undone.`,
+        'warning',
+        function() {
+          const index = servicesData.findIndex(s => s.id === id);
+          if (index > -1) {
+            servicesData.splice(index, 1);
+            renderServices();
+            showToast('Service deleted successfully!', 'success');
+          }
         }
-      }
+      );
     }
 
     function addNewService() {
-      const name = prompt('Enter Service Name:');
-      const provider = prompt('Enter Provider Name:');
-      const category = prompt('Enter Category (AI Services/Trading/Security/Data Analysis/Content Creation):');
-      const price = prompt('Enter Price (e.g., $5.00/hr):');
+      const formContent = `
+        <form id="add-service-form" class="space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Service Name *</label>
+            <input type="text" id="new-service-name" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="Enter service name">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Provider *</label>
+            <input type="text" id="new-service-provider" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="Enter provider name">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Category *</label>
+            <select id="new-service-category" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+              <option value="">Select category</option>
+              <option value="AI Services">AI Services</option>
+              <option value="Trading">Trading</option>
+              <option value="Security">Security</option>
+              <option value="Data Analysis">Data Analysis</option>
+              <option value="Content Creation">Content Creation</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Price *</label>
+            <input type="text" id="new-service-price" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="$5.00/hr">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Description</label>
+            <textarea id="new-service-description" rows="3" class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="Service description..."></textarea>
+          </div>
+        </form>
+      `;
       
-      if (name && provider && category && price) {
-        const newId = servicesData.length + 1;
-        servicesData.push({
-          id: newId,
-          name: name,
-          provider: provider,
-          category: category,
-          price: price,
-          status: 'active'
-        });
-        renderServices();
-        alert('New service added successfully!');
-      }
+      openGenericModal('Add New Service', formContent, [
+        { text: 'Cancel', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' },
+        { 
+          text: 'Add Service', 
+          class: 'px-4 py-2 bg-amber-400 text-black font-bold rounded-sm hover:bg-amber-300',
+          onclick: function() {
+            const name = document.getElementById('new-service-name').value.trim();
+            const provider = document.getElementById('new-service-provider').value.trim();
+            const category = document.getElementById('new-service-category').value;
+            const price = document.getElementById('new-service-price').value.trim();
+            
+            if (!name || !provider || !category || !price) {
+              showToast('Please fill in all required fields', 'error');
+              return true;
+            }
+            
+            const newId = servicesData.length + 1;
+            servicesData.push({
+              id: newId,
+              name: name,
+              provider: provider,
+              category: category,
+              price: price,
+              status: 'active'
+            });
+            renderServices();
+            showToast('Service added successfully!', 'success');
+          },
+          keepOpen: true
+        }
+      ]);
     }
 
     // Initialize services table
     document.addEventListener('DOMContentLoaded', function() {
       renderServices();
+      loadAllAdminData();
+    });
+
+    // ============================================
+    // NEW ADMIN TABS - FUNCTIONS
+    // ============================================
+
+    async function loadAllAdminData() {
+      loadAnalytics();
+      loadBookings();
+      loadReviews();
+      loadMessages();
+      loadSecurityData();
+      loadAIAgents();
+    }
+
+    // ANALYTICS
+    async function loadAnalytics() {
+      try {
+        const stats = await GAiAdmin.getStats();
+        document.getElementById('analytics-users').textContent = stats.users.toLocaleString();
+        document.getElementById('analytics-active').textContent = stats.activeUsers.toLocaleString();
+        document.getElementById('analytics-services').textContent = stats.services.toLocaleString();
+        document.getElementById('analytics-messages').textContent = stats.messages.toLocaleString();
+        document.getElementById('analytics-bookings').textContent = stats.bookings.toLocaleString();
+        document.getElementById('analytics-reviews').textContent = stats.reviews.toLocaleString();
+        
+        const onlineUsers = await GAiAdmin.getOnlineUsers();
+        document.getElementById('analytics-online').textContent = (onlineUsers.filter(u => u.isOnline)).length;
+        document.getElementById('analytics-pending').textContent = stats.pendingApprovals;
+      } catch (e) {
+        console.warn('Load analytics error:', e);
+      }
+    }
+
+    // BOOKINGS
+    async function loadBookings() {
+      const tbody = document.getElementById('bookings-table-body');
+      if (!tbody) return;
+      
+      try {
+        const bookings = await GAiAdmin.getBookings();
+        if (!bookings || bookings.length === 0) {
+          tbody.innerHTML = '<tr class="border-b border-white/5"><td colspan="6" class="p-8 text-center text-zinc-500">No bookings found.</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = bookings.slice(0, 20).map(booking => `
+          <tr class="border-b border-white/5 hover:bg-white/5">
+            <td class="p-4"><p class="font-bold text-white">${booking.service_id ? 'Service #' + booking.service_id.substring(0,8) : 'N/A'}</p></td>
+            <td class="p-4 text-zinc-400">${booking.user_id ? booking.user_id.substring(0,8) : 'N/A'}</td>
+            <td class="p-4 text-zinc-400">${booking.provider_id ? booking.provider_id.substring(0,8) : 'N/A'}</td>
+            <td class="p-4 text-zinc-400">${booking.scheduled_at ? new Date(booking.scheduled_at).toLocaleDateString() : 'Not scheduled'}</td>
+            <td class="p-4"><span class="badge ${booking.status === 'confirmed' ? 'bg-green-500/15 text-green-500' : booking.status === 'pending' ? 'bg-yellow-500/15 text-yellow-500' : 'bg-red-500/15 text-red-500'}">${booking.status || 'pending'}</span></td>
+            <td class="p-4">
+              <div class="flex gap-2">
+                <button onclick="updateBookingStatus('${booking.id}', 'confirmed')" class="action-btn p-2 text-green-400 hover:bg-green-400/10 rounded-sm cursor-pointer" title="Confirm">
+                  <span class="material-symbols-outlined text-lg">check</span>
+                </button>
+                <button onclick="updateBookingStatus('${booking.id}', 'cancelled')" class="action-btn p-2 text-red-400 hover:bg-red-400/10 rounded-sm cursor-pointer" title="Cancel">
+                  <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        tbody.innerHTML = '<tr class="border-b border-white/5"><td colspan="6" class="p-8 text-center text-zinc-500">Error loading bookings.</td></tr>';
+      }
+    }
+
+    async function refreshBookings() {
+      loadBookings();
+      showToast('Bookings refreshed!', 'info');
+    }
+
+    async function updateBookingStatus(id, status) {
+      try {
+        await GAiAdmin.updateBooking(id, { status });
+        loadBookings();
+        showToast('Booking status updated!', 'success');
+      } catch (e) {
+        showToast('Error updating booking: ' + e.message, 'error');
+      }
+    }
+
+    // REVIEWS
+    async function loadReviews() {
+      const tbody = document.getElementById('reviews-table-body');
+      if (!tbody) return;
+      
+      try {
+        const reviews = await GAiAdmin.getReviews();
+        if (!reviews || reviews.length === 0) {
+          tbody.innerHTML = '<tr class="border-b border-white/5"><td colspan="6" class="p-8 text-center text-zinc-500">No reviews found.</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = reviews.slice(0, 20).map(review => `
+          <tr class="border-b border-white/5 hover:bg-white/5">
+            <td class="p-4"><p class="font-bold text-white">${review.service_id ? 'Service' : 'N/A'}</p></td>
+            <td class="p-4 text-zinc-400">${review.user_id ? review.user_id.substring(0,8) : 'N/A'}</td>
+            <td class="p-4">
+              <div class="flex gap-1">
+                ${[1,2,3,4,5].map(i => `<span class="material-symbols-outlined text-sm ${i <= (review.rating || 0) ? 'text-amber-400' : 'text-zinc-600'}">star</span>`).join('')}
+              </div>
+            </td>
+            <td class="p-4 text-zinc-400 max-w-xs truncate">${review.comment || 'No comment'}</td>
+            <td class="p-4"><span class="badge ${review.status === 'approved' ? 'bg-green-500/15 text-green-500' : 'bg-yellow-500/15 text-yellow-500'}">${review.status || 'pending'}</span></td>
+            <td class="p-4">
+              <div class="flex gap-2">
+                <button onclick="moderateReview('${review.id}', 'approved')" class="action-btn p-2 text-green-400 hover:bg-green-400/10 rounded-sm cursor-pointer" title="Approve">
+                  <span class="material-symbols-outlined text-lg">check</span>
+                </button>
+                <button onclick="moderateReview('${review.id}', 'rejected')" class="action-btn p-2 text-red-400 hover:bg-red-400/10 rounded-sm cursor-pointer" title="Reject">
+                  <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        tbody.innerHTML = '<tr class="border-b border-white/5"><td colspan="6" class="p-8 text-center text-zinc-500">Error loading reviews.</td></tr>';
+      }
+    }
+
+    async function refreshReviews() {
+      loadReviews();
+      showToast('Reviews refreshed!', 'info');
+    }
+
+    async function moderateReview(id, status) {
+      try {
+        await GAiAdmin.moderateReview(id, status);
+        loadReviews();
+        showToast('Review moderated!', 'success');
+      } catch (e) {
+        showToast('Error moderating review: ' + e.message, 'error');
+      }
+    }
+
+    // MESSAGING
+    async function loadMessages() {
+      const tbody = document.getElementById('messages-table-body');
+      if (!tbody) return;
+      
+      try {
+        const messages = await GAiAdmin.getMessages();
+        if (!messages || messages.length === 0) {
+          tbody.innerHTML = '<tr class="border-b border-white/5"><td colspan="5" class="p-8 text-center text-zinc-500">No messages found.</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = messages.slice(0, 20).map(msg => `
+          <tr class="border-b border-white/5 hover:bg-white/5">
+            <td class="p-4 text-zinc-400">${msg.sender_id ? msg.sender_id.substring(0,8) : 'N/A'}</td>
+            <td class="p-4 text-zinc-400">${msg.receiver_id ? msg.receiver_id.substring(0,8) : 'N/A'}</td>
+            <td class="p-4 text-white max-w-xs truncate">${msg.content || ''}</td>
+            <td class="p-4 text-zinc-500 text-xs">${msg.created_at ? new Date(msg.created_at).toLocaleString() : ''}</td>
+            <td class="p-4">
+              <div class="flex gap-2">
+                <button onclick="flagMessage('${msg.id}')" class="action-btn p-2 text-yellow-400 hover:bg-yellow-400/10 rounded-sm cursor-pointer" title="Flag">
+                  <span class="material-symbols-outlined text-lg">flag</span>
+                </button>
+                <button onclick="deleteMessage('${msg.id}')" class="action-btn p-2 text-red-400 hover:bg-red-400/10 rounded-sm cursor-pointer" title="Delete">
+                  <span class="material-symbols-outlined text-lg">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        tbody.innerHTML = '<tr class="border-b border-white/5"><td colspan="5" class="p-8 text-center text-zinc-500">Error loading messages.</td></tr>';
+      }
+    }
+
+    async function refreshMessages() {
+      loadMessages();
+      showToast('Messages refreshed!', 'info');
+    }
+
+    async function flagMessage(id) {
+      try {
+        await GAiAdmin.flagMessage(id, 'Flagged by admin');
+        loadMessages();
+        showToast('Message flagged!', 'warning');
+      } catch (e) {
+        showToast('Error flagging message: ' + e.message, 'error');
+      }
+    }
+
+    async function deleteMessage(id) {
+      showConfirm(
+        'Delete Message',
+        'Are you sure you want to delete this message?',
+        'warning',
+        async function() {
+          try {
+            await GAiAdmin.deleteMessage(id);
+            loadMessages();
+            showToast('Message deleted!', 'success');
+          } catch (e) {
+            showToast('Error deleting message: ' + e.message, 'error');
+          }
+        }
+      );
+    }
+
+    function showBroadcastModal() {
+      const formContent = `
+        <form class="space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Broadcast Title *</label>
+            <input type="text" id="broadcast-title" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="Enter broadcast title">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Message *</label>
+            <textarea id="broadcast-message" rows="4" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="Enter your broadcast message..."></textarea>
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Target Audience</label>
+            <div class="flex flex-wrap gap-2">
+              <label class="flex items-center gap-2 text-sm text-zinc-300">
+                <input type="checkbox" value="member" checked class="broadcast-target"> Members
+              </label>
+              <label class="flex items-center gap-2 text-sm text-zinc-300">
+                <input type="checkbox" value="premium" checked class="broadcast-target"> Premium
+              </label>
+              <label class="flex items-center gap-2 text-sm text-zinc-300">
+                <input type="checkbox" value="vip" checked class="broadcast-target"> VIP
+              </label>
+            </div>
+          </div>
+        </form>
+      `;
+      
+      openGenericModal('Send Broadcast Message', formContent, [
+        { text: 'Cancel', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' },
+        { 
+          text: 'Send Broadcast', 
+          class: 'px-4 py-2 bg-purple-500 text-white font-bold rounded-sm hover:bg-purple-400',
+          onclick: function() {
+            const title = document.getElementById('broadcast-title').value.trim();
+            const message = document.getElementById('broadcast-message').value.trim();
+            
+            if (!title || !message) {
+              showToast('Please fill in all required fields', 'error');
+              return true;
+            }
+            
+            const targets = Array.from(document.querySelectorAll('.broadcast-target:checked')).map(cb => cb.value);
+            
+            GAiAdmin.sendBroadcast({
+              title: title,
+              message: message,
+              target_roles: targets
+            }).then(() => {
+              closeGenericModal();
+              showToast('Broadcast sent!', 'success');
+            }).catch(e => {
+              showToast('Error: ' + e.message, 'error');
+            });
+            return true;
+          },
+          keepOpen: true
+        }
+      ]);
+    }
+
+    // SECURITY
+    async function loadSecurityData() {
+      // IP Blacklist
+      const ipList = document.getElementById('ip-blacklist');
+      if (ipList) {
+        try {
+          const ips = await GAiAdmin.getIPBlacklist();
+          if (!ips || ips.length === 0) {
+            ipList.innerHTML = '<p class="text-zinc-500 text-sm">No IPs blacklisted.</p>';
+          } else {
+            ipList.innerHTML = ips.map(ip => `
+              <div class="flex items-center justify-between p-2 border-b border-white/5">
+                <span class="font-mono text-sm text-white">${ip.ip_address}</span>
+                <button onclick="removeIPFromBlacklist('${ip.id}')" class="text-red-400 hover:text-white text-xs">Remove</button>
+              </div>
+            `).join('');
+          }
+        } catch (e) {
+          ipList.innerHTML = '<p class="text-zinc-500 text-sm">Error loading IP blacklist.</p>';
+        }
+      }
+      
+      // User Blacklist
+      const userList = document.getElementById('user-blacklist');
+      if (userList) {
+        try {
+          const users = await GAiAdmin.getBlacklist();
+          if (!users || users.length === 0) {
+            userList.innerHTML = '<p class="text-zinc-500 text-sm">No users blacklisted.</p>';
+          } else {
+            userList.innerHTML = users.map(u => `
+              <div class="flex items-center justify-between p-2 border-b border-white/5">
+                <span class="text-sm text-white">${u.user_id ? u.user_id.substring(0,8) : 'N/A'}</span>
+                <button onclick="removeUserFromBlacklist('${u.id}')" class="text-red-400 hover:text-white text-xs">Remove</button>
+              </div>
+            `).join('');
+          }
+        } catch (e) {
+          userList.innerHTML = '<p class="text-zinc-500 text-sm">Error loading user blacklist.</p>';
+        }
+      }
+    }
+
+    async function refreshSecurityData() {
+      loadSecurityData();
+      showToast('Security data refreshed!', 'info');
+    }
+
+    function showAddIPModal() {
+      const formContent = `
+        <form class="space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">IP Address *</label>
+            <input type="text" id="block-ip-address" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="e.g., 192.168.1.1">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Reason</label>
+            <textarea id="block-ip-reason" rows="3" class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="Reason for blocking..."></textarea>
+          </div>
+        </form>
+      `;
+      
+      openGenericModal('Block IP Address', formContent, [
+        { text: 'Cancel', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' },
+        { 
+          text: 'Block IP', 
+          class: 'px-4 py-2 bg-red-500 text-white font-bold rounded-sm hover:bg-red-400',
+          onclick: function() {
+            const ip = document.getElementById('block-ip-address').value.trim();
+            const reason = document.getElementById('block-ip-reason').value.trim();
+            
+            if (!ip) {
+              showToast('Please enter an IP address', 'error');
+              return true;
+            }
+            
+            GAiAdmin.addIPToBlacklist(ip, reason || 'Blocked by admin').then(() => {
+              loadSecurityData();
+              closeGenericModal();
+              showToast('IP added to blacklist!', 'success');
+            }).catch(e => {
+              showToast('Error: ' + e.message, 'error');
+            });
+            return true;
+          },
+          keepOpen: true
+        }
+      ]);
+    }
+
+    async function removeIPFromBlacklist(id) {
+      showConfirm(
+        'Remove IP from Blacklist',
+        'Are you sure you want to remove this IP from the blacklist?',
+        'warning',
+        async function() {
+          await GAiAdmin.removeIPFromBlacklist(id);
+          loadSecurityData();
+          showToast('IP removed from blacklist', 'success');
+        }
+      );
+    }
+
+    async function removeUserFromBlacklist(id) {
+      showConfirm(
+        'Remove User from Blacklist',
+        'Are you sure you want to remove this user from the blacklist?',
+        'warning',
+        async function() {
+        await GAiAdmin.removeFromBlacklist(id);
+        loadSecurityData();
+      }
+    }
+
+    function exportAllUserData() {
+      showToast('Exporting all user data (GDPR)...', 'info');
+    }
+
+    function showActivityLog() {
+      GAiAdmin.getActivityLog().then(logs => {
+        if (logs && logs.length > 0) {
+          openGenericModal('Recent Activity', `
+            <div class="space-y-2 max-h-64 overflow-y-auto">
+              ${logs.slice(0, 10).map(l => `<div class="p-2 bg-neutral-900 rounded-sm"><span class="text-zinc-400">${l.action}</span><br><span class="text-xs text-zinc-500">${l.created_at}</span></div>`).join('')}
+            </div>
+          `, [{ text: 'Close', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' }]);
+        } else {
+          showToast('No activity logs found.', 'info');
+        }
+      });
+    }
+
+    function showSecuritySettings() {
+      openGenericModal('Security Settings', `
+  <div class="space-y-4">
+    <div class="flex items-center justify-between p-3 bg-neutral-900 rounded-sm">
+      <span class="text-zinc-400">Two-Factor Authentication</span>
+      <span class="text-green-400 font-bold">Configured</span>
+    </div>
+    <div class="flex items-center justify-between p-3 bg-neutral-900 rounded-sm">
+      <span class="text-zinc-400">IP Blocking</span>
+      <span class="text-green-400 font-bold">Enabled</span>
+    </div>
+    <div class="flex items-center justify-between p-3 bg-neutral-900 rounded-sm">
+      <span class="text-zinc-400">Login Alerts</span>
+      <span class="text-green-400 font-bold">Enabled</span>
+    </div>
+    <div class="flex items-center justify-between p-3 bg-neutral-900 rounded-sm">
+      <span class="text-zinc-400">Session Timeout</span>
+      <span class="text-white font-bold">30 minutes</span>
+    </div>
+  </div>
+`, [{ text: 'Close', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' }]);
+    }
+
+    // AI AGENTS
+    async function loadAIAgents() {
+      const tbody = document.getElementById('ai-agents-table-body');
+      if (!tbody) return;
+      
+      try {
+        const agents = await GAiAdmin.getAIAgents();
+        if (!agents || agents.length === 0) {
+          tbody.innerHTML = '<tr class="border-b border-white/5"><td colspan="5" class="p-8 text-center text-zinc-500">No AI agents configured. Add your first agent!</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = agents.map(agent => `
+          <tr class="border-b border-white/5 hover:bg-white/5">
+            <td class="p-4"><p class="font-bold text-white">${agent.name}</p></td>
+            <td class="p-4"><span class="badge bg-purple-500/20 text-purple-400">${agent.agent_type || agent.type}</span></td>
+            <td class="p-4"><span class="badge ${agent.enabled ? 'bg-green-500/15 text-green-500' : 'bg-zinc-500/20 text-zinc-400'}">${agent.enabled ? 'Active' : 'Disabled'}</span></td>
+            <td class="p-4 text-zinc-400">${agent.created_at ? new Date(agent.created_at).toLocaleDateString() : 'N/A'}</td>
+            <td class="p-4">
+              <div class="flex gap-2">
+                <button onclick="toggleAIAgent('${agent.id}', ${!agent.enabled})" class="action-btn p-2 text-green-400 hover:bg-green-400/10 rounded-sm cursor-pointer" title="${agent.enabled ? 'Disable' : 'Enable'}">
+                  <span class="material-symbols-outlined text-lg">${agent.enabled ? 'pause' : 'play_arrow'}</span>
+                </button>
+                <button onclick="editAIAgent('${agent.id}')" class="action-btn p-2 text-purple-400 hover:bg-purple-400/10 rounded-sm cursor-pointer" title="Edit">
+                  <span class="material-symbols-outlined text-lg">edit</span>
+                </button>
+                <button onclick="deleteAIAgent('${agent.id}')" class="action-btn p-2 text-red-400 hover:bg-red-400/10 rounded-sm cursor-pointer" title="Delete">
+                  <span class="material-symbols-outlined text-lg">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        tbody.innerHTML = '<tr class="border-b border-white/5"><td colspan="5" class="p-8 text-center text-zinc-500">Error loading AI agents.</td></tr>';
+      }
+    }
+
+    function showAddAIAgentModal() {
+      const formContent = `
+        <form class="space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Agent Name *</label>
+            <input type="text" id="new-agent-name" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="e.g., Content Moderator">
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">Agent Type *</label>
+            <select id="new-agent-type" required class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400">
+              <option value="">Select type</option>
+              <option value="moderation">Content Moderation</option>
+              <option value="engagement">User Engagement</option>
+              <option value="marketing">Marketing</option>
+              <option value="support">Customer Support</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2">System Prompt</label>
+            <textarea id="new-agent-prompt" rows="4" class="w-full bg-neutral-900 border border-zinc-700 text-white px-3 py-2 rounded-sm outline-none focus:border-amber-400" placeholder="You are a helpful AI assistant..."></textarea>
+          </div>
+        </form>
+      `;
+      
+      openGenericModal('Add AI Agent', formContent, [
+        { text: 'Cancel', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' },
+        { 
+          text: 'Create Agent', 
+          class: 'px-4 py-2 bg-purple-500 text-white font-bold rounded-sm hover:bg-purple-400',
+          onclick: function() {
+            const name = document.getElementById('new-agent-name').value.trim();
+            const type = document.getElementById('new-agent-type').value;
+            const prompt_text = document.getElementById('new-agent-prompt').value.trim();
+            
+            if (!name || !type) {
+              showToast('Please fill in all required fields', 'error');
+              return true;
+            }
+            
+            GAiAdmin.createAIAgent({
+              name: name,
+              agent_type: type,
+              system_prompt: prompt_text || 'You are a helpful AI assistant.',
+              enabled: true
+            }).then(() => {
+              loadAIAgents();
+              closeGenericModal();
+              showToast('AI Agent created!', 'success');
+            }).catch(e => {
+              showToast('Error: ' + e.message, 'error');
+            });
+            return true;
+          },
+          keepOpen: true
+        }
+      ]);
+    }
+
+    async function toggleAIAgent(id, enabled) {
+      try {
+        await GAiAdmin.toggleAIAgent(id, enabled);
+        loadAIAgents();
+        showToast('AI Agent ' + (enabled ? 'enabled' : 'disabled') + '!', 'success');
+      } catch (e) {
+        showToast('Error: ' + e.message, 'error');
+      }
+    }
+
+    function editAIAgent(id) {
+      openGenericModal('Edit AI Agent', `
+        <div class="space-y-4">
+          <p class="text-zinc-400">Edit functionality for AI Agent ID: ${id}</p>
+          <p class="text-zinc-500 text-sm">Use the form above to create a new agent or modify this feature.</p>
+        </div>
+      `, [{ text: 'Close', class: 'px-4 py-2 bg-neutral-700 text-white rounded-sm hover:bg-neutral-600' }]);
+    }
+
+    async function deleteAIAgent(id) {
+      showConfirm(
+        'Delete AI Agent',
+        'Are you sure you want to delete this AI Agent?',
+        'warning',
+        async function() {
+          try {
+            await GAiAdmin.deleteAIAgent(id);
+            loadAIAgents();
+            showToast('AI Agent deleted!', 'success');
+          } catch (e) {
+            showToast('Error: ' + e.message, 'error');
+        }
+      }
+    }
+
+    // Update tab click handlers to load data when switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const tab = this.dataset.tab;
+        if (tab === 'analytics') loadAnalytics();
+        if (tab === 'bookings') loadBookings();
+        if (tab === 'reviews') loadReviews();
+        if (tab === 'messaging') loadMessages();
+        if (tab === 'security') loadSecurityData();
+        if (tab === 'ai-agents') loadAIAgents();
+      });
     });
   </script>
 </body>
