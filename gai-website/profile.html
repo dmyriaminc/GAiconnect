@@ -1707,7 +1707,6 @@
       }
       
       // Display actual membership ID from localStorage or Supabase
-      const userId = localStorage.getItem('gai_userId');
       const membershipId = localStorage.getItem('gai_membershipId') || userId || (profile.user_id);
       if (membershipId) {
         idEl.textContent = membershipId.toUpperCase();

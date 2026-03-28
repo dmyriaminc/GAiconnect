@@ -225,6 +225,12 @@
     
     // Initialize members list
     function loadMembers() {
+      // Ensure DOM elements are loaded
+      if (!membersList) {
+        membersList = document.getElementById('members-list');
+      }
+      if (!membersList) return;
+      
       const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
       const currentUser = localStorage.getItem('gai_username');
       

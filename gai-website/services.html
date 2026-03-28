@@ -829,7 +829,7 @@
     let currentServiceProviderId = null;
     let currentServiceProviderNickname = null;
     
-    function viewServiceDetails(title, provider, price, description, category, rating, reviews, location, lat, lng, providerId) {
+    async function viewServiceDetails(title, provider, price, description, category, rating, reviews, location, lat, lng, providerId) {
       // Store service data in sessionStorage for the details page
       const serviceData = {
         title: decodeURIComponent(title),
