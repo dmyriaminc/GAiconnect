@@ -1,0 +1,12 @@
+{
+  "name": "gai-connect-website",
+  "version": "1.0.0",
+  "description": "GAi Connect - Multi-Agent AI Platform",
+  "scripts": {
+    "dev": "echo 'Open index.html directly in browser'",
+    "start": "echo 'Static site - no build needed. Deploy directly to Netlify.'"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

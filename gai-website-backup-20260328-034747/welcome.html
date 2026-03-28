@@ -25,7 +25,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="gai-user.js"></script>
-  <script src="supabase-client.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -858,72 +857,29 @@
 
     // Nearby Features
     let nearbyMode = false;
-    
-    // Get real data from GAiData/GAiLogicLayer or use fallback
-    let profilesData = [];
-    let servicesData = [];
-    
-    function loadRealData() {
-      try {
-        // Load real users as profiles
-        if (typeof GAiData !== 'undefined') {
-          const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
-          profilesData = users.map(u => ({
-            name: u.nickname || u.fullname || 'User',
-            tier: u.tier || 'Standard',
-            role: u.nationality || 'Member',
-            email: u.email || '',
-            status: 'Online',
-            activity: 'Active now',
-            lat: u.lat || 0,
-            lng: u.lng || 0,
-            user_id: u.user_id
-          }));
-          
-          // Load real services
-          const services = JSON.parse(localStorage.getItem('gai_services') || '[]');
-          servicesData = services.map(s => ({
-            title: s.title,
-            provider: s.provider || 'Provider',
-            price: (s.price || '0') + ' GAi/hr',
-            category: s.category || 'General',
-            description: s.description || '',
-            reviews: (s.reviews || 0) + ' reviews',
-            rating: s.rating || '5.0',
-            lat: s.lat || 0,
-            lng: s.lng || 0
-          }));
-        }
-      } catch (e) {
-        console.warn('Failed to load real data:', e);
-      }
-      
-      // Fallback to demo data if no real data
-      if (profilesData.length === 0) {
-        profilesData = [
-          { name: 'Xenon_77', tier: 'VVIP', role: 'Trading Nodes', email: 'xenon@neural.mesh', status: 'Online', activity: 'Active 2m ago', lat: 48.8566, lng: 2.3522 },
-          { name: 'Nova_Protocol', tier: 'VVIP', role: 'Data Architect', email: 'nova@quantum.sys', status: 'Away', activity: 'Active 15m ago', lat: 48.8600, lng: 2.3200 },
-          { name: 'The_Oracle', tier: 'Presidential', role: 'Storage Pro', email: 'oracle@vault.tech', status: 'Offline', activity: 'Active 1h ago', lat: 48.8700, lng: 2.3400 },
-          { name: 'CyberXpert', tier: 'Premium', role: 'Neural Engineer', email: 'cyber@expert.tech', status: 'Online', activity: 'Active 5m ago', lat: 48.8500, lng: 2.3100 },
-          { name: 'Neural_Ninja', tier: 'Premium', role: 'Security Expert', email: 'ninja@neural.net', status: 'Online', activity: 'Active 10m ago', lat: 48.8650, lng: 2.3300 },
-          { name: 'DataWitch', tier: 'VVIP', role: 'AI Specialist', email: 'witch@data.tech', status: 'Online', activity: 'Active 3m ago', lat: 48.8550, lng: 2.3450 }
-        ];
-      }
-      
-      if (servicesData.length === 0) {
-        servicesData = [
-          { title: 'Deep-Mind Arbitrage', provider: 'Xenon_77', price: '2.44 GAi/hr', category: 'Trading', description: 'Advanced neural arbitrage using quantum-resistant algorithms.', reviews: '127 reviews', rating: '4.9', lat: 48.8566, lng: 2.3522 },
-          { title: 'Biometric Shield Pro', provider: 'Neural_Ninja', price: '1.89 GAi/hr', category: 'Security', description: 'Enterprise-grade biometric security systems.', reviews: '89 reviews', rating: '4.8', lat: 48.8650, lng: 2.3300 },
-          { title: 'Neural Network Design', provider: 'CyberXpert', price: '3.20 GAi/hr', category: 'AI/Neural', description: 'Custom neural network architecture design.', reviews: '156 reviews', rating: '5.0', lat: 48.8500, lng: 2.3100 },
-          { title: 'Quantum Encryption', provider: 'QuantumLeap', price: '2.99 GAi/hr', category: 'Security', description: 'Post-quantum encryption solutions.', reviews: '94 reviews', rating: '4.7', lat: 48.8580, lng: 2.3380 },
-          { title: 'Data Vault Premium', provider: 'The_Oracle', price: '1.50 GAi/hr', category: 'Data', description: 'Secure distributed data storage.', reviews: '203 reviews', rating: '4.9', lat: 48.8700, lng: 2.3400 },
-          { title: 'AI Consultation', provider: 'DataWitch', price: '4.00 GAi/hr', category: 'AI/Neural', description: 'Expert AI implementation guidance.', reviews: '78 reviews', rating: '4.8', lat: 48.8550, lng: 2.3450 }
-        ];
-      }
-    }
-    
-    // Load data on script load
-    loadRealData();
+    const profilesData = [
+      { name: 'Xenon_77', tier: 'VVIP', role: 'Trading Nodes', email: 'xenon@neural.mesh', status: 'Online', activity: 'Active 2m ago', lat: 48.8566, lng: 2.3522 },
+      { name: 'Nova_Protocol', tier: 'VVIP', role: 'Data Architect', email: 'nova@quantum.sys', status: 'Away', activity: 'Active 15m ago', lat: 48.8600, lng: 2.3200 },
+      { name: 'The_Oracle', tier: 'Presidential', role: 'Storage Pro', email: 'oracle@vault.tech', status: 'Offline', activity: 'Active 1h ago', lat: 48.8700, lng: 2.3400 },
+      { name: 'CyberXpert', tier: 'Premium', role: 'Neural Engineer', email: 'cyber@expert.tech', status: 'Online', activity: 'Active 5m ago', lat: 48.8500, lng: 2.3100 },
+      { name: 'Neural_Ninja', tier: 'Premium', role: 'Security Expert', email: 'ninja@neural.net', status: 'Online', activity: 'Active 10m ago', lat: 48.8650, lng: 2.3300 },
+      { name: 'DataWitch', tier: 'VVIP', role: 'AI Specialist', email: 'witch@data.tech', status: 'Online', activity: 'Active 3m ago', lat: 48.8550, lng: 2.3450 },
+      { name: 'QuantumLeap', tier: 'Premium', role: 'Quantum Dev', email: 'quantum@leap.io', status: 'Online', activity: 'Active 8m ago', lat: 48.8580, lng: 2.3380 },
+      { name: 'CryptoMancer', tier: 'Standard', role: 'Blockchain', email: 'crypto@mancer.net', status: 'Away', activity: 'Active 30m ago', lat: 48.8620, lng: 2.3250 },
+      { name: 'NeuralDream', tier: 'VVIP', role: 'ML Engineer', email: 'dream@neural.ai', status: 'Online', activity: 'Active 1m ago', lat: 48.8570, lng: 2.3420 },
+      { name: 'CyberWarden', tier: 'Presidential', role: 'Security Chief', email: 'warden@cyber.org', status: 'Online', activity: 'Active 12m ago', lat: 48.8530, lng: 2.3350 },
+      { name: 'DataStream', tier: 'Premium', role: 'Data Analyst', email: 'stream@data.tech', status: 'Offline', activity: 'Active 2h ago', lat: 48.8590, lng: 2.3280 },
+      { name: 'NeuraLink', tier: 'Standard', role: 'Neural Designer', email: 'link@neura.design', status: 'Online', activity: 'Active 4m ago', lat: 48.8540, lng: 2.3410 }
+    ];
+
+    const servicesData = [
+      { title: 'Deep-Mind Arbitrage', provider: 'Xenon_77', price: '2.44 GAi/hr', category: 'Trading', description: 'Advanced neural arbitrage using quantum-resistant algorithms.', reviews: '127 reviews', rating: '4.9', lat: 48.8566, lng: 2.3522 },
+      { title: 'Biometric Shield Pro', provider: 'Neural_Ninja', price: '1.89 GAi/hr', category: 'Security', description: 'Enterprise-grade biometric security systems.', reviews: '89 reviews', rating: '4.8', lat: 48.8650, lng: 2.3300 },
+      { title: 'Neural Network Design', provider: 'CyberXpert', price: '3.20 GAi/hr', category: 'AI/Neural', description: 'Custom neural network architecture design.', reviews: '156 reviews', rating: '5.0', lat: 48.8500, lng: 2.3100 },
+      { title: 'Quantum Encryption', provider: 'QuantumLeap', price: '2.99 GAi/hr', category: 'Security', description: 'Post-quantum encryption solutions.', reviews: '94 reviews', rating: '4.7', lat: 48.8580, lng: 2.3380 },
+      { title: 'Data Vault Premium', provider: 'The_Oracle', price: '1.50 GAi/hr', category: 'Data', description: 'Secure distributed data storage.', reviews: '203 reviews', rating: '4.9', lat: 48.8700, lng: 2.3400 },
+      { title: 'AI Consultation', provider: 'DataWitch', price: '4.00 GAi/hr', category: 'AI/Neural', description: 'Expert AI implementation guidance.', reviews: '78 reviews', rating: '4.8', lat: 48.8550, lng: 2.3450 }
+    ];
 
     function renderProfiles(filterNearby = false) {
       const grid = document.getElementById('profiles-grid');
@@ -997,20 +953,9 @@
     }
 
     // Initialize profiles on load
-    document.addEventListener('DOMContentLoaded', async function() {
-      // Sync data from Supabase first
-      if (typeof GAiData !== 'undefined') {
-        await GAiData.syncAllData();
-      }
-      // Reload real data after sync
-      loadRealData();
+    document.addEventListener('DOMContentLoaded', function() {
       renderProfiles(false);
       renderServices(false);
-      
-      // Initialize nearby
-      if (typeof GAiNearby !== 'undefined') {
-        GAiNearby.init();
-      }
     });
 
     // Service Modal Functions

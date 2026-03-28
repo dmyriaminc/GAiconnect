@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory | GAi Connect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Manrope', sans-serif; }
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .material-symbols-outlined { font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; }
+    
+    @keyframes pulse-glow { 0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 197, 99, 0.6)); } 50% { filter: drop-shadow(0 0 20px rgba(255, 197, 99, 0.9)); } }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.5s ease-out; }
+    .scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px); }
+    .sidebar-link { transition: all 0.3s ease; }
+    .sidebar-link:hover { transform: translateX(4px); }
+    .sidebar-link.active { background: rgba(255, 197, 99, 0.1); border-left-color: #ffc563; color: #ffc563; }
+    .memory-card { transition: all 0.3s ease; }
+    .memory-card:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(255, 197, 99, 0.1); }
+    .timeline-line { position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #ffc563, #444); }
+    
+    @media (max-width: 1023px) { .sidebar { display: none; } .main-content { margin-left: 0; } }
+    @media (min-width: 1024px) { .main-content { margin-left: 16rem; } }
+  </style>
+</head>
+<body class="bg-neutral-950 min-h-screen text-white">
+  <div class="scanline-overlay"></div>
+  
+  <header class="bg-black/80 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/10 h-16 flex items-center">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between w-full">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="font-headline text-2xl font-black tracking-tighter text-amber-400">GAi Connect</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <span class="px-3 py-1 bg-amber-400/20 text-amber-400 text-xs font-bold rounded-sm">GAi Memory</span>
+        <a href="admin.html" class="text-zinc-400 hover:text-amber-400 transition-colors">
+          <span class="material-symbols-outlined">admin_panel_settings</span>
+        </a>
+        <div class="w-8 h-8 rounded-sm bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-400/30"></div>
+      </div>
+    </div>
+  </header>
+  
+  <aside class="sidebar bg-zinc-950/90 h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col justify-between py-8 pt-20 z-40 border-r border-white/5">
+    <div class="space-y-2">
+      <div class="px-6 mb-6">
+        <div class="flex items-center gap-3 p-3 bg-zinc-900/50 rounded-sm border-l-2 border-amber-400">
+          <div class="w-10 h-10 rounded-sm bg-gradient-to-br from-amber-400/30 to-amber-600/20 border border-amber-400/30 flex items-center justify-center">
+            <span class="material-symbols-outlined text-amber-400 text-lg">psychology</span>
+          </div>
+          <div class="overflow-hidden">
+            <p class="font-headline font-bold text-white text-sm truncate">GAi Memory</p>
+            <p class="text-[10px] text-amber-400 uppercase tracking-widest">Neural Storage</p>
+          </div>
+        </div>
+      </div>
+      <nav class="space-y-1">
+        <a href="dashboard.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">hub</span>
+          <span class="font-headline font-medium text-sm">Connect Feed</span>
+        </a>
+        <a href="#" onclick="alert('Online Members coming soon')" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">groups</span>
+          <span class="font-headline font-medium text-sm">Online Members</span>
+        </a>
+        <a href="services.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">work</span>
+          <span class="font-headline font-medium text-sm">Services</span>
+        </a>
+        <a href="admin.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">admin_panel_settings</span>
+          <span class="font-headline font-medium text-sm">Admin</span>
+        </a>
+        <a href="tools.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">build</span>
+          <span class="font-headline font-medium text-sm">Tools</span>
+        </a>
+        <a href="memory.html" class="sidebar-link active flex items-center gap-3 px-4 py-3 border-l-4 border-transparent">
+          <span class="material-symbols-outlined filled">psychology</span>
+          <span class="font-headline font-medium text-sm">Memory</span>
+        </a>
+        <a href="theme.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">palette</span>
+          <span class="font-headline font-medium text-sm">Theme</span>
+        </a>
+      </nav>
+    </div>
+    <div class="px-4 space-y-4">
+      <div class="border-t border-zinc-900 pt-4 space-y-1">
+        <a class="sidebar-link text-zinc-500 px-4 py-2 flex items-center gap-3 hover:text-white text-xs transition-colors" href="index.html">
+          <span class="material-symbols-outlined text-sm">logout</span>
+          <span>Sign Out</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+  
+  <main class="pt-16 min-h-screen main-content">
+    <div class="p-6">
+      <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 class="font-headline text-4xl font-black text-white uppercase tracking-tighter mb-2">GAi Memory</h1>
+          <p class="text-zinc-400">Neural storage for all activities & interactions</p>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="exportMemory()" class="px-4 py-2 bg-neutral-800 text-white text-sm font-bold uppercase tracking-wider rounded-sm hover:bg-neutral-700 flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">download</span>
+            Export
+          </button>
+          <button onclick="clearMemory()" class="px-4 py-2 bg-red-500/20 text-red-400 text-sm font-bold uppercase tracking-wider rounded-sm hover:bg-red-500/30 flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">delete</span>
+            Clear
+          </button>
+        </div>
+      </div>
+      
+      <!-- GAi Assistant Integration -->
+      <div class="bg-neutral-800 rounded-sm border border-amber-400/30 p-4 mb-6">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-black text-xl">psychology</span>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="font-headline font-bold text-amber-400">GAi Assistant</span>
+              <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            </div>
+            <p class="text-sm text-zinc-400 mb-3">I remember everything. Ask me about your activities, search your history, or request analysis of your patterns.</p>
+            <div class="flex gap-2">
+              <input type="text" id="memory-query" placeholder="Ask GAi about your memory..." class="flex-1 bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-amber-400 text-white" onkeypress="if(event.key==='Enter')queryMemory()">
+              <button onclick="queryMemory()" class="px-4 py-2 bg-amber-400 text-black text-sm font-bold uppercase tracking-wider rounded-sm hover:bg-amber-300">
+                Ask
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <!-- Memory Timeline -->
+        <div class="xl:col-span-2 space-y-6">
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-headline text-lg font-bold text-white">Activity Timeline</h3>
+              <select id="memory-filter" onchange="filterMemory()" class="bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-amber-400 text-white">
+                <option value="all">All Activities</option>
+                <option value="auth">Authentication</option>
+                <option value="search">Searches</option>
+                <option value="tools">Tool Usage</option>
+                <option value="workflow">Workflow</option>
+                <option value="chat">Chat/AI</option>
+                <option value="page">Page Visits</option>
+              </select>
+            </div>
+            <div class="relative" id="memory-timeline">
+              <div class="timeline-line"></div>
+              <div id="memory-list" class="space-y-4">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Stats Panel -->
+        <div class="space-y-6">
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">analytics</span>
+              Memory Stats
+            </h3>
+            <div class="space-y-4">
+              <div class="p-4 bg-neutral-900 rounded-sm">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm text-zinc-400">Total Memories</span>
+                  <span class="font-headline text-xl font-bold text-amber-400" id="stat-total">0</span>
+                </div>
+                <div class="w-full h-2 bg-neutral-700 rounded-full overflow-hidden">
+                  <div class="h-full bg-amber-400" style="width: 100%"></div>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="p-3 bg-neutral-900 rounded-sm text-center">
+                  <span class="material-symbols-outlined text-blue-400 text-xl">search</span>
+                  <p class="font-headline text-lg font-bold text-white" id="stat-search">0</p>
+                  <p class="text-[10px] text-zinc-500">Searches</p>
+                </div>
+                <div class="p-3 bg-neutral-900 rounded-sm text-center">
+                  <span class="material-symbols-outlined text-purple-400 text-xl">build</span>
+                  <p class="font-headline text-lg font-bold text-white" id="stat-tools">0</p>
+                  <p class="text-[10px] text-zinc-500">Tools Used</p>
+                </div>
+                <div class="p-3 bg-neutral-900 rounded-sm text-center">
+                  <span class="material-symbols-outlined text-green-400 text-xl">task_alt</span>
+                  <p class="font-headline text-lg font-bold text-white" id="stat-workflow">0</p>
+                  <p class="text-[10px] text-zinc-500">Workflows</p>
+                </div>
+                <div class="p-3 bg-neutral-900 rounded-sm text-center">
+                  <span class="material-symbols-outlined text-pink-400 text-xl">chat</span>
+                  <p class="font-headline text-lg font-bold text-white" id="stat-chat">0</p>
+                  <p class="text-[10px] text-zinc-500">AI Chats</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">auto_awesome</span>
+              GAi Insights
+            </h3>
+            <div id="gai-insights" class="space-y-3">
+              <div class="p-3 bg-neutral-900 rounded-sm border-l-2 border-amber-400">
+                <p class="text-xs text-zinc-400">Loading insights...</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">cloud</span>
+              Storage Status
+            </h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-zinc-400">Local Storage</span>
+                <span class="text-green-400 text-sm flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">check_circle</span>
+                  Active
+                </span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-zinc-400">Sync Status</span>
+                <span class="text-amber-400 text-sm flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">sync</span>
+                  Synced
+                </span>
+              </div>
+              <div class="w-full h-2 bg-neutral-700 rounded-full overflow-hidden mt-2">
+                <div class="h-full bg-gradient-to-r from-amber-400 to-orange-500" style="width: 15%"></div>
+              </div>
+              <p class="text-xs text-zinc-500">15% of storage used</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-black/90 backdrop-blur-2xl lg:hidden z-50 border-t border-amber-400/20">
+    <a href="dashboard.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">hub</span>
+      <span class="text-[10px] font-bold uppercase">Feed</span>
+    </a>
+    <a href="services.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">work</span>
+      <span class="text-[10px] font-bold uppercase">Services</span>
+    </a>
+    <a href="admin.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span class="text-[10px] font-bold uppercase">Admin</span>
+    </a>
+    <a href="tools.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">build</span>
+      <span class="text-[10px] font-bold uppercase">Tools</span>
+    </a>
+    <a href="memory.html" class="flex flex-col items-center justify-center text-amber-400 bg-amber-400/5 rounded-xl py-1 px-4">
+      <span class="material-symbols-outlined">psychology</span>
+      <span class="text-[10px] font-bold uppercase">Memory</span>
+    </a>
+  </nav>
+  
+  <!-- GAi Chat Widget -->
+  <div id="gai-memory-chat" class="fixed bottom-20 right-6 z-50 lg:hidden">
+    <button onclick="toggleMemoryChat()" class="w-12 h-12 bg-amber-400 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+      <span class="material-symbols-outlined text-black">chat</span>
+    </button>
+  </div>
+  
+  <script>
+    // Memory Storage System
+    const MemorySystem = {
+      storageKey: 'gai_memory_store',
+      
+      init() {
+        this.loadMemory();
+        this.render();
+        this.trackActivity('page', 'Memory page accessed');
+      },
+      
+      getMemory() {
+        return JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+      },
+      
+      saveMemory(memory) {
+        localStorage.setItem(this.storageKey, JSON.stringify(memory));
+      },
+      
+      addMemory(type, title, description, metadata = {}) {
+        const memory = this.getMemory();
+        const newMemory = {
+          id: Date.now(),
+          type: type,
+          title: title,
+          description: description,
+          metadata: metadata,
+          timestamp: new Date().toISOString(),
+          gai_remembered: true
+        };
+        memory.unshift(newMemory);
+        this.saveMemory(memory);
+        this.render();
+        return newMemory;
+      },
+      
+      loadMemory() {
+        const memory = this.getMemory();
+        if (memory.length === 0) {
+          // Add sample memories for demo
+          const sampleMemories = [
+            { type: 'auth', title: 'Biometric Login', description: 'Face recognition successful', timestamp: new Date(Date.now() - 3600000).toISOString() },
+            { type: 'tools', title: 'Background Search', description: 'Searched IP: 192.168.1.1', timestamp: new Date(Date.now() - 7200000).toISOString() },
+            { type: 'workflow', title: 'Project Created', description: 'New project: GAi Platform v2.0', timestamp: new Date(Date.now() - 10800000).toISOString() },
+            { type: 'chat', title: 'AI Conversation', description: 'Asked about membership plans', timestamp: new Date(Date.now() - 14400000).toISOString() },
+            { type: 'page', title: 'Page Visit', description: 'Accessed Admin Dashboard', timestamp: new Date(Date.now() - 18000000).toISOString() },
+            { type: 'search', title: 'Reverse Image Search', description: 'Analyzed: profile_photo.jpg', timestamp: new Date(Date.now() - 21600000).toISOString() },
+          ];
+          sampleMemories.forEach(m => this.addMemory(m.type, m.title, m.description));
+        }
+      },
+      
+      trackActivity(type, description, metadata = {}) {
+        const titles = {
+          auth: 'Authentication',
+          search: 'Search',
+          tools: 'Tool Usage',
+          workflow: 'Workflow',
+          chat: 'AI Chat',
+          page: 'Page Visit'
+        };
+        this.addMemory(type, titles[type] || 'Activity', description, metadata);
+      },
+      
+      render(filter = 'all') {
+        const memory = this.getMemory();
+        const filtered = filter === 'all' ? memory : memory.filter(m => m.type === filter);
+        
+        const list = document.getElementById('memory-list');
+        const icons = {
+          auth: 'fingerprint',
+          search: 'search',
+          tools: 'build',
+          workflow: 'task_alt',
+          chat: 'chat',
+          page: 'visibility'
+        };
+        const colors = {
+          auth: 'amber',
+          search: 'blue',
+          tools: 'purple',
+          workflow: 'green',
+          chat: 'pink',
+          page: 'cyan'
+        };
+        
+        list.innerHTML = filtered.map(m => `
+          <div class="memory-card relative pl-12 animate-fadeIn">
+            <div class="absolute left-0 top-0 w-12 h-12 rounded-full bg-${colors[m.type]}-500/20 flex items-center justify-center">
+              <span class="material-symbols-outlined text-${colors[m.type]}-400 text-xl">${icons[m.type]}</span>
+            </div>
+            <div class="bg-neutral-900 p-4 rounded-sm ml-4">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-white text-sm">${m.title}</span>
+                <span class="text-[10px] text-zinc-500">${this.formatTime(m.timestamp)}</span>
+              </div>
+              <p class="text-xs text-zinc-400">${m.description}</p>
+            </div>
+          </div>
+        `).join('');
+        
+        this.updateStats();
+        this.generateInsights();
+      },
+      
+      updateStats() {
+        const memory = this.getMemory();
+        document.getElementById('stat-total').textContent = memory.length;
+        document.getElementById('stat-search').textContent = memory.filter(m => m.type === 'search').length;
+        document.getElementById('stat-tools').textContent = memory.filter(m => m.type === 'tools').length;
+        document.getElementById('stat-workflow').textContent = memory.filter(m => m.type === 'workflow').length;
+        document.getElementById('stat-chat').textContent = memory.filter(m => m.type === 'chat').length;
+      },
+      
+      generateInsights() {
+        const memory = this.getMemory();
+        const insights = [];
+        
+        if (memory.length > 0) {
+          const recentTools = memory.filter(m => m.type === 'tools').length;
+          const recentSearch = memory.filter(m => m.type === 'search').length;
+          
+          if (recentTools > 3) {
+            insights.push({ type: 'positive', text: `You've used tools ${recentTools} times - productivity is high!` });
+          }
+          if (recentSearch > 0) {
+            insights.push({ type: 'info', text: `You made ${recentSearch} searches recently.` });
+          }
+          insights.push({ type: 'success', text: `GAi remembers ${memory.length} activities from your session.` });
+        }
+        
+        const container = document.getElementById('gai-insights');
+        container.innerHTML = insights.length > 0 ? insights.map(i => `
+          <div class="p-3 bg-neutral-900 rounded-sm border-l-2 border-${i.type === 'positive' ? 'green' : i.type === 'info' ? 'blue' : 'amber'}-400">
+            <p class="text-xs text-zinc-400">${i.text}</p>
+          </div>
+        `).join('') : '<div class="p-3 bg-neutral-900 rounded-sm"><p class="text-xs text-zinc-400">No insights available yet.</p></div>';
+      },
+      
+      formatTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = now - date;
+        
+        if (diff < 60000) return 'Just now';
+        if (diff < 3600000) return Math.floor(diff / 60000) + ' min ago';
+        if (diff < 86400000) return Math.floor(diff / 3600000) + ' hours ago';
+        return date.toLocaleDateString();
+      },
+      
+      query(query) {
+        const memory = this.getMemory();
+        const lowerQuery = query.toLowerCase();
+        
+        const results = memory.filter(m => 
+          m.title.toLowerCase().includes(lowerQuery) ||
+          m.description.toLowerCase().includes(lowerQuery)
+        );
+        
+        if (results.length === 0) {
+          return "I couldn't find any memories matching that. Try a different search term.";
+        }
+        
+        return `Found ${results.length} memories:\n\n` + results.slice(0, 5).map(m => 
+          `• ${m.title}: ${m.description} (${this.formatTime(m.timestamp)})`
+        ).join('\n');
+      }
+    };
+    
+    function filterMemory() {
+      const filter = document.getElementById('memory-filter').value;
+      MemorySystem.render(filter);
+    }
+    
+    function queryMemory() {
+      const query = document.getElementById('memory-query').value.trim();
+      if (!query) return;
+      
+      MemorySystem.trackActivity('chat', `Asked: "${query}"`);
+      const response = MemorySystem.query(query);
+      alert('GAi Memory:\n\n' + response);
+      document.getElementById('memory-query').value = '';
+    }
+    
+    function exportMemory() {
+      const memory = MemorySystem.getMemory();
+      const blob = new Blob([JSON.stringify(memory, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'gai-memory-' + new Date().toISOString().split('T')[0] + '.json';
+      a.click();
+    }
+    
+    function clearMemory() {
+      if (confirm('Clear all GAi memories? This cannot be undone.')) {
+        localStorage.removeItem(MemorySystem.storageKey);
+        MemorySystem.render();
+        alert('All memories cleared.');
+      }
+    }
+    
+    function toggleMemoryChat() {
+      alert('GAi Memory Chat - Use the query box above to search your memories.');
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      MemorySystem.init();
+    });
+  </script>
+</body>
+</html>

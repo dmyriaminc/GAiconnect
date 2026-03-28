@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tools | GAi Connect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Manrope', sans-serif; }
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .material-symbols-outlined { font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; }
+    
+    @keyframes pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 197, 99, 0.6)); }
+      50% { filter: drop-shadow(0 0 20px rgba(255, 197, 99, 0.9)); }
+    }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .scanline-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px);
+    }
+    .glass-panel { background: rgba(41, 37, 36, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 197, 99, 0.2); }
+    .badge { padding: 2px 8px; border-radius: 2px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .tool-card { transition: all 0.3s ease; }
+    .tool-card:hover { transform: translateY(-4px); box-shadow: 0 0 30px rgba(255, 197, 99, 0.15); }
+    .tab-btn { transition: all 0.2s ease; }
+    .tab-btn.active { background: #ffc563; color: #000; }
+    .terminal-cursor { animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .sidebar-link { transition: all 0.3s ease; }
+    .sidebar-link:hover { transform: translateX(4px); }
+    .sidebar-link.active { background: rgba(255, 197, 99, 0.1); border-left-color: #ffc563; color: #ffc563; }
+    
+    @media (max-width: 1023px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; }
+    }
+    @media (min-width: 1024px) {
+      .main-content { margin-left: 16rem; }
+    }
+  </style>
+</head>
+<body class="bg-neutral-950 min-h-screen text-white">
+  <div class="scanline-overlay"></div>
+  
+  <header class="bg-black/80 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/10 h-16 flex items-center">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between w-full">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="font-headline text-2xl font-black tracking-tighter text-amber-400">GAi Connect</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <span class="badge bg-amber-400/20 text-amber-400">Admin Tools</span>
+        <a href="admin.html" class="text-zinc-400 hover:text-amber-400 transition-colors">
+          <span class="material-symbols-outlined">admin_panel_settings</span>
+        </a>
+        <div class="w-8 h-8 rounded-sm bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-400/30"></div>
+      </div>
+    </div>
+  </header>
+  
+  <aside class="sidebar bg-zinc-950/90 h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col justify-between py-8 pt-20 z-40 border-r border-white/5">
+    <div class="space-y-2">
+      <div class="px-6 mb-6">
+        <div class="flex items-center gap-3 p-3 bg-zinc-900/50 rounded-sm border-l-2 border-amber-400">
+          <div class="w-10 h-10 rounded-sm bg-gradient-to-br from-amber-400/30 to-amber-600/20 border border-amber-400/30 flex items-center justify-center">
+            <span class="material-symbols-outlined text-amber-400 text-lg">build</span>
+          </div>
+          <div class="overflow-hidden">
+            <p class="font-headline font-bold text-white text-sm truncate">OSINT Tools</p>
+            <p class="text-[10px] text-amber-400 uppercase tracking-widest">Terminal</p>
+          </div>
+        </div>
+      </div>
+      <nav class="space-y-1">
+        <a href="dashboard.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">hub</span>
+          <span class="font-headline font-medium text-sm">Connect Feed</span>
+        </a>
+        <a href="members.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">groups</span>
+          <span class="font-headline font-medium text-sm">Online Members</span>
+        </a>
+        <a href="services.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">work</span>
+          <span class="font-headline font-medium text-sm">Services</span>
+        </a>
+        <a href="admin.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">admin_panel_settings</span>
+          <span class="font-headline font-medium text-sm">Admin</span>
+        </a>
+        <a href="tools.html" class="sidebar-link active flex items-center gap-3 px-4 py-3 border-l-4 border-transparent">
+          <span class="material-symbols-outlined filled">build</span>
+          <span class="font-headline font-medium text-sm">Tools</span>
+        </a>
+        <a href="theme.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">palette</span>
+          <span class="font-headline font-medium text-sm">Theme</span>
+        </a>
+        <a href="memory.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">psychology</span>
+          <span class="font-headline font-medium text-sm">Memory</span>
+        </a>
+      </nav>
+    </div>
+    <div class="px-4 space-y-4">
+      <div class="border-t border-zinc-900 pt-4 space-y-1">
+        <a class="sidebar-link text-zinc-500 px-4 py-2 flex items-center gap-3 hover:text-white text-xs transition-colors" href="index.html">
+          <span class="material-symbols-outlined text-sm">logout</span>
+          <span>Sign Out</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+  
+  <main class="pt-16 min-h-screen main-content">
+    <div class="p-6">
+      <div class="mb-8">
+        <h1 class="font-headline text-4xl font-black text-white uppercase tracking-tighter mb-2">OSINT Terminal</h1>
+        <p class="text-zinc-400">Advanced search, analysis & automation tools</p>
+      </div>
+      
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <!-- Terminal Panel -->
+        <div class="xl:col-span-2 space-y-6">
+          <!-- Terminal -->
+          <div class="bg-black rounded-sm border border-zinc-800 overflow-hidden">
+            <div class="bg-zinc-900 px-4 py-2 flex items-center gap-2 border-b border-zinc-800">
+              <div class="flex gap-2">
+                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                <span class="w-3 h-3 rounded-full bg-green-500"></span>
+              </div>
+              <span class="ml-4 font-mono text-xs text-zinc-500">GAi Terminal v2.0</span>
+            </div>
+            <div class="p-4 font-mono text-sm min-h-[300px]" id="terminal-output">
+              <div class="text-amber-400 mb-2">┌── GAi OSINT Terminal</div>
+              <div class="text-zinc-500 mb-4">│  Type a command or select a tool below</div>
+              <div class="text-zinc-400 mb-1">$ <span class="text-white">help</span></div>
+              <div class="text-zinc-500 ml-4 mb-4">Available commands: search, reverse, analyze, social, forecast, content, build</div>
+              <div class="text-zinc-400 mb-1">$ <span class="text-white">status</span></div>
+              <div class="text-zinc-500 ml-4">All systems operational. 7 tools loaded.</div>
+              <div class="mt-4 flex items-center gap-2">
+                <span class="text-amber-400">$</span>
+                <input type="text" id="terminal-input" class="bg-transparent border-none outline-none text-white flex-1 font-mono" placeholder="Enter command..." autofocus>
+                <button onclick="executeCommand()" class="px-3 py-1 bg-amber-400 text-black text-xs font-bold uppercase hover:bg-amber-300">Run</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Tool Categories -->
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4">Tool Categories</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <button onclick="openTool('search')" class="tool-card bg-neutral-900 p-4 rounded-sm border border-zinc-800 hover:border-amber-400 cursor-pointer text-left">
+                <span class="material-symbols-outlined text-amber-400 text-2xl mb-2">search</span>
+                <p class="font-headline text-sm font-bold text-white">Background Search</p>
+                <p class="text-xs text-zinc-500 mt-1">Name, phone, email, IP</p>
+              </button>
+              <button onclick="openTool('reverse')" class="tool-card bg-neutral-900 p-4 rounded-sm border border-zinc-800 hover:border-purple-400 cursor-pointer text-left">
+                <span class="material-symbols-outlined text-purple-400 text-2xl mb-2">image_search</span>
+                <p class="font-headline text-sm font-bold text-white">Reverse Search</p>
+                <p class="text-xs text-zinc-500 mt-1">Image & face recognition</p>
+              </button>
+              <button onclick="openTool('analyze')" class="tool-card bg-neutral-900 p-4 rounded-sm border border-zinc-800 hover:border-cyan-400 cursor-pointer text-left">
+                <span class="material-symbols-outlined text-cyan-400 text-2xl mb-2">analytics</span>
+                <p class="font-headline text-sm font-bold text-white">Media Analysis</p>
+                <p class="text-xs text-zinc-500 mt-1">Audio, video, document</p>
+              </button>
+              <button onclick="openTool('social')" class="tool-card bg-neutral-900 p-4 rounded-sm border border-zinc-800 hover:border-green-400 cursor-pointer text-left">
+                <span class="material-symbols-outlined text-green-400 text-2xl mb-2">campaign</span>
+                <p class="font-headline text-sm font-bold text-white">Social Media AI</p>
+                <p class="text-xs text-zinc-500 mt-1">Marketing & engagement</p>
+              </button>
+              <button onclick="openTool('forecast')" class="tool-card bg-neutral-900 p-4 rounded-sm border border-zinc-800 hover:border-blue-400 cursor-pointer text-left">
+                <span class="material-symbols-outlined text-blue-400 text-2xl mb-2">trending_up</span>
+                <p class="font-headline text-sm font-bold text-white">Forecasting</p>
+                <p class="text-xs text-zinc-500 mt-1">Forex, sports, trends</p>
+              </button>
+              <button onclick="openTool('content')" class="tool-card bg-neutral-900 p-4 rounded-sm border border-zinc-800 hover:border-pink-400 cursor-pointer text-left">
+                <span class="material-symbols-outlined text-pink-400 text-2xl mb-2">auto_awesome</span>
+                <p class="font-headline text-sm font-bold text-white">Content Gen</p>
+                <p class="text-xs text-zinc-500 mt-1">AI content creation</p>
+              </button>
+              <button onclick="openTool('build')" class="tool-card bg-neutral-900 p-4 rounded-sm border border-zinc-800 hover:border-orange-400 cursor-pointer text-left">
+                <span class="material-symbols-outlined text-orange-400 text-2xl mb-2">construction</span>
+                <p class="font-headline text-sm font-bold text-white">Tool Builder</p>
+                <p class="text-xs text-zinc-500 mt-1">AI environments</p>
+              </button>
+              <button onclick="openTool('dump')" class="tool-card bg-neutral-900 p-4 rounded-sm border border-zinc-800 hover:border-red-400 cursor-pointer text-left">
+                <span class="material-symbols-outlined text-red-400 text-2xl mb-2">download</span>
+                <p class="font-headline text-sm font-bold text-white">Dump Users</p>
+                <p class="text-xs text-zinc-500 mt-1">Export user data</p>
+              </button>
+              <button onclick="openTool('photo')" class="tool-card bg-neutral-900 p-4 rounded-sm border border-zinc-800 hover:border-yellow-400 cursor-pointer text-left">
+                <span class="material-symbols-outlined text-yellow-400 text-2xl mb-2">photo_camera</span>
+                <p class="font-headline text-sm font-bold text-white">Photo Generator</p>
+                <p class="text-xs text-zinc-500 mt-1">AI image creation</p>
+              </button>
+              <button onclick="openTool('all')" class="tool-card bg-neutral-900 p-4 rounded-sm border border-zinc-800 hover:border-zinc-600 cursor-pointer text-left">
+                <span class="material-symbols-outlined text-zinc-400 text-2xl mb-2">apps</span>
+                <p class="font-headline text-sm font-bold text-white">All Tools</p>
+                <p class="text-xs text-zinc-500 mt-1">View complete list</p>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Results Panel -->
+        <div class="space-y-6">
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">terminal</span>
+              Active Tool
+            </h3>
+            <div id="active-tool-panel">
+              <div class="text-center py-8">
+                <span class="material-symbols-outlined text-zinc-600 text-4xl mb-4">build</span>
+                <p class="text-zinc-500 text-sm">Select a tool to begin</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">history</span>
+              Recent Searches
+            </h3>
+            <div class="space-y-3" id="search-history">
+              <div class="flex items-center gap-3 p-3 bg-neutral-900 rounded-sm">
+                <span class="material-symbols-outlined text-amber-400 text-sm">search</span>
+                <div class="flex-1 overflow-hidden">
+                  <p class="text-xs text-white truncate">IP Lookup: 192.168.1.1</p>
+                  <p class="text-[10px] text-zinc-500">2 min ago</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-neutral-900 rounded-sm">
+                <span class="material-symbols-outlined text-purple-400 text-sm">image_search</span>
+                <div class="flex-1 overflow-hidden">
+                  <p class="text-xs text-white truncate">Face ID: user_photo.jpg</p>
+                  <p class="text-[10px] text-zinc-500">15 min ago</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-neutral-900 rounded-sm">
+                <span class="material-symbols-outlined text-cyan-400 text-sm">analytics</span>
+                <div class="flex-1 overflow-hidden">
+                  <p class="text-xs text-white truncate">Audio: interview.mp3</p>
+                  <p class="text-[10px] text-zinc-500">1 hour ago</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">memory</span>
+              System Status
+            </h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-zinc-400">API Status</span>
+                <span class="badge bg-green-500/15 text-green-500">Online</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-zinc-400">Ollama</span>
+                <span class="badge bg-green-500/15 text-green-500">Connected</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-zinc-400">LM Studio</span>
+                <span class="badge bg-green-500/15 text-green-500">Connected</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-zinc-400">Hugging Face</span>
+                <span class="badge bg-amber-500/15 text-amber-500">Standby</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-zinc-400">OpenCode</span>
+                <span class="badge bg-green-500/15 text-green-500">Connected</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-black/90 backdrop-blur-2xl lg:hidden z-50 border-t border-amber-400/20">
+    <a href="dashboard.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">hub</span>
+      <span class="text-[10px] font-bold uppercase">Feed</span>
+    </a>
+    <a href="services.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">work</span>
+      <span class="text-[10px] font-bold uppercase">Services</span>
+    </a>
+    <a href="admin.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span class="text-[10px] font-bold uppercase">Admin</span>
+    </a>
+    <a href="tools.html" class="flex flex-col items-center justify-center text-amber-400 bg-amber-400/5 rounded-xl py-1 px-4">
+      <span class="material-symbols-outlined">build</span>
+      <span class="text-[10px] font-bold uppercase">Tools</span>
+    </a>
+    <a href="theme.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">palette</span>
+      <span class="text-[10px] font-bold uppercase">Theme</span>
+    </a>
+    <a href="memory.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">psychology</span>
+      <span class="text-[10px] font-bold uppercase">Memory</span>
+    </a>
+  </nav>
+  
+  <script>
+    const terminalOutput = document.getElementById('terminal-output');
+    const terminalInput = document.getElementById('terminal-input');
+    
+    terminalInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        executeCommand();
+      }
+    });
+    
+    function executeCommand() {
+      const cmd = terminalInput.value.trim().toLowerCase();
+      if (!cmd) return;
+      
+      addToTerminal(`$ ${terminalInput.value}`);
+      terminalInput.value = '';
+      
+      const responses = {
+        'help': 'Available commands:\n  search  - Background search (name, phone, email, IP)\n  reverse - Reverse image/face search\n  analyze - Audio/video/document analysis\n  social  - Social media marketing AI\n  forecast - Forex, sports predictions\n  content - AI content generation\n  build   - Tool builder / AI environments\n  status  - System status\n  clear   - Clear terminal',
+        'search': 'Opening Background Search tool...\n  [✓] Name Lookup\n  [✓] Phone Lookup\n  [✓] Email Lookup\n  [✓] IP Lookup',
+        'reverse': 'Opening Reverse Image Search...\n  [✓] Image Recognition\n  [✓] Face Detection\n  [✓] Visual Search',
+        'analyze': 'Opening Media Analysis tools...\n  [✓] Audio Analysis\n  [✓] Video Processing\n  [✓] Document OCR',
+        'social': 'Opening Social Media AI...\n  [✓] Post Scheduler\n  [✓] Engagement Analyzer\n  [✓] Trend Tracker',
+        'forecast': 'Opening Forecasting tools...\n  [✓] Forex Predictor\n  [✓] Sports Analytics\n  [✓] Market Trends',
+        'content': 'Opening Content Generator...\n  [✓] Article Writer\n  [✓] Social Posts\n  [✓] Code Generator',
+        'build': 'Opening Tool Builder...\n  [✓] Custom Scripts\n  [✓] API Integrations\n  [✓] Automation Flows',
+        'dump': 'Opening Dump Users tool...\n  [✓] User Data Extraction\n  [✓] Export Formats: JSON, CSV, XML\n  [✓] Batch Processing\n  [✓] Admin Authorization Required',
+        'photo': 'Opening Photo Generator...\n  [✓] DALL-E 3 Integration\n  [✓] Stable Diffusion XL\n  [✓] Midjourney V6\n  [✓] Local Models (Ollama)',
+        'status': 'System Status:\n  API: Online\n  Ollama: Connected\n  LM Studio: Connected\n  HuggingFace: Standby\n  OpenCode: Connected',
+        'clear': 'CLEAR'
+      };
+      
+      if (responses[cmd]) {
+        if (responses[cmd] === 'CLEAR') {
+          terminalOutput.innerHTML = '';
+        } else {
+          addToTerminal(responses[cmd]);
+        }
+      } else {
+        addToTerminal(`Command not found: ${cmd}\nType 'help' for available commands`);
+      }
+      
+      terminalOutput.parentElement.scrollTop = terminalOutput.parentElement.scrollHeight;
+    }
+    
+    function addToTerminal(text) {
+      const lines = text.split('\n');
+      lines.forEach(line => {
+        const div = document.createElement('div');
+        div.className = 'text-zinc-400 ml-4 mb-1';
+        if (line.startsWith('$')) {
+          div.className = 'text-zinc-400 mb-1';
+          div.textContent = line;
+        } else if (line.includes('✓')) {
+          div.className = 'text-green-400 ml-4 mb-1';
+          div.textContent = '  ' + line;
+        } else if (line.startsWith('Available') || line.startsWith('  search') || line.startsWith('  reverse')) {
+          div.className = 'text-zinc-500 text-xs ml-4 mb-1';
+          div.textContent = line;
+        } else {
+          div.textContent = '  ' + line;
+        }
+        terminalOutput.appendChild(div);
+      });
+    }
+    
+    function openTool(tool) {
+      const panel = document.getElementById('active-tool-panel');
+      const toolInfo = {
+        search: {
+          icon: 'search',
+          title: 'Background Search',
+          color: 'amber',
+          desc: 'Search by name, phone, email, or IP address',
+          inputs: `
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Search Type</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-amber-400 text-white">
+                  <option>Name</option>
+                  <option>Phone Number</option>
+                  <option>Email Address</option>
+                  <option>IP Address</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Query</label>
+                <input type="text" placeholder="Enter search query..." class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-amber-400 text-white">
+              </div>
+              <button onclick="runSearch()" class="w-full py-2.5 bg-amber-400 text-black font-headline font-bold text-sm uppercase tracking-widest hover:bg-amber-300 rounded-sm cursor-pointer">
+                Search
+              </button>
+            </div>
+          `
+        },
+        reverse: {
+          icon: 'image_search',
+          title: 'Reverse Image Search',
+          color: 'purple',
+          desc: 'Upload image for facial recognition or visual search',
+          inputs: `
+            <div class="space-y-3">
+              <div class="border-2 border-dashed border-zinc-700 rounded-sm p-8 text-center">
+                <span class="material-symbols-outlined text-zinc-500 text-4xl mb-2">cloud_upload</span>
+                <p class="text-sm text-zinc-500">Drop image here or click to upload</p>
+                <input type="file" class="hidden" id="image-upload">
+              </div>
+              <div class="flex gap-2">
+                <button class="flex-1 py-2 bg-purple-500 text-white text-sm font-bold uppercase hover:bg-purple-400 rounded-sm cursor-pointer">
+                  Face ID
+                </button>
+                <button class="flex-1 py-2 bg-purple-500 text-white text-sm font-bold uppercase hover:bg-purple-400 rounded-sm cursor-pointer">
+                  Visual Search
+                </button>
+              </div>
+            </div>
+          `
+        },
+        analyze: {
+          icon: 'analytics',
+          title: 'Media Analysis',
+          color: 'cyan',
+          desc: 'Analyze audio, video, or documents',
+          inputs: `
+            <div class="space-y-3">
+              <div class="grid grid-cols-3 gap-2">
+                <button class="p-3 bg-neutral-900 rounded-sm border border-zinc-700 hover:border-cyan-400 cursor-pointer text-center">
+                  <span class="material-symbols-outlined text-cyan-400">mic</span>
+                  <p class="text-xs text-zinc-500 mt-1">Audio</p>
+                </button>
+                <button class="p-3 bg-neutral-900 rounded-sm border border-zinc-700 hover:border-cyan-400 cursor-pointer text-center">
+                  <span class="material-symbols-outlined text-cyan-400">videocam</span>
+                  <p class="text-xs text-zinc-500 mt-1">Video</p>
+                </button>
+                <button class="p-3 bg-neutral-900 rounded-sm border border-zinc-700 hover:border-cyan-400 cursor-pointer text-center">
+                  <span class="material-symbols-outlined text-cyan-400">description</span>
+                  <p class="text-xs text-zinc-500 mt-1">Document</p>
+                </button>
+              </div>
+              <div class="border-2 border-dashed border-zinc-700 rounded-sm p-6 text-center">
+                <span class="material-symbols-outlined text-zinc-500 text-3xl mb-2">upload_file</span>
+                <p class="text-xs text-zinc-500">Upload media file</p>
+              </div>
+            </div>
+          `
+        },
+        social: {
+          icon: 'campaign',
+          title: 'Social Media AI',
+          color: 'green',
+          desc: 'Schedule posts, analyze engagement, track trends',
+          inputs: `
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Platform</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-green-400 text-white">
+                  <option>All Platforms</option>
+                  <option>Twitter/X</option>
+                  <option>Instagram</option>
+                  <option>LinkedIn</option>
+                  <option>TikTok</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Action</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-green-400 text-white">
+                  <option>Create Post</option>
+                  <option>Schedule Post</option>
+                  <option>Analyze Engagement</option>
+                  <option>Track Trends</option>
+                </select>
+              </div>
+              <button class="w-full py-2.5 bg-green-500 text-white font-headline font-bold text-sm uppercase tracking-widest hover:bg-green-400 rounded-sm cursor-pointer">
+                Execute
+              </button>
+            </div>
+          `
+        },
+        forecast: {
+          icon: 'trending_up',
+          title: 'Forecasting',
+          color: 'blue',
+          desc: 'Forex, sports predictions, market trends',
+          inputs: `
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Prediction Type</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-blue-400 text-white">
+                  <option>Forex</option>
+                  <option>Sports</option>
+                  <option>Crypto</option>
+                  <option>Stocks</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Asset/Pair</label>
+                <input type="text" placeholder="e.g., EUR/USD, BTC/USD" class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-blue-400 text-white">
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Timeframe</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-blue-400 text-white">
+                  <option>1 Hour</option>
+                  <option>24 Hours</option>
+                  <option>7 Days</option>
+                  <option>30 Days</option>
+                </select>
+              </div>
+              <button class="w-full py-2.5 bg-blue-500 text-white font-headline font-bold text-sm uppercase tracking-widest hover:bg-blue-400 rounded-sm cursor-pointer">
+                Generate Prediction
+              </button>
+            </div>
+          `
+        },
+        content: {
+          icon: 'auto_awesome',
+          title: 'Content Generation',
+          color: 'pink',
+          desc: 'AI-powered content creation',
+          inputs: `
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Content Type</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-pink-400 text-white">
+                  <option>Article</option>
+                  <option>Social Post</option>
+                  <option>Email</option>
+                  <option>Code</option>
+                  <option>Script</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Topic</label>
+                <input type="text" placeholder="Describe what you want..." class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-pink-400 text-white">
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Tone</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-pink-400 text-white">
+                  <option>Professional</option>
+                  <option>Casual</option>
+                  <option>Technical</option>
+                  <option>Creative</option>
+                </select>
+              </div>
+              <button class="w-full py-2.5 bg-pink-500 text-white font-headline font-bold text-sm uppercase tracking-widest hover:bg-pink-400 rounded-sm cursor-pointer">
+                Generate
+              </button>
+            </div>
+          `
+        },
+        build: {
+          icon: 'construction',
+          title: 'Tool Builder',
+          color: 'orange',
+          desc: 'Create custom AI tools and automation',
+          inputs: `
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Tool Type</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-orange-400 text-white">
+                  <option>Custom Script</option>
+                  <option>API Connector</option>
+                  <option>Automation Flow</option>
+                  <option>Webhook</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">AI Model</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-orange-400 text-white">
+                  <option>GPT-4 Turbo</option>
+                  <option>Claude 3 Opus</option>
+                  <option>Llama 3 (Local)</option>
+                  <option>Mistral (Local)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Description</label>
+                <textarea rows="3" placeholder="Describe your tool..." class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-orange-400 text-white"></textarea>
+              </div>
+              <button class="w-full py-2.5 bg-orange-500 text-white font-headline font-bold text-sm uppercase tracking-widest hover:bg-orange-400 rounded-sm cursor-pointer">
+                Build Tool
+              </button>
+            </div>
+          `
+        },
+        dump: {
+          icon: 'download',
+          title: 'Dump Users',
+          color: 'red',
+          desc: 'Extract and export user data with advanced filters',
+          inputs: `
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Dump Type</label>
+                <select id="dump-type" class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-red-400 text-white">
+                  <option value="all">All Users</option>
+                  <option value="active">Active Users</option>
+                  <option value="premium">Premium Members</option>
+                  <option value="new">New Registrations</option>
+                  <option value="inactive">Inactive Users</option>
+                </select>
+              </div>
+              
+              <div class="border-t border-zinc-700 pt-3">
+                <label class="text-xs text-amber-400 uppercase tracking-wider block mb-2">User Attributes Filter</label>
+                
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="text-[10px] text-zinc-500 block mb-1">Nationality</label>
+                    <select class="w-full bg-neutral-900 border border-zinc-700 text-xs px-2 py-1.5 rounded-sm text-white">
+                      <option value="">All</option>
+                      <option>American</option>
+                      <option>British</option>
+                      <option>Canadian</option>
+                      <option>Australian</option>
+                      <option>German</option>
+                      <option>French</option>
+                      <option>Spanish</option>
+                      <option>Italian</option>
+                      <option>Japanese</option>
+                      <option>Korean</option>
+                      <option>Chinese</option>
+                      <option>Indian</option>
+                      <option>Brazilian</option>
+                      <option>Mexican</option>
+                      <option>African</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-zinc-500 block mb-1">Ethnicity</label>
+                    <select class="w-full bg-neutral-900 border border-zinc-700 text-xs px-2 py-1.5 rounded-sm text-white">
+                      <option value="">All</option>
+                      <option>Caucasian</option>
+                      <option>African American</option>
+                      <option>Hispanic/Latino</option>
+                      <option>Asian</option>
+                      <option>Middle Eastern</option>
+                      <option>South Asian</option>
+                      <option>Pacific Islander</option>
+                      <option>Mixed/Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-zinc-500 block mb-1">Skin Color</label>
+                    <select class="w-full bg-neutral-900 border border-zinc-700 text-xs px-2 py-1.5 rounded-sm text-white">
+                      <option value="">All</option>
+                      <option>Very Light</option>
+                      <option>Light</option>
+                      <option>Medium</option>
+                      <option>Olive</option>
+                      <option>Brown</option>
+                      <option>Dark Brown</option>
+                      <option>Very Dark</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-zinc-500 block mb-1">Hair Color</label>
+                    <select class="w-full bg-neutral-900 border border-zinc-700 text-xs px-2 py-1.5 rounded-sm text-white">
+                      <option value="">All</option>
+                      <option>Black</option>
+                      <option>Brown</option>
+                      <option>Blonde</option>
+                      <option>Red/Auburn</option>
+                      <option>Gray/White</option>
+                      <option>Blue</option>
+                      <option>Green</option>
+                      <option>Colored/Bold</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-zinc-500 block mb-1">Gender</label>
+                    <select class="w-full bg-neutral-900 border border-zinc-700 text-xs px-2 py-1.5 rounded-sm text-white">
+                      <option value="">All</option>
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Non-Binary</option>
+                      <option>Transgender</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-zinc-500 block mb-1">Age Range</label>
+                    <select class="w-full bg-neutral-900 border border-zinc-700 text-xs px-2 py-1.5 rounded-sm text-white">
+                      <option value="">All Ages</option>
+                      <option>18-24</option>
+                      <option>25-34</option>
+                      <option>35-44</option>
+                      <option>45-54</option>
+                      <option>55-64</option>
+                      <option>65+</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="mt-2">
+                  <label class="text-[10px] text-zinc-500 block mb-1">Dressing Sense</label>
+                  <select class="w-full bg-neutral-900 border border-zinc-700 text-xs px-2 py-1.5 rounded-sm text-white">
+                    <option value="">All Styles</option>
+                    <option>Casual</option>
+                    <option>Formal</option>
+                    <option>Streetwear</option>
+                    <option>Business</option>
+                    <option>Sporty</option>
+                    <option>Alternative</option>
+                    <option>Minimalist</option>
+                    <option>Luxury</option>
+                    <option>Bohemian</option>
+                    <option>Edgy</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Data Fields</label>
+                <div class="space-y-2">
+                  <label class="flex items-center gap-2 p-2 bg-neutral-900 rounded-sm cursor-pointer">
+                    <input type="checkbox" checked class="w-4 h-4 accent-red-400">
+                    <span class="text-sm text-white">User ID</span>
+                  </label>
+                  <label class="flex items-center gap-2 p-2 bg-neutral-900 rounded-sm cursor-pointer">
+                    <input type="checkbox" checked class="w-4 h-4 accent-red-400">
+                    <span class="text-sm text-white">Email</span>
+                  </label>
+                  <label class="flex items-center gap-2 p-2 bg-neutral-900 rounded-sm cursor-pointer">
+                    <input type="checkbox" checked class="w-4 h-4 accent-red-400">
+                    <span class="text-sm text-white">Profile Data</span>
+                  </label>
+                  <label class="flex items-center gap-2 p-2 bg-neutral-900 rounded-sm cursor-pointer">
+                    <input type="checkbox" class="w-4 h-4 accent-red-400">
+                    <span class="text-sm text-white">Activity Log</span>
+                  </label>
+                  <label class="flex items-center gap-2 p-2 bg-neutral-900 rounded-sm cursor-pointer">
+                    <input type="checkbox" class="w-4 h-4 accent-red-400">
+                    <span class="text-sm text-white">Payment History</span>
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Export Format</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-red-400 text-white">
+                  <option>JSON</option>
+                  <option>CSV</option>
+                  <option>XML</option>
+                  <option>SQL Dump</option>
+                </select>
+              </div>
+              <button onclick="runDumpUsers()" class="w-full py-2.5 bg-red-500 text-white font-headline font-bold text-sm uppercase tracking-widest hover:bg-red-400 rounded-sm cursor-pointer">
+                <span class="flex items-center justify-center gap-2">
+                  <span class="material-symbols-outlined text-lg">download</span> Export Data
+                </span>
+              </button>
+              <button onclick="generateDumpUsers()" class="w-full py-2.5 mt-2 bg-green-600 text-white font-headline font-bold text-sm uppercase tracking-widest hover:bg-green-500 rounded-sm cursor-pointer">
+                <span class="flex items-center justify-center gap-2">
+                  <span class="material-symbols-outlined text-lg">add</span> Generate Test Users
+                </span>
+              </button>
+            </div>
+          `
+        },
+        photo: {
+          icon: 'photo_camera',
+          title: 'Photo Generator',
+          color: 'yellow',
+          desc: 'AI-powered image generation',
+          inputs: `
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Generation Type</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-yellow-400 text-white">
+                  <option>Text to Image</option>
+                  <option>Profile Photo</option>
+                  <option>Avatar Generation</option>
+                  <option>Background Removal</option>
+                  <option>Image Enhancement</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Describe Your Image</label>
+                <textarea id="photo-prompt" rows="3" placeholder="e.g., A futuristic city with neon lights at night, cyberpunk style..." class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-yellow-400 text-white"></textarea>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Resolution</label>
+                  <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-yellow-400 text-white">
+                    <option>512x512</option>
+                    <option selected>1024x1024</option>
+                    <option>2048x2048</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Style</label>
+                  <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-yellow-400 text-white">
+                    <option>Realistic</option>
+                    <option>Anime</option>
+                    <option>Cyberpunk</option>
+                    <option>Abstract</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">AI Model</label>
+                <select class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-yellow-400 text-white">
+                  <option>DALL-E 3</option>
+                  <option>Stable Diffusion XL</option>
+                  <option>Midjourney V6</option>
+                  <option>Local (Ollama)</option>
+                </select>
+              </div>
+              <button onclick="runPhotoGenerator()" class="w-full py-2.5 bg-yellow-500 text-black font-headline font-bold text-sm uppercase tracking-widest hover:bg-yellow-400 rounded-sm cursor-pointer">
+                <span class="flex items-center justify-center gap-2">
+                  <span class="material-symbols-outlined text-lg">auto_awesome</span> Generate Image
+                </span>
+              </button>
+              <div id="photo-preview" class="hidden mt-4 p-4 bg-neutral-900 rounded-sm">
+                <div class="aspect-square bg-gradient-to-br from-amber-400/20 to-orange-500/20 rounded-sm flex items-center justify-center">
+                  <span class="material-symbols-outlined text-4xl text-amber-400 animate-pulse">image</span>
+                </div>
+                <p class="text-xs text-center text-zinc-500 mt-2">Generating...</p>
+              </div>
+            </div>
+          `
+        },
+        all: {
+          icon: 'apps',
+          title: 'All Tools',
+          color: 'zinc',
+          desc: 'View complete list of available tools',
+          inputs: `
+            <div class="space-y-2">
+              <div class="p-3 bg-neutral-900 rounded-sm flex items-center gap-3">
+                <span class="material-symbols-outlined text-amber-400">search</span>
+                <span class="text-sm text-white">Name Search</span>
+              </div>
+              <div class="p-3 bg-neutral-900 rounded-sm flex items-center gap-3">
+                <span class="material-symbols-outlined text-amber-400">phone</span>
+                <span class="text-sm text-white">Phone Lookup</span>
+              </div>
+              <div class="p-3 bg-neutral-900 rounded-sm flex items-center gap-3">
+                <span class="material-symbols-outlined text-amber-400">email</span>
+                <span class="text-sm text-white">Email Finder</span>
+              </div>
+              <div class="p-3 bg-neutral-900 rounded-sm flex items-center gap-3">
+                <span class="material-symbols-outlined text-purple-400">face</span>
+                <span class="text-sm text-white">Face Recognition</span>
+              </div>
+              <div class="p-3 bg-neutral-900 rounded-sm flex items-center gap-3">
+                <span class="material-symbols-outlined text-cyan-400">transcribe</span>
+                <span class="text-sm text-white">Speech to Text</span>
+              </div>
+              <div class="p-3 bg-neutral-900 rounded-sm flex items-center gap-3">
+                <span class="material-symbols-outlined text-green-400">schedule</span>
+                <span class="text-sm text-white">Post Scheduler</span>
+              </div>
+              <div class="p-3 bg-neutral-900 rounded-sm flex items-center gap-3">
+                <span class="material-symbols-outlined text-red-400">download</span>
+                <span class="text-sm text-white">Dump Users</span>
+              </div>
+              <div class="p-3 bg-neutral-900 rounded-sm flex items-center gap-3">
+                <span class="material-symbols-outlined text-yellow-400">photo_camera</span>
+                <span class="text-sm text-white">Photo Generator</span>
+              </div>
+            </div>
+          `
+        }
+      };
+      
+      const t = toolInfo[tool];
+      panel.innerHTML = `
+        <div class="text-center mb-4">
+          <span class="material-symbols-outlined text-${t.color}-400 text-4xl mb-2">${t.icon}</span>
+          <h4 class="font-headline text-lg font-bold text-white">${t.title}</h4>
+          <p class="text-xs text-zinc-500">${t.desc}</p>
+        </div>
+        ${t.inputs}
+      `;
+    }
+    
+    function runSearch() {
+      const searchType = document.querySelector('#active-tool-panel select')?.value || 'Name';
+      const query = document.querySelector('#active-tool-panel input[type="text"]')?.value.trim();
+      
+      if (!query) {
+        alert('Please enter a search query.');
+        return;
+      }
+      
+      // Search in users
+      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      const results = users.filter(u => {
+        const searchIn = [u.nickname, u.fullname, u.email, u.id, u.location, u.nationality].filter(Boolean).join(' ').toLowerCase();
+        return searchIn.includes(query.toLowerCase());
+      });
+      
+      if (results.length === 0) {
+        alert(`No results found for "${query}"\n\nNo users match your search criteria.`);
+        return;
+      }
+      
+      // Show results
+      const resultText = results.slice(0, 10).map(u => 
+        `ID: ${u.id || u.user_id}\nName: ${u.nickname}\nEmail: ${u.email}\nTier: ${u.tier}\nStatus: ${u.status}\n---`
+      ).join('\n');
+      
+      alert(`Search Results for "${query}"\n\nFound ${results.length} result(s):\n\n${resultText}${results.length > 10 ? '\n... and ' + (results.length - 10) + ' more' : ''}`);
+    }
+    
+    async function runDumpUsers() {
+      const dumpType = document.getElementById('dump-type')?.value || 'all';
+      
+      // Get all checkboxes for data fields
+      const checkboxes = document.querySelectorAll('#active-tool-panel input[type="checkbox"]');
+      const selectedFields = [];
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const label = cb.closest('label')?.querySelector('span')?.textContent || '';
+          selectedFields.push(label);
+        }
+      });
+      
+      // Get export format
+      const formatSelect = document.querySelector('#active-tool-panel select:last-of-type');
+      const format = formatSelect?.value || 'JSON';
+      
+      // Get users from Supabase or localStorage
+      let users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      
+      if (typeof supabase !== 'undefined' && supabase.isConfigured) {
+        try {
+          const { data, error } = await supabase.from('users').select('*');
+          if (!error && data && data.length > 0) {
+            users = data;
+            // Update localStorage cache
+            localStorage.setItem('gai_users', JSON.stringify(users));
+          }
+        } catch (e) {
+          console.warn('Failed to fetch users from Supabase:', e.message);
+        }
+      }
+      
+      // Filter by type
+      let filteredUsers = users;
+      if (dumpType === 'active') {
+        filteredUsers = users.filter(u => u.status === 'active');
+      } else if (dumpType === 'premium') {
+        filteredUsers = users.filter(u => ['Premium', 'Elite', 'VVIP'].includes(u.tier));
+      } else if (dumpType === 'new') {
+        const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+        filteredUsers = users.filter(u => new Date(u.createdAt).getTime() > weekAgo);
+      } else if (dumpType === 'inactive') {
+        filteredUsers = users.filter(u => u.status !== 'active');
+      }
+      
+      // Select only checked fields
+      const exportData = filteredUsers.map(user => {
+        const obj = {};
+        if (selectedFields.includes('User ID')) obj.id = user.id || user.user_id;
+        if (selectedFields.includes('Email')) obj.email = user.email;
+        if (selectedFields.includes('Profile Data')) {
+          obj.nickname = user.nickname;
+          obj.fullname = user.fullname;
+          obj.tier = user.tier;
+          obj.status = user.status;
+          obj.location = user.location;
+          obj.nationality = user.nationality;
+        }
+        if (selectedFields.includes('Activity Log')) obj.lastLogin = user.lastLogin || 'N/A';
+        if (selectedFields.includes('Payment History')) obj.payments = user.payments || [];
+        return obj;
+      });
+      
+      // Format output
+      let output, mimeType, extension;
+      if (format === 'JSON') {
+        output = JSON.stringify(exportData, null, 2);
+        mimeType = 'application/json';
+        extension = 'json';
+      } else if (format === 'CSV') {
+        const headers = Object.keys(exportData[0] || {});
+        const rows = exportData.map(u => headers.map(h => `"${u[h] || ''}"`).join(','));
+        output = [headers.join(','), ...rows].join('\n');
+        mimeType = 'text/csv';
+        extension = 'csv';
+      } else if (format === 'XML') {
+        output = '<?xml version="1.0" encoding="UTF-8"?>\n<users>\n' + 
+          exportData.map(u => `  <user>\n${Object.entries(u).map(([k,v]) => `    <${k}>${v}</${k}>`).join('\n')}  </user>`).join('\n') +
+          '\n</users>';
+        mimeType = 'application/xml';
+        extension = 'xml';
+      } else {
+        output = JSON.stringify(exportData, null, 2);
+        mimeType = 'text/plain';
+        extension = 'sql';
+      }
+      
+      // Download file
+      const blob = new Blob([output], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `gai-users-dump-${dumpType}-${Date.now()}.${extension}`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      // Track in memory
+      if (typeof MemorySystem !== 'undefined') {
+        MemorySystem.trackActivity('tools', `Dumped ${filteredUsers.length} users: ${dumpType} (${format})`);
+      }
+      
+      alert(`User Dump Complete!\n\nExported: ${filteredUsers.length} users\nType: ${dumpType}\nFormat: ${format}\nFields: ${selectedFields.length}\n\nFile downloaded.`);
+    }
+    
+    async function generateDumpUsers() {
+      const count = prompt('How many test users to generate?', '10');
+      if (!count || isNaN(count) || parseInt(count) < 1) return;
+      
+      const numUsers = parseInt(count);
+      const tiers = ['Free', 'Standard', 'Premium', 'Elite', 'VVIP'];
+      const nationalities = ['American', 'British', 'Canadian', 'Australian', 'German', 'French', 'Spanish', 'Italian', 'Japanese', 'Korean', 'Chinese', 'Indian', 'Brazilian', 'Mexican'];
+      const locations = ['New York', 'Los Angeles', 'London', 'Berlin', 'Tokyo', 'Paris', 'Sydney', 'Toronto', 'Mumbai', 'Shanghai', 'Seoul', 'Mexico City'];
+      
+      const firstNames = ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Cameron', 'Drew', 'Skyler', 'Reese', 'Parker', 'Dakota', 'Charlie', 'Sam', 'Jamie', 'Dylan', 'Blake', 'Hayden'];
+      const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'Thompson', 'White', 'Harris'];
+      
+      const newUsers = [];
+      
+      // Get existing users to determine starting ID
+      let users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      let startId = users.length + 1001;
+      
+      for (let i = 0; i < numUsers; i++) {
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+        const nickname = firstName + '_' + Math.floor(Math.random() * 999);
+        const tier = tiers[Math.floor(Math.random() * tiers.length)];
+        const nationality = nationalities[Math.floor(Math.random() * nationalities.length)];
+        const location = locations[Math.floor(Math.random() * locations.length)];
+        
+        const newUser = {
+          id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString() + i,
+          user_id: 'GAi' + String(startId + i).padStart(6, '0'),
+          fullname: firstName + ' ' + lastName,
+          nickname: nickname,
+          email: nickname.toLowerCase() + '@example.com',
+          password: 'b64:' + btoa('password123'),
+          tier: tier,
+          nationality: nationality,
+          location: location,
+          bio: 'Generated test user',
+          verified: Math.random() > 0.5,
+          status: 'active',
+          created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        
+        newUsers.push(newUser);
+        
+        // Add to local array
+        users.push(newUser);
+        
+        // Save to Supabase if configured
+        if (typeof supabase !== 'undefined' && supabase.isConfigured) {
+          try {
+            await supabase.from('users').insert(newUser);
+          } catch (e) {
+            console.warn('Failed to create user in Supabase:', e.message);
+          }
+        }
+      }
+      
+      // Update localStorage
+      localStorage.setItem('gai_users', JSON.stringify(users));
+      
+      alert(`Successfully generated ${numUsers} test users!\n\nUsers added:\n${newUsers.map(u => '• ' + u.nickname + ' (' + u.tier + ')').join('\n')}\n\nTotal users now: ${users.length}`);
+      
+      // Track in memory
+      if (typeof MemorySystem !== 'undefined') {
+        MemorySystem.trackActivity('tools', `Generated ${numUsers} test users`);
+      }
+    }
+    
+    function runPhotoGenerator() {
+      const prompt = document.getElementById('photo-prompt')?.value || '';
+      
+      if (!prompt) {
+        alert('Please describe the image you want to generate.');
+        return;
+      }
+      
+      // Track in memory
+      if (typeof MemorySystem !== 'undefined') {
+        MemorySystem.trackActivity('tools', `Generated photo: "${prompt.substring(0, 30)}..."`);
+      }
+      
+      // Show loading state
+      const preview = document.getElementById('photo-preview');
+      if (preview) {
+        preview.classList.remove('hidden');
+      }
+      
+      alert(`Photo Generation Started\n\nPrompt: ${prompt}\n\nIn production, this would use AI (DALL-E 3, Stable Diffusion, or Midjourney) to generate your image.\n\nThis may take 10-30 seconds depending on the model and resolution.`);
+    }
+    
+    // Track tool usage in Memory
+    function trackToolUsage(toolName) {
+      if (typeof MemorySystem !== 'undefined') {
+        MemorySystem.trackActivity('tools', `Used tool: ${toolName}`);
+      }
+    }
+    
+    // Override tool buttons to track usage
+    document.querySelectorAll('.tool-card').forEach(card => {
+      card.addEventListener('click', function() {
+        const toolName = this.querySelector('p').textContent;
+        trackToolUsage(toolName);
+      });
+    });
+  </script>
+  
+  <!-- GAi Assistant Chat -->
+  <div id="gai-assistant" class="fixed bottom-6 right-6 z-50">
+    <button id="gai-toggle" class="w-14 h-14 bg-amber-400 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer">
+      <span class="material-symbols-outlined filled text-black">chat</span>
+    </button>
+    <div id="gai-chat" class="hidden absolute bottom-16 right-0 w-80 bg-neutral-900 border border-amber-400/30 rounded-lg shadow-2xl overflow-hidden">
+      <div class="bg-amber-400 px-4 py-3 flex items-center gap-2">
+        <span class="material-symbols-outlined filled text-black">psychology</span>
+        <span class="font-headline font-bold text-black">GAi Assistant</span>
+      </div>
+      <div id="gai-messages" class="h-64 p-4 overflow-y-auto space-y-3">
+        <div class="bg-neutral-800 rounded-lg p-3">
+          <p class="text-sm text-white">I'm here to help with <span class="text-amber-400 font-bold">Tools</span>. Ask me about:</p>
+          <ul class="text-xs text-zinc-400 mt-2 space-y-1">
+            <li>• Background search usage</li>
+            <li>• How to use reverse image search</li>
+            <li>• Media analysis features</li>
+            <li>• Tool configurations</li>
+          </ul>
+        </div>
+      </div>
+      <div class="p-3 border-t border-zinc-700">
+        <div class="flex gap-2">
+          <input type="text" id="gai-tools-input" placeholder="Ask GAi..." class="flex-1 bg-neutral-800 border border-zinc-600 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-amber-400 outline-none" onkeypress="if(event.key==='Enter')submitGaiToolsInput()">
+          <button onclick="submitGaiToolsInput()" class="p-2 bg-amber-400 hover:bg-amber-300 rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-black">send</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const gaiToggle = document.getElementById('gai-toggle');
+    const gaiChat = document.getElementById('gai-chat');
+    const gaiToolsInput = document.getElementById('gai-tools-input');
+    const gaiMessages = document.getElementById('gai-messages');
+    
+    gaiToggle?.addEventListener('click', () => {
+      gaiChat.classList.toggle('hidden');
+    });
+    
+    function submitGaiToolsInput() {
+      const message = gaiToolsInput.value.trim();
+      if (!message) return;
+      
+      gaiMessages.innerHTML += '<div class="bg-neutral-800 rounded-lg p-3"><p class="text-sm text-white"><span class="text-blue-400 font-bold">You:</span> ' + message + '</p></div>';
+      gaiToolsInput.value = '';
+      gaiMessages.scrollTop = gaiMessages.scrollHeight;
+      
+      // Track in Memory
+      if (typeof MemorySystem !== 'undefined') {
+        MemorySystem.trackActivity('chat', `Asked about tools: "${message}"`);
+      }
+      
+      setTimeout(() => {
+        let response = "I'm here to help with the OSINT Tools. Here are some things I can assist with:";
+        const lower = message.toLowerCase();
+        
+        if (lower.includes('search') || lower.includes('background')) {
+          response = "Background Search lets you find information by name, phone, email, or IP address. It's useful for identity verification and investigations.";
+        } else if (lower.includes('reverse') || lower.includes('image') || lower.includes('face')) {
+          response = "Reverse Image Search uses facial recognition and visual matching. Upload an image to find similar faces or search for image origins.";
+        } else if (lower.includes('analyze') || lower.includes('media') || lower.includes('audio')) {
+          response = "Media Analysis supports audio transcription, video processing, and document OCR. Great for extracting content from media files.";
+        } else if (lower.includes('social') || lower.includes('marketing')) {
+          response = "Social Media AI helps schedule posts, analyze engagement, and track trends across multiple platforms.";
+        } else if (lower.includes('forecast') || lower.includes('predict')) {
+          response = "Forecasting tools provide predictions for forex, sports, crypto, and stocks using AI-powered analysis.";
+        } else if (lower.includes('content') || lower.includes('generate')) {
+          response = "Content Generation uses AI to create articles, social posts, emails, code, and more. Just describe what you need!";
+        } else if (lower.includes('build') || lower.includes('tool')) {
+          response = "Tool Builder lets you create custom AI-powered tools, API connectors, and automation flows.";
+        } else if (lower.includes('dump') || lower.includes('export') || lower.includes('user data')) {
+          response = "Dump Users tool allows you to extract and export user data. You can filter by user type (active, premium, new) and choose export formats (JSON, CSV, XML, SQL). Note: Admin permissions required.";
+        } else if (lower.includes('photo') || lower.includes('image') || lower.includes('generate') || lower.includes('ai art')) {
+          response = "Photo Generator creates AI-powered images from text descriptions. Supports DALL-E 3, Stable Diffusion XL, Midjourney V6, and local models. Choose resolution, style, and get creative!";
+        }
+        
+        gaiMessages.innerHTML += '<div class="bg-neutral-800 rounded-lg p-3"><p class="text-sm text-white"><span class="text-amber-400 font-bold">GAi:</span> ' + response + '</p></div>';
+        gaiMessages.scrollTop = gaiMessages.scrollHeight;
+      }, 800);
+    }
+  </script>
+</body>
+</html>

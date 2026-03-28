@@ -443,18 +443,10 @@
             locationInput.classList.remove('border-red-500');
             locationInput.classList.add('border-green-500');
             
-            // Save coordinates for nearby features
-            localStorage.setItem('gai_locationCoords', JSON.stringify({ lat: lat, lng: lon }));
-            localStorage.setItem('gai_reg_location', locationString);
-            
           } catch (error) {
             locationInput.value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
             locationStatus.textContent = 'Location detected (coordinates only)';
             locationStatus.className = 'text-[10px] text-yellow-400 mt-1';
-            
-            // Save coordinates for nearby features
-            localStorage.setItem('gai_locationCoords', JSON.stringify({ lat: lat, lng: lon }));
-            localStorage.setItem('gai_reg_location', locationInput.value);
           }
           
           locationBtn.disabled = false;
