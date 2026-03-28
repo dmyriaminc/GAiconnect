@@ -338,6 +338,12 @@
     // Initialize Face API
     async function initFaceAPI() {
       try {
+        // Check if faceapi is available
+        if (typeof faceapi === 'undefined') {
+          console.warn('Face API library not loaded - biometric login disabled');
+          document.getElementById('progress-text').textContent = 'Biometric unavailable';
+          return;
+        }
         const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model';
         await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
         await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
@@ -345,8 +351,9 @@
         faceApiLoaded = true;
         console.log('Face API loaded successfully');
       } catch (error) {
-        console.error('Failed to load Face API:', error);
-        alert('Face recognition models failed to load. Please refresh the page.');
+        console.warn('Failed to load Face API:', error.message);
+        document.getElementById('progress-text').textContent = 'Biometric unavailable';
+        // Don't block - user can still use manual login
       }
     }
     
@@ -968,25 +975,26 @@
           return;
         }
         
-        if (supabase.isConfigured) {
-          // Use Supabase for production
-          const { data, error } = await supabase.signIn(memberId, password);
-          
-          if (error) throw error;
-          
-          // Get user from our users table
+        // First, find user by memberId/nickname/email to get their data
+        user = await GAiData.findUser(normalizedMemberId, password);
+        if (!user) {
           user = await GAiData.findUser(memberId, password);
-          
-          if (user) {
-            localStorage.setItem('gai_supabase_token', data.session.access_token);
+        }
+        
+        if (supabase.isConfigured && user && user.email) {
+          // Use Supabase for production - authenticate with email
+          try {
+            const { data, error } = await supabase.signIn(user.email, password);
+            
+            if (!error && data && data.session) {
+              localStorage.setItem('gai_supabase_token', data.session.access_token);
+              console.log('Supabase auth successful');
+            } else if (error) {
+              console.warn('Supabase auth failed, using local fallback:', error.message);
+            }
+          } catch (authError) {
+            console.warn('Supabase auth error:', authError.message);
           }
-        } else {
-          // Fallback to localStorage
-          const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
-          user = users.find(u => 
-            (u.id === normalizedMemberId || u.id === memberId || u.email === memberId || u.nickname === memberId || u.user_id === memberId || u.user_id === normalizedMemberId) && 
-            (u.password === 'b64:' + btoa(password) || u.password === password)
-          );
         }
         
         if (user) {
