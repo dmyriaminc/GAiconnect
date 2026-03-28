@@ -31,14 +31,15 @@ const GAiUser = {
     }
     localStorage.setItem('gai_activities', JSON.stringify(activities));
     
-    // Sync to Supabase if available
+    // Sync to Supabase if available (silent fail - activities table may not exist)
     try {
       const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
       const userId = localStorage.getItem('gai_userId');
       
       if (userId) {
-        await fetch(`${SUPABASE_URL}/rest/v1/activities`, {
+        // Use fetch without await to not block the main operation
+        fetch(`${SUPABASE_URL}/rest/v1/activities`, {
           method: 'POST',
           headers: {
             'apikey': SUPABASE_KEY,
@@ -53,10 +54,10 @@ const GAiUser = {
             details: details,
             created_at: new Date().toISOString()
           })
-        });
+        }).catch(() => {}); // Silent fail
       }
     } catch (e) {
-      console.warn('Failed to sync activity to Supabase:', e.message);
+      // Silent fail - don't log errors for activities
     }
     
     return newActivity;
@@ -65,7 +66,7 @@ const GAiUser = {
   async getActivities(limit = 20) {
     let activities = JSON.parse(localStorage.getItem('gai_activities') || '[]');
     
-    // Try to load from Supabase
+    // Try to load from Supabase (silent fail)
     try {
       const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
@@ -97,7 +98,7 @@ const GAiUser = {
         }
       }
     } catch (e) {
-      console.warn('Failed to load activities from Supabase:', e.message);
+      // Silent fail - don't log errors
     }
     
     return activities.slice(0, limit);

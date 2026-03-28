@@ -350,11 +350,11 @@
   <div id="gai-assistant" class="fixed bottom-6 right-6 z-50">
     <button id="gai-toggle" class="w-14 h-14 bg-amber-400 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer relative">
       <span class="material-symbols-outlined filled text-black">chat</span>
-      <img src="https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male-1.png" class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-black" alt="">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ffc563'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='%23000' font-family='Arial'%3EG%3C/text%3E%3C/svg%3E" class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-black" alt="">
     </button>
     <div id="gai-chat" class="hidden absolute bottom-16 right-0 w-80 bg-neutral-900 border border-amber-400/30 rounded-lg shadow-2xl overflow-hidden">
       <div class="bg-amber-400 px-4 py-3 flex items-center gap-2">
-        <img src="https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male-1.png" class="w-6 h-6 rounded-full" alt="GAi">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ffc563'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='%23000' font-family='Arial'%3EG%3C/text%3E%3C/svg%3E" class="w-6 h-6 rounded-full" alt="GAi">
         <span class="font-headline font-bold text-black">GAi Assistant</span>
         <span class="ml-auto flex items-center gap-1">
           <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -870,7 +870,7 @@
       document.getElementById('details-map-link').href = `https://www.google.com/maps?q=${lat},${lng}`;
       
       const categoryBadge = document.getElementById('details-category-badge');
-      const categoryColors = {
+      const detailsCategoryColors = {
         'Female Escort': 'from-pink-500 to-rose-500',
         'Male Escort': 'from-blue-500 to-cyan-500',
         'Model': 'from-purple-500 to-violet-500',
@@ -879,7 +879,7 @@
         'Massage Therapist': 'from-green-500 to-emerald-500',
         'Hairstylist': 'from-cyan-500 to-blue-500'
       };
-      categoryBadge.className = `absolute bottom-4 left-4 bg-gradient-to-r ${categoryColors[category] || 'from-amber-500 to-orange-500'} text-white text-xs font-bold px-3 py-1 uppercase rounded-sm`;
+      categoryBadge.className = `absolute bottom-4 left-4 bg-gradient-to-r ${detailsCategoryColors[category] || 'from-amber-500 to-orange-500'} text-white text-xs font-bold px-3 py-1 uppercase rounded-sm`;
       
       const checkBtn = document.getElementById('details-connect-btn');
       const currentUserId = localStorage.getItem('gai_userId');
