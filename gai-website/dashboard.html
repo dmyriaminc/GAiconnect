@@ -560,7 +560,8 @@
       }, 1200);
     }
 
-    function runDiagnostic() {
+    function runDiagnostic(event) {
+      if (!event) return;
       const btn = event.target;
       btn.innerHTML = '<span class="material-symbols-outlined animate-spin mr-2">sync</span> Running...';
       btn.classList.add('opacity-75');

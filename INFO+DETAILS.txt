@@ -1,4 +1,21 @@
-Modify and Fix:
+NEW Modify and Fix:
+
+1. Run a full code scan on the website, and make sure every tools, features, profiles, data, messenger, biometric and the whole website syc, including all the user's, agents and admin activities and data's.
+===================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 1. Membership ID Login: Now validates and normalizes GAi format IDs, users can login with exact generated format (example: GAi001001)
 
