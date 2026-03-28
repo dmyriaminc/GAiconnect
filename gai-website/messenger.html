@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="gai-user.js"></script>
+  <script src="supabase-client.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Manrope', sans-serif; background: #000000; color: #ffffff; }
@@ -197,13 +198,30 @@
   <!-- Music Panel Removed -->
 
   <script>
-    const messageInput = document.getElementById('message-input');
-    const sendBtn = document.getElementById('send-btn');
-    const messagesContainer = document.getElementById('messages-container');
-    const membersList = document.getElementById('members-list');
-    
+    let messageInput, sendBtn, messagesContainer, membersList;
     let currentChatUser = null;
-    let currentUserId = localStorage.getItem('gai_userId') || 'demo';
+    let currentUserId;
+    
+    // Initialize after DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      messageInput = document.getElementById('message-input');
+      sendBtn = document.getElementById('send-btn');
+      messagesContainer = document.getElementById('messages-container');
+      membersList = document.getElementById('members-list');
+      currentUserId = localStorage.getItem('gai_userId') || 'demo';
+      
+      // Set up event listeners
+      if (sendBtn) {
+        sendBtn.addEventListener('click', sendMessage);
+      }
+      if (messageInput) {
+        messageInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            sendMessage();
+          }
+        });
+      }
+    });
     
     // Initialize members list
     function loadMembers() {
@@ -338,7 +356,15 @@
     }
 
     async function sendMessage() {
-      const message = messageInput.value.trim();
+      // Make sure DOM elements exist
+      if (!messageInput) {
+        messageInput = document.getElementById('message-input');
+      }
+      if (!messagesContainer) {
+        messagesContainer = document.getElementById('messages-container');
+      }
+      
+      const message = messageInput ? messageInput.value.trim() : '';
       if (!message) return;
       if (!currentChatUser) {
         alert('Please select a member to chat with first.');
@@ -850,8 +876,16 @@
     
     // Initialize GAi User & Location
     document.addEventListener('DOMContentLoaded', function() {
-      GAiUser.init();
-      GAiNearby.init();
+      try {
+        if (typeof GAiUser !== 'undefined') {
+          GAiUser.init();
+        }
+        if (typeof GAiNearby !== 'undefined') {
+          GAiNearby.init();
+        }
+      } catch (e) {
+        console.error('Error initializing messenger:', e);
+      }
     });
   </script>
 </body>

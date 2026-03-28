@@ -1474,30 +1474,47 @@
     });
     
     document.addEventListener('DOMContentLoaded', async function() {
-      GAiUser.init();
-      GAiNearby.init();
-      
-      // Sync data from Supabase first
-      if (typeof GAiData !== 'undefined') {
-        await GAiData.syncAllData();
+      try {
+        if (typeof GAiUser !== 'undefined') {
+          GAiUser.init();
+        }
+        if (typeof GAiNearby !== 'undefined') {
+          GAiNearby.init();
+        }
+        
+        // Sync data from Supabase first
+        if (typeof GAiData !== 'undefined') {
+          await GAiData.syncAllData();
+        }
+        
+        // Check if viewing another user's profile
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewUserId = urlParams.get('id');
+        const viewUserNickname = urlParams.get('user');
+        
+        if (viewUserId) {
+          await loadOtherUserProfile(viewUserId);
+          loadProfilePhoto(viewUserId);
+        } else if (viewUserNickname) {
+          await loadOtherUserProfileByNickname(viewUserNickname);
+        } else {
+          await loadUserProfile();
+          const currentUserId = localStorage.getItem('gai_userId');
+          loadProfilePhoto(currentUserId);
+        }
+        
+        // Load contact info
+        if (typeof loadContactInfo === 'function') {
+          loadContactInfo();
+        }
+      } catch (e) {
+        console.error('Error loading profile:', e);
+        // Show fallback content
+        const displayNameEl = document.getElementById('profile-display-name');
+        if (displayNameEl) {
+          displayNameEl.textContent = localStorage.getItem('gai_username') || localStorage.getItem('gai_reg_fullname') || 'User';
+        }
       }
-      
-      // Check if viewing another user's profile
-      const urlParams = new URLSearchParams(window.location.search);
-      const viewUserId = urlParams.get('id');
-      const viewUserNickname = urlParams.get('user');
-      
-      if (viewUserId) {
-        await loadOtherUserProfile(viewUserId);
-        loadProfilePhoto(viewUserId);
-      } else if (viewUserNickname) {
-        await loadOtherUserProfileByNickname(viewUserNickname);
-      } else {
-        loadUserProfile();
-        const currentUserId = localStorage.getItem('gai_userId');
-        loadProfilePhoto(currentUserId);
-      }
-      loadContactInfo();
     });
     
     async function loadOtherUserProfile(userId) {
@@ -1623,9 +1640,17 @@
     }
     
     async function loadUserProfile() {
-      // Load portfolio and stats on profile load
-      loadPortfolio();
-      loadProfileStats();
+      try {
+        // Load portfolio and stats on profile load
+        if (typeof loadPortfolio === 'function') {
+          loadPortfolio();
+        }
+        if (typeof loadProfileStats === 'function') {
+          loadProfileStats();
+        }
+      } catch (e) {
+        console.warn('Error loading portfolio/stats:', e);
+      }
       
       const userId = localStorage.getItem('gai_userId');
       let profile = null;

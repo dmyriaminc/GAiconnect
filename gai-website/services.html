@@ -1235,16 +1235,23 @@
     
     // Initialize services on page load
     document.addEventListener('DOMContentLoaded', async function() {
-      // Sync data from Supabase first
-      if (typeof GAiData !== 'undefined') {
-        await GAiData.syncAllData();
-      }
-      // Reload services from Supabase/localStorage
-      servicesData = await loadAllServices();
-      // Detect location and currency on page load
-      detectUserLocation().then(() => {
+      try {
+        // Sync data from Supabase first
+        if (typeof GAiData !== 'undefined') {
+          await GAiData.syncAllData();
+        }
+        // Reload services from Supabase/localStorage
+        servicesData = await loadAllServices();
+        // Detect location and currency on page load
+        detectUserLocation().then(() => {
+          renderServices('all');
+        });
+      } catch (e) {
+        console.error('Error loading services:', e);
+        // Load default services as fallback
+        servicesData = defaultServices;
         renderServices('all');
-      });
+      }
     });
 
     // Music Feature - Streaming Radio
@@ -1488,8 +1495,16 @@
     
     // Initialize GAi User & Location
     document.addEventListener('DOMContentLoaded', function() {
-      GAiUser.init();
-      GAiNearby.init();
+      try {
+        if (typeof GAiUser !== 'undefined') {
+          GAiUser.init();
+        }
+        if (typeof GAiNearby !== 'undefined') {
+          GAiNearby.init();
+        }
+      } catch (e) {
+        console.error('Error initializing services:', e);
+      }
     });
   </script>
 </body>
