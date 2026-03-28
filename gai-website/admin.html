@@ -1136,6 +1136,9 @@
             <td class="p-4 text-zinc-500">${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
             <td class="p-4">
               <div class="flex gap-2">
+                <button class="action-btn p-2 text-blue-400 hover:bg-blue-400/10 rounded-sm cursor-pointer" onclick="viewUser('${user.id}')" title="View">
+                  <span class="material-symbols-outlined text-lg">visibility</span>
+                </button>
                 <button class="action-btn p-2 text-purple-400 hover:bg-purple-400/10 rounded-sm cursor-pointer" onclick="editUser('${user.id}')" title="Edit">
                   <span class="material-symbols-outlined text-lg">edit</span>
                 </button>
@@ -1172,6 +1175,36 @@
       document.getElementById('modal-memberid').value = newId;
       
       openUserModal();
+    }
+    
+    async function viewUser(userId) {
+      const users = await getUsers();
+      const user = users.find(u => u.id === userId || u.user_id === userId);
+      if (!user) {
+        alert('User not found.');
+        return;
+      }
+      
+      const userDetails = `
+╔══════════════════════════════════════════════╗
+║              USER PROFILE VIEW               ║
+╠══════════════════════════════════════════════╣
+║ ID:           ${(user.id || user.user_id || '').padEnd(31)}║
+║ Full Name:    ${(user.fullname || 'N/A').padEnd(31)}║
+║ Nickname:     ${(user.nickname || 'N/A').padEnd(31)}║
+║ Email:        ${(user.email || 'N/A').padEnd(31)}║
+║ Membership:   ${(user.tier || 'Standard').padEnd(31)}║
+║ Status:       ${(user.status || 'active').padEnd(31)}║
+║ Nationality:  ${(user.nationality || 'N/A').padEnd(31)}║
+║ Location:     ${(user.location || 'N/A').padEnd(31)}║
+║ DOB:          ${(user.dob || 'N/A').padEnd(31)}║
+║ Verified:      ${((user.verified ? 'Yes' : 'No') || 'No').padEnd(31)}║
+║ Biometric:    ${((user.biometricEnabled ? 'Enabled' : 'Disabled') || 'No').padEnd(31)}║
+║ Created:       ${(user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A').padEnd(31)}║
+╚══════════════════════════════════════════════╝
+      `.replace(/║/g, '\n').replace(/╔|╗|╚|╝|═|╣|╠/g, '').trim();
+      
+      alert('USER DETAILS\n\n' + userDetails + '\n\nFor full details, click Edit.');
     }
 
     async function editUser(userId) {

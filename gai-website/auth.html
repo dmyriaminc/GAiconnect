@@ -198,7 +198,7 @@
         <span class="material-symbols-outlined">close</span>
       </button>
       <h2 class="font-headline text-2xl font-bold text-amber-400 mb-2">Create Account</h2>
-      <p class="text-xs text-zinc-500 mb-4">Face Recognition is <span class="text-red-400 font-bold">REQUIRED</span> for registration</p>
+      <p class="text-xs text-zinc-500 mb-4">Face Recognition is <span class="text-amber-400 font-bold">OPTIONAL</span> - enhance security by enabling it after registration</p>
       <div id="registration-face-section" class="mb-4 p-4 bg-neutral-800/50 border border-amber-400/30 rounded-lg">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
@@ -212,9 +212,9 @@
         </div>
         <button type="button" id="reg-capture-face-btn" onclick="captureRegistrationFace()" class="btn-primary w-full flex items-center justify-center gap-2">
           <span class="material-symbols-outlined">camera_alt</span>
-          <span>Enable Face Recognition</span>
+          <span>Optional: Enable Face Recognition</span>
         </button>
-        <p class="text-[10px] text-zinc-500 mt-2 text-center">Your face data will be encrypted and used for secure login only</p>
+        <p class="text-[10px] text-zinc-500 mt-2 text-center">Your face data will be encrypted and used for secure login only. Skip this step if you prefer.</p>
       </div>
       <form id="registration-form" onsubmit="handleRegistration(event)" class="space-y-4">
         <div>
@@ -243,10 +243,17 @@
         </div>
         <div>
           <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Location</label>
-          <input type="text" id="reg-location" class="input-cyber" placeholder="City, Country">
+          <div class="flex gap-2">
+            <input type="text" id="reg-location" class="input-cyber flex-1" placeholder="City, Country">
+            <button type="button" onclick="detectLocation()" id="detect-location-btn" class="bg-neutral-700 hover:bg-neutral-600 text-amber-400 px-4 py-2 rounded border border-amber-400/30 flex items-center gap-2 transition-colors">
+              <span class="material-symbols-outlined text-sm">my_location</span>
+              <span class="text-xs hidden sm:inline">Detect</span>
+            </button>
+          </div>
+          <p id="location-status" class="text-[10px] text-zinc-500 mt-1"></p>
         </div>
         <div class="pt-4">
-          <button type="submit" id="reg-submit-btn" class="btn-primary w-full opacity-50 cursor-not-allowed" disabled>Enable Face Recognition First</button>
+          <button type="submit" id="reg-submit-btn" class="btn-primary w-full">Create Account</button>
         </div>
         <p class="text-xs text-zinc-500 text-center">By registering, you agree to our Terms of Service and Privacy Policy.</p>
       </form>
@@ -342,6 +349,88 @@
 
     function closeRegistrationForm() {
       document.getElementById('registration-modal').classList.add('hidden');
+    }
+    
+    function detectLocation() {
+      const locationInput = document.getElementById('reg-location');
+      const locationBtn = document.getElementById('detect-location-btn');
+      const locationStatus = document.getElementById('location-status');
+      
+      if (!navigator.geolocation) {
+        locationStatus.textContent = 'Geolocation is not supported by your browser';
+        locationStatus.className = 'text-[10px] text-red-400 mt-1';
+        return;
+      }
+      
+      locationBtn.disabled = true;
+      locationBtn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">progress_activity</span><span class="text-xs hidden sm:inline">Detecting...</span>';
+      locationStatus.textContent = 'Requesting location access...';
+      locationStatus.className = 'text-[10px] text-amber-400 mt-1';
+      
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          
+          locationStatus.textContent = 'Fetching address details...';
+          
+          try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+            const data = await response.json();
+            
+            let locationString = '';
+            if (data.address) {
+              const city = data.address.city || data.address.town || data.address.village || data.address.municipality || data.address.county || '';
+              const country = data.address.country || '';
+              locationString = city ? `${city}, ${country}` : country;
+            }
+            
+            if (!locationString) {
+              locationString = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+            }
+            
+            locationInput.value = locationString;
+            locationStatus.textContent = 'Location detected successfully!';
+            locationStatus.className = 'text-[10px] text-green-400 mt-1';
+            
+          } catch (error) {
+            locationInput.value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+            locationStatus.textContent = 'Location detected (address lookup failed)';
+            locationStatus.className = 'text-[10px] text-yellow-400 mt-1';
+          }
+          
+          locationBtn.disabled = false;
+          locationBtn.innerHTML = '<span class="material-symbols-outlined text-sm">my_location</span><span class="text-xs hidden sm:inline">Detect</span>';
+        },
+        (error) => {
+          locationBtn.disabled = false;
+          locationBtn.innerHTML = '<span class="material-symbols-outlined text-sm">my_location</span><span class="text-xs hidden sm:inline">Detect</span>';
+          
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              locationStatus.textContent = 'Location access denied. Please allow location access to auto-fill.';
+              locationStatus.className = 'text-[10px] text-red-400 mt-1';
+              alert('Location access denied.\n\nTo auto-fill your location:\n1. Click the lock/location icon in your browser address bar\n2. Allow location access for this site\n3. Click Detect again');
+              break;
+            case error.POSITION_UNAVAILABLE:
+              locationStatus.textContent = 'Location unavailable. Please enter manually.';
+              locationStatus.className = 'text-[10px] text-red-400 mt-1';
+              break;
+            case error.TIMEOUT:
+              locationStatus.textContent = 'Location request timed out. Try again.';
+              locationStatus.className = 'text-[10px] text-red-400 mt-1';
+              break;
+            default:
+              locationStatus.textContent = 'Error detecting location.';
+              locationStatus.className = 'text-[10px] text-red-400 mt-1';
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        }
+      );
     }
     
     function captureRegistrationFace() {
@@ -445,11 +534,6 @@
     async function handleRegistration(event) {
       event.preventDefault();
       
-      if (!registrationFaceDescriptor) {
-        alert('Face Recognition is REQUIRED. Please enable face recognition before creating an account.');
-        return;
-      }
-      
       const fullname = document.getElementById('reg-fullname').value.trim();
       const nickname = document.getElementById('reg-nickname').value.trim();
       const email = document.getElementById('reg-email').value.trim();
@@ -481,7 +565,7 @@
           return;
         }
 
-        // Create new user with face data
+        // Create new user
         newUser = {
           id: 'GAi' + String(users.length + 1001).padStart(6, '0'),
           fullname,
@@ -495,8 +579,8 @@
           verified: false,
           createdAt: new Date().toISOString(),
           status: 'active',
-          faceDescriptor: Array.from(registrationFaceDescriptor),
-          biometricEnabled: true
+          faceDescriptor: registrationFaceDescriptor ? Array.from(registrationFaceDescriptor) : null,
+          biometricEnabled: !!registrationFaceDescriptor
         };
 
         users.push(newUser);
@@ -513,9 +597,13 @@
         localStorage.setItem('gai_reg_dob', dob);
         localStorage.setItem('gai_reg_nationality', nationality);
         localStorage.setItem('gai_reg_location', location);
-        localStorage.setItem('gai_biometricEnabled', 'true');
+        localStorage.setItem('gai_biometricEnabled', registrationFaceDescriptor ? 'true' : 'false');
 
-        alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!\n\nYour Face Recognition is now enabled for secure login.');
+        if (registrationFaceDescriptor) {
+          alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!\n\nYour Face Recognition is now enabled for secure login.');
+        } else {
+          alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!\n\nYou can enable Face Recognition later from your profile settings.');
+        }
         window.location.href = 'dashboard.html';
         
       } catch (error) {

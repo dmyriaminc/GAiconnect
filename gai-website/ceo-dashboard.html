@@ -716,6 +716,50 @@
                 <span class="agent-task-count text-xs text-amber-400">Ready</span>
               </div>
             </div>
+            
+            <!-- News Agent -->
+            <div data-agent="news" class="agent-card glass-panel p-5 rounded-lg cursor-pointer" onclick="openAgentModal('news')">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg bg-red-500/20 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-red-400">newspaper</span>
+                  </div>
+                  <div>
+                    <h3 class="font-headline font-bold text-white">News Agent</h3>
+                    <p class="text-[10px] text-zinc-500 uppercase tracking-widest">Sports & News</p>
+                  </div>
+                </div>
+                <div class="agent-status-dot w-3 h-3 rounded-full bg-zinc-500"></div>
+              </div>
+              <p class="text-xs text-zinc-400 mb-3 line-clamp-2">Football, tennis, basketball, sports news</p>
+              <div class="flex items-center justify-between">
+                <span class="agent-status-text text-xs text-zinc-500">Idle</span>
+                <span class="agent-task-count text-xs text-amber-400">Ready</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Visibility Controls Section -->
+        <section class="glass-panel p-6 border-t-2 border-amber-400 mt-6">
+          <h2 class="font-headline text-xl font-bold text-white uppercase tracking-tight mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-400">visibility</span>
+            Tool Visibility Controls
+            <span class="ml-auto text-xs px-2 py-1 bg-amber-400/20 text-amber-400 rounded">Admin Only</span>
+          </h2>
+          <p class="text-sm text-zinc-400 mb-4">Control which tools and agents are visible to users based on membership tier.</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="visibility-controls">
+            <!-- Visibility controls will be generated dynamically -->
+          </div>
+          
+          <div class="mt-4 flex gap-2">
+            <button onclick="saveVisibilitySettings()" class="px-4 py-2 bg-amber-400 text-black font-bold text-sm rounded hover:bg-amber-300">
+              Save Visibility Settings
+            </button>
+            <button onclick="resetVisibilitySettings()" class="px-4 py-2 bg-neutral-700 text-white font-bold text-sm rounded hover:bg-neutral-600">
+              Reset to Default
+            </button>
           </div>
         </section>
         
@@ -1244,7 +1288,8 @@
         trading: { color: 'green', bg: 'bg-green-500/20', icon: 'trending_up' },
         data: { color: 'blue', bg: 'bg-blue-500/20', icon: 'analytics' },
         builder: { color: 'purple', bg: 'bg-purple-500/20', icon: 'build' },
-        security: { color: 'orange', bg: 'bg-orange-500/20', icon: 'security' }
+        security: { color: 'orange', bg: 'bg-orange-500/20', icon: 'security' },
+        news: { color: 'red', bg: 'bg-red-500/20', icon: 'newspaper' }
       };
       
       const colors = colorMap[agentId] || { color: 'amber', bg: 'bg-amber-500/20', icon: 'psychology' };
@@ -1346,6 +1391,103 @@
         notification.remove();
       }, 3000);
     }
+    
+    // Visibility Controls
+    const VISIBILITY_KEY = 'gai_tool_visibility';
+    const MEMBERSHIP_TIERS = ['Free', 'Standard', 'Premium', 'Elite', 'VVIP'];
+    
+    function getVisibilitySettings() {
+      return JSON.parse(localStorage.getItem(VISIBILITY_KEY) || JSON.stringify({
+        osint: ['Standard', 'Premium', 'Elite', 'VVIP'],
+        social: ['Standard', 'Premium', 'Elite', 'VVIP'],
+        content: ['Free', 'Standard', 'Premium', 'Elite', 'VVIP'],
+        trading: ['Premium', 'Elite', 'VVIP'],
+        data: ['Standard', 'Premium', 'Elite', 'VVIP'],
+        builder: ['Elite', 'VVIP'],
+        security: ['Premium', 'Elite', 'VVIP'],
+        news: ['Free', 'Standard', 'Premium', 'Elite', 'VVIP']
+      }));
+    }
+    
+    function initVisibilityControls() {
+      const container = document.getElementById('visibility-controls');
+      const settings = getVisibilitySettings();
+      const agents = Object.keys(GAiCEO.agents);
+      
+      container.innerHTML = agents.map(agentId => {
+        const agent = GAiCEO.agents[agentId];
+        const allowedTiers = settings[agentId] || MEMBERSHIP_TIERS;
+        const colors = {
+          osint: 'red', social: 'cyan', content: 'amber', trading: 'green',
+          data: 'blue', builder: 'purple', security: 'orange', news: 'red'
+        };
+        const color = colors[agentId] || 'amber';
+        
+        return `
+          <div class="bg-neutral-800 p-4 rounded-lg border border-white/10">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-8 h-8 rounded bg-${color}-500/20 flex items-center justify-center">
+                <span class="material-symbols-outlined text-${color}-400 text-sm">${agent.icon}</span>
+              </div>
+              <div>
+                <p class="font-headline font-bold text-white text-sm">${agent.name}</p>
+                <p class="text-xs text-zinc-500">${agent.capabilities[0]}</p>
+              </div>
+            </div>
+            <div class="space-y-2">
+              ${MEMBERSHIP_TIERS.map(tier => `
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" 
+                    id="vis-${agentId}-${tier.replace(/\s+/g, '')}" 
+                    class="w-4 h-4 rounded accent-${color}-400"
+                    ${allowedTiers.includes(tier) ? 'checked' : ''}
+                    onchange="updateVisibilitySetting('${agentId}', '${tier}', this.checked)"
+                  >
+                  <span class="text-xs ${allowedTiers.includes(tier) ? 'text-white' : 'text-zinc-500'}">${tier}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function updateVisibilitySetting(agentId, tier, enabled) {
+      const settings = getVisibilitySettings();
+      if (!settings[agentId]) settings[agentId] = [...MEMBERSHIP_TIERS];
+      
+      if (enabled && !settings[agentId].includes(tier)) {
+        settings[agentId].push(tier);
+      } else if (!enabled) {
+        settings[agentId] = settings[agentId].filter(t => t !== tier);
+      }
+      
+      localStorage.setItem(VISIBILITY_KEY, JSON.stringify(settings));
+      showNotification(`${tier} ${enabled ? 'can now access' : 'no longer has access to'} ${GAiCEO.agents[agentId]?.name || agentId}`, 'success');
+    }
+    
+    function saveVisibilitySettings() {
+      const settings = getVisibilitySettings();
+      localStorage.setItem(VISIBILITY_KEY, JSON.stringify(settings));
+      showNotification('Visibility settings saved!', 'success');
+    }
+    
+    function resetVisibilitySettings() {
+      localStorage.removeItem(VISIBILITY_KEY);
+      initVisibilityControls();
+      showNotification('Visibility settings reset to default', 'info');
+    }
+    
+    function checkUserToolAccess(agentId) {
+      const userTier = localStorage.getItem('gai_userTier') || 'Free';
+      const settings = getVisibilitySettings();
+      return settings[agentId]?.includes(userTier) || false;
+    }
+    
+    // Initialize visibility controls on load
+    document.addEventListener('DOMContentLoaded', function() {
+      initVisibilityControls();
+    });
   </script>
 </body>
 </html>

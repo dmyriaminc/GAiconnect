@@ -87,6 +87,18 @@ const GAiCEO = {
       capabilities: ['Fraud detection', 'Identity verification', 'Risk alerts', 'Monitoring', 'Penetration testing', 'Compliance'],
       tools: ['CrowdStrike', 'Darktrace', 'Qualys', 'Nessus', 'Splunk'],
       stats: { threats: 0, blocked: 0, alerts: 0, lastRun: null }
+    },
+    news: {
+      id: 'news',
+      name: 'News Agent',
+      icon: 'newspaper',
+      color: '#ff4757',
+      colorClass: 'red',
+      status: 'idle',
+      tasks: [],
+      capabilities: ['Football news', 'Tennis updates', 'Basketball scores', 'Sports predictions', 'Live match tracking', 'Transfer news'],
+      tools: ['ESPN API', 'FlashScore', 'The Athletic', 'Opta', 'Sportradar'],
+      stats: { articles: 0, predictions: 0, accuracy: 0, lastRun: null }
     }
   },
 

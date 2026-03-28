@@ -887,19 +887,124 @@
     }
     
     function runSearch() {
-      alert('Search initiated! In production, this would query the background search database.');
+      const searchType = document.querySelector('#active-tool-panel select')?.value || 'Name';
+      const query = document.querySelector('#active-tool-panel input[type="text"]')?.value.trim();
+      
+      if (!query) {
+        alert('Please enter a search query.');
+        return;
+      }
+      
+      // Search in users
+      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      const results = users.filter(u => {
+        const searchIn = [u.nickname, u.fullname, u.email, u.id, u.location, u.nationality].filter(Boolean).join(' ').toLowerCase();
+        return searchIn.includes(query.toLowerCase());
+      });
+      
+      if (results.length === 0) {
+        alert(`No results found for "${query}"\n\nNo users match your search criteria.`);
+        return;
+      }
+      
+      // Show results
+      const resultText = results.slice(0, 10).map(u => 
+        `ID: ${u.id || u.user_id}\nName: ${u.nickname}\nEmail: ${u.email}\nTier: ${u.tier}\nStatus: ${u.status}\n---`
+      ).join('\n');
+      
+      alert(`Search Results for "${query}"\n\nFound ${results.length} result(s):\n\n${resultText}${results.length > 10 ? '\n... and ' + (results.length - 10) + ' more' : ''}`);
     }
     
     function runDumpUsers() {
       const dumpType = document.getElementById('dump-type')?.value || 'all';
-      const format = 'JSON';
+      
+      // Get all checkboxes for data fields
+      const checkboxes = document.querySelectorAll('#active-tool-panel input[type="checkbox"]');
+      const selectedFields = [];
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const label = cb.closest('label')?.querySelector('span')?.textContent || '';
+          selectedFields.push(label);
+        }
+      });
+      
+      // Get export format
+      const formatSelect = document.querySelector('#active-tool-panel select:last-of-type');
+      const format = formatSelect?.value || 'JSON';
+      
+      // Get users from storage
+      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      
+      // Filter by type
+      let filteredUsers = users;
+      if (dumpType === 'active') {
+        filteredUsers = users.filter(u => u.status === 'active');
+      } else if (dumpType === 'premium') {
+        filteredUsers = users.filter(u => ['Premium', 'Elite', 'VVIP'].includes(u.tier));
+      } else if (dumpType === 'new') {
+        const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+        filteredUsers = users.filter(u => new Date(u.createdAt).getTime() > weekAgo);
+      } else if (dumpType === 'inactive') {
+        filteredUsers = users.filter(u => u.status !== 'active');
+      }
+      
+      // Select only checked fields
+      const exportData = filteredUsers.map(user => {
+        const obj = {};
+        if (selectedFields.includes('User ID')) obj.id = user.id || user.user_id;
+        if (selectedFields.includes('Email')) obj.email = user.email;
+        if (selectedFields.includes('Profile Data')) {
+          obj.nickname = user.nickname;
+          obj.fullname = user.fullname;
+          obj.tier = user.tier;
+          obj.status = user.status;
+          obj.location = user.location;
+          obj.nationality = user.nationality;
+        }
+        if (selectedFields.includes('Activity Log')) obj.lastLogin = user.lastLogin || 'N/A';
+        if (selectedFields.includes('Payment History')) obj.payments = user.payments || [];
+        return obj;
+      });
+      
+      // Format output
+      let output, mimeType, extension;
+      if (format === 'JSON') {
+        output = JSON.stringify(exportData, null, 2);
+        mimeType = 'application/json';
+        extension = 'json';
+      } else if (format === 'CSV') {
+        const headers = Object.keys(exportData[0] || {});
+        const rows = exportData.map(u => headers.map(h => `"${u[h] || ''}"`).join(','));
+        output = [headers.join(','), ...rows].join('\n');
+        mimeType = 'text/csv';
+        extension = 'csv';
+      } else if (format === 'XML') {
+        output = '<?xml version="1.0" encoding="UTF-8"?>\n<users>\n' + 
+          exportData.map(u => `  <user>\n${Object.entries(u).map(([k,v]) => `    <${k}>${v}</${k}>`).join('\n')}  </user>`).join('\n') +
+          '\n</users>';
+        mimeType = 'application/xml';
+        extension = 'xml';
+      } else {
+        output = JSON.stringify(exportData, null, 2);
+        mimeType = 'text/plain';
+        extension = 'sql';
+      }
+      
+      // Download file
+      const blob = new Blob([output], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `gai-users-dump-${dumpType}-${Date.now()}.${extension}`;
+      a.click();
+      URL.revokeObjectURL(url);
       
       // Track in memory
       if (typeof MemorySystem !== 'undefined') {
-        MemorySystem.trackActivity('tools', `Dumped users: ${dumpType} (${format})`);
+        MemorySystem.trackActivity('tools', `Dumped ${filteredUsers.length} users: ${dumpType} (${format})`);
       }
       
-      alert(`User Dump Initiated\n\nType: ${dumpType}\nFormat: ${format}\n\nIn production, this would export user data to the selected format.\n\nNote: This requires admin permissions.`);
+      alert(`User Dump Complete!\n\nExported: ${filteredUsers.length} users\nType: ${dumpType}\nFormat: ${format}\nFields: ${selectedFields.length}\n\nFile downloaded.`);
     }
     
     function runPhotoGenerator() {

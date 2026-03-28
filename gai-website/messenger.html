@@ -81,6 +81,16 @@
               <span class="material-symbols-outlined">close</span>
             </button>
           </div>
+          
+          <!-- Membership ID Search -->
+          <div class="mb-4 p-3 bg-neutral-800/50 rounded-lg border border-amber-400/20">
+            <p class="text-xs text-amber-400 uppercase tracking-wider mb-2">Search by Membership ID</p>
+            <div class="flex gap-2">
+              <input type="text" id="member-id-input" class="input-cyber flex-1 font-mono text-sm" placeholder="GAiXXXXXX">
+              <button onclick="searchByMembershipId()" class="px-4 py-2 bg-amber-400 text-black font-bold text-sm rounded hover:bg-amber-300">Go</button>
+            </div>
+          </div>
+          
           <div class="relative mb-4">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">search</span>
             <input type="text" id="member-search-input" class="input-cyber pl-10" placeholder="Search by name or nickname..." oninput="searchMembers()">
@@ -392,18 +402,38 @@
     }
     
     function searchMembers() {
-      const query = document.getElementById('member-search-input').value.toLowerCase();
+      const query = document.getElementById('member-search-input').value.toLowerCase().trim();
       const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
       const currentUser = localStorage.getItem('gai_username');
-      const filtered = users.filter(u => 
-        u.nickname !== currentUser && 
-        (u.nickname.toLowerCase().includes(query) || 
-         (u.fullname && u.fullname.toLowerCase().includes(query)))
-      );
+      
+      // Check if query looks like a Membership ID (GAi prefix)
+      const isMembershipId = query.toUpperCase().startsWith('GAI');
+      
+      let filtered = [];
+      if (isMembershipId) {
+        // Search by exact membership ID
+        filtered = users.filter(u => 
+          u.id && u.id.toUpperCase().includes(query.toUpperCase())
+        );
+      } else if (query) {
+        // Search by name, nickname, or fullname
+        filtered = users.filter(u => 
+          u.nickname !== currentUser && 
+          (u.nickname.toLowerCase().includes(query) || 
+           (u.fullname && u.fullname.toLowerCase().includes(query)) ||
+           (u.email && u.email.toLowerCase().includes(query)))
+        );
+      } else {
+        // Show all users (except current)
+        filtered = users.filter(u => u.nickname !== currentUser);
+      }
       
       const resultsDiv = document.getElementById('member-search-results');
       if (filtered.length === 0) {
-        resultsDiv.innerHTML = '<p class="text-zinc-500 text-center py-4">No members found</p>';
+        resultsDiv.innerHTML = `
+          <p class="text-zinc-500 text-center py-4">No members found</p>
+          <p class="text-zinc-600 text-xs text-center">Try searching by Membership ID (e.g., GAi001001)</p>
+        `;
         return;
       }
       
@@ -414,11 +444,37 @@
             <div class="w-10 h-10 rounded-full bg-amber-400/30 flex items-center justify-center text-sm font-bold text-amber-400">${initials}</div>
             <div class="flex-1">
               <p class="text-white font-medium">${user.nickname}</p>
-              <p class="text-zinc-500 text-xs">${user.tier || 'Standard'} Member</p>
+              <p class="text-zinc-500 text-xs font-mono">${user.id || user.user_id || ''}</p>
             </div>
+            <span class="text-[10px] text-zinc-600">${user.tier || 'Standard'}</span>
           </div>
         `;
       }).join('');
+    }
+    
+    function searchByMembershipId() {
+      const memberId = document.getElementById('member-id-input')?.value.trim().toUpperCase();
+      if (!memberId) {
+        alert('Please enter a Membership ID');
+        return;
+      }
+      
+      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      const currentUser = localStorage.getItem('gai_username');
+      
+      const user = users.find(u => 
+        u.nickname !== currentUser && 
+        (u.id && u.id.toUpperCase().includes(memberId)) ||
+        (u.user_id && u.user_id.toUpperCase().includes(memberId))
+      );
+      
+      if (!user) {
+        alert(`No member found with ID containing "${memberId}"\n\nPlease check the Membership ID and try again.`);
+        return;
+      }
+      
+      selectMember(user.id, user.nickname);
+      alert(`Found member: ${user.nickname} (${user.id || user.user_id})\n\nOpening chat...`);
     }
     
     function selectMember(userId, nickname) {
