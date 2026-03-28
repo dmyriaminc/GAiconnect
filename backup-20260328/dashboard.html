@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | GAi Connect</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Your personal GAi Connect dashboard - manage services, connect with members, access AI agents, and track your activity.">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Dashboard | GAi Connect">
+  <meta property="og:description" content="Your personal dashboard on GAi Connect">
+  <meta property="og:type" content="website">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+  <meta name="theme-color" content="#ffc563">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="supabase-client.js"></script>
+  <script src="gai-user.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Manrope', sans-serif; background: #0e0e0f; color: #ffffff; }
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    .material-symbols-outlined { font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; }
+    .glass-panel { background: linear-gradient(135deg, rgba(38, 38, 39, 0.6) 0%, rgba(14, 14, 15, 0.8) 100%); backdrop-filter: blur(16px); border: 1px solid rgba(255, 197, 99, 0.1); }
+    .nav-item { transition: all 0.3s ease; }
+    .nav-item:hover { transform: translateX(4px); }
+    .nav-item.active { background: rgba(255, 197, 99, 0.1); border-left-color: #ffc563; color: #ffc563; }
+    .service-card { transition: all 0.3s ease; }
+    .service-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(255, 197, 99, 0.1); }
+    @keyframes pulse-glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .glow-text { color: #ffc563; text-shadow: 0 0 10px #ffc563, 0 0 30px #ffc563; }
+    .cyber-grid-bg { background-image: linear-gradient(to right, rgba(255, 197, 99, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 197, 99, 0.02) 1px, transparent 1px); background-size: 40px 40px; }
+    .scanline-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 100; }
+    .scanline-overlay::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.1) 2px, rgba(0, 0, 0, 0.1) 4px); }
+  </style>
+</head>
+<body class="cyber-grid-bg">
+  <div class="scanline-overlay"></div>
+  
+  <!-- Top Navigation -->
+  <header class="bg-black/80 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/10 h-16 flex items-center">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between w-full">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="font-headline text-2xl font-black tracking-tighter text-amber-400">GAi Connect</span>
+      </a>
+      <div class="hidden md:flex items-center flex-1 max-w-xl mx-12">
+        <div class="relative w-full group">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-amber-400 transition-colors">search</span>
+          <input class="w-full bg-neutral-800 border-none focus:ring-1 focus:ring-amber-400/50 text-xs py-2 pl-10 pr-4 rounded-sm transition-all placeholder:text-zinc-600 outline-none" placeholder="Search services..." type="text">
+        </div>
+      </div>
+      <div class="flex items-center gap-6">
+        <button class="hover:text-amber-400 transition-colors active:scale-95 duration-200 cursor-pointer" onclick="triggerBiometric()"><span class="material-symbols-outlined" aria-hidden="true">fingerprint</span></button>
+        <button class="hover:text-amber-400 transition-colors active:scale-95 duration-200 relative cursor-pointer" onclick="toggleNotifications()">
+          <span class="material-symbols-outlined" aria-hidden="true">notifications_active</span><span id="notification-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] flex items-center justify-center text-white font-bold hidden">0</span>
+        </button>
+        <a href="profile.html" class="w-8 h-8 rounded-sm bg-gradient-to-br from-amber-400 to-amber-600 border border-amber-400/30"></a>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Notification Panel -->
+  <div id="notification-panel" class="fixed top-16 right-4 w-80 max-h-[60vh] bg-zinc-900/95 backdrop-blur-xl border border-amber-400/30 rounded-lg shadow-2xl z-[100] hidden overflow-hidden">
+    <div class="flex items-center justify-between p-4 border-b border-zinc-700">
+      <h3 class="font-headline font-bold text-amber-400">Notifications</h3>
+      <button onclick="clearAllNotifications()" class="text-xs text-zinc-500 hover:text-white">Clear All</button>
+    </div>
+    <div id="notification-list" class="overflow-y-auto max-h-[calc(60vh-60px)]">
+      <div id="notification-empty" class="p-8 text-center text-zinc-500">
+        <span class="material-symbols-outlined text-4xl mb-2">notifications_off</span>
+        <p class="text-sm">No notifications yet</p>
+      </div>
+    </div>
+  </div>
+   
+  <!-- Side Navigation -->
+  <aside class="bg-zinc-950/90 h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col justify-between py-8 pt-24 z-40">
+    <div class="space-y-6">
+      <div class="px-6 mb-8">
+        <a href="profile.html" class="flex items-center gap-3 p-3 bg-zinc-900/50 rounded-sm border-l-2 border-amber-400 hover:bg-zinc-900 transition-colors">
+          <div class="w-10 h-10 rounded-sm bg-gradient-to-br from-amber-400/30 to-amber-600/20 border border-amber-400/30 flex items-center justify-center">
+            <span class="material-symbols-outlined text-amber-400 text-lg">person</span>
+          </div>
+          <div class="overflow-hidden">
+            <p class="font-headline font-bold text-white text-sm truncate">System Operator</p>
+            <p class="text-[10px] text-amber-400 uppercase tracking-widest">Premium</p>
+          </div>
+        </a>
+        <a href="telegram-login.html" class="flex items-center gap-2 p-2 mt-2 bg-blue-500/10 border border-blue-500/30 rounded-sm hover:bg-blue-500/20 transition-colors">
+          <span class="text-lg">📱</span>
+          <span class="font-headline text-xs text-blue-400">Login via Telegram</span>
+        </a>
+      </div>
+      <nav class="space-y-1">
+        <a href="dashboard.html" class="nav-item active block px-4 py-3 flex items-center gap-4 border-l-4 border-transparent"><span class="material-symbols-outlined filled">hub</span><span class="font-headline font-medium text-sm">Connect Feed</span></a>
+        <a href="members.html" class="nav-item block px-4 py-3 flex items-center gap-4 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white"><span class="material-symbols-outlined filled" aria-hidden="true">groups</span><span class="font-headline font-medium text-sm">Online Members</span></a>
+        <a href="services.html" class="nav-item block px-4 py-3 flex items-center gap-4 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white"><span class="material-symbols-outlined filled" aria-hidden="true">work</span><span class="font-headline font-medium text-sm">Services</span></a>
+        <a href="messenger.html" class="nav-item block px-4 py-3 flex items-center gap-4 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white"><span class="material-symbols-outlined filled" aria-hidden="true">chat</span><span class="font-headline font-medium text-sm">Messages</span></a>
+        <a href="subscription.html" class="nav-item block px-4 py-3 flex items-center gap-4 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white"><span class="material-symbols-outlined filled" aria-hidden="true">workspace_premium</span><span class="font-headline font-medium text-sm">Membership</span></a>
+        <a href="admin.html" class="nav-item block px-4 py-3 flex items-center gap-4 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white"><span class="material-symbols-outlined filled" aria-hidden="true">admin_panel_settings</span><span class="font-headline font-medium text-sm">Admin</span></a>
+        <a href="ceo-dashboard.html" class="nav-item block px-4 py-3 flex items-center gap-4 border-l-4 border-amber-400 bg-amber-400/10 text-amber-400"><span class="material-symbols-outlined filled" aria-hidden="true">hub</span><span class="font-headline font-medium text-sm">CEO Dashboard</span></a>
+      </nav>
+    </div>
+    <div class="px-4 space-y-4">
+      <a href="subscription.html"><button class="w-full py-3 bg-amber-400 text-black font-bold text-xs uppercase tracking-tighter rounded-sm hover:brightness-110 transition-all active:scale-95">Upgrade Plan</button></a>
+      <div class="border-t border-zinc-900 pt-4 space-y-1">
+        <a class="nav-item text-zinc-500 px-4 py-2 flex items-center gap-4 hover:text-white text-xs transition-colors" onclick="alert('Support: contact@gai.com')"><span class="material-symbols-outlined text-sm">contact_support</span><span>Support</span></a>
+        <a class="nav-item text-zinc-500 px-4 py-2 flex items-center gap-4 hover:text-red-400 text-xs transition-colors" href="index.html"><span class="material-symbols-outlined text-sm">power_settings_new</span><span>Sign Out</span></a>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="lg:ml-64 pt-20 px-6 pb-24 min-h-screen">
+    <!-- Welcome Banner -->
+    <div class="mb-6 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-400/20 rounded-lg p-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-amber-400">waving_hand</span>
+        </div>
+        <div>
+          <p class="text-sm text-white font-medium">Welcome back, <span id="welcome-name" class="text-amber-400 font-bold">Loading...</span>!</p>
+          <p class="text-xs text-zinc-500">Last login: Today at 9:42 AM</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 relative">
+        <button onclick="toggleQuickActions()" class="flex items-center gap-2 px-3 py-1.5 bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs font-bold rounded-lg hover:bg-amber-400/20 transition-all cursor-pointer">
+          <span class="material-symbols-outlined text-sm">bolt</span>
+          Quick Actions
+          <span class="material-symbols-outlined text-sm">expand_more</span>
+        </button>
+        <div id="quick-actions-menu" class="hidden absolute top-full right-0 mt-2 w-56 bg-neutral-800 border border-amber-400/30 rounded-lg shadow-2xl z-[100] overflow-hidden">
+          <div class="p-3 border-b border-white/10">
+            <p class="text-xs text-zinc-400">Quick Actions</p>
+          </div>
+          <div class="py-2">
+            <a href="services.html?action=new" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+              <span class="material-symbols-outlined text-amber-400 text-lg">add_circle</span>
+              <span class="text-sm text-white">Post New Service</span>
+            </a>
+            <a href="ceo-dashboard.html" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+              <span class="material-symbols-outlined text-purple-400 text-lg">psychology</span>
+              <span class="text-sm text-white">GAi CEO Dashboard</span>
+            </a>
+            <a href="messenger.html" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+              <span class="material-symbols-outlined text-blue-400 text-lg">chat</span>
+              <span class="text-sm text-white">Open Messenger</span>
+            </a>
+            <a href="profile.html" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+              <span class="material-symbols-outlined text-green-400 text-lg">person</span>
+              <span class="text-sm text-white">Edit Profile</span>
+            </a>
+            <a href="subscription.html" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+              <span class="material-symbols-outlined text-pink-400 text-lg">workspace_premium</span>
+              <span class="text-sm text-white">Upgrade Membership</span>
+            </a>
+            <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors text-left">
+              <span class="material-symbols-outlined text-red-400 text-lg">logout</span>
+              <span class="text-sm text-red-400">Logout</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      function handleLogout() {
+        if (typeof GAiUser !== 'undefined') {
+          GAiUser.logout();
+        }
+        localStorage.clear();
+        window.location.href = 'auth.html';
+      }
+      
+      function toggleQuickActions() {
+        const menu = document.getElementById('quick-actions-menu');
+        menu.classList.toggle('hidden');
+      }
+      document.addEventListener('click', function(e) {
+        const menu = document.getElementById('quick-actions-menu');
+        const btn = e.target.closest('button[onclick="toggleQuickActions()"]');
+        if (!btn && menu) { menu.classList.add('hidden'); }
+      });
+    </script>
+    
+    <!-- Stats Cards -->
+    <section class="mb-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-neutral-800/50 border border-white/5 rounded-lg p-4 hover:border-amber-400/30 transition-all cursor-pointer" onclick="viewAnalytics()">
+        <div class="flex items-center justify-between mb-2">
+          <span class="w-8 h-8 rounded-lg bg-amber-400/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-amber-400 text-sm">trending_up</span>
+          </span>
+          <span class="text-xs text-green-400 font-bold">+12%</span>
+        </div>
+        <p class="font-headline text-2xl font-bold text-white">2,847</p>
+        <p class="text-xs text-zinc-500">Total Views</p>
+      </div>
+      <div class="bg-neutral-800/50 border border-white/5 rounded-lg p-4 hover:border-blue-400/30 transition-all cursor-pointer" onclick="viewMessages()">
+        <div class="flex items-center justify-between mb-2">
+          <span class="w-8 h-8 rounded-lg bg-blue-400/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-blue-400 text-sm">chat</span>
+          </span>
+          <span class="text-xs text-blue-400 font-bold">3 New</span>
+        </div>
+        <p class="font-headline text-2xl font-bold text-white">156</p>
+        <p class="text-xs text-zinc-500">Messages</p>
+      </div>
+      <div class="bg-neutral-800/50 border border-white/5 rounded-lg p-4 hover:border-green-400/30 transition-all cursor-pointer" onclick="viewConnections()">
+        <div class="flex items-center justify-between mb-2">
+          <span class="w-8 h-8 rounded-lg bg-green-400/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-green-400 text-sm">group</span>
+          </span>
+          <span class="text-xs text-green-400 font-bold">+5</span>
+        </div>
+        <p class="font-headline text-2xl font-bold text-white">423</p>
+        <p class="text-xs text-zinc-500">Connections</p>
+      </div>
+      <div class="bg-neutral-800/50 border border-white/5 rounded-lg p-4 hover:border-purple-400/30 transition-all cursor-pointer" onclick="viewServices()">
+        <div class="flex items-center justify-between mb-2">
+          <span class="w-8 h-8 rounded-lg bg-purple-400/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-purple-400 text-sm">work</span>
+          </span>
+          <span class="text-xs text-purple-400 font-bold">42 Active</span>
+        </div>
+        <p class="font-headline text-2xl font-bold text-white">$8.4K</p>
+        <p class="text-xs text-zinc-500">Service Revenue</p>
+      </div>
+    </section>
+    
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <div class="xl:col-span-2 space-y-8">
+        <!-- GAi CEO Quick Access -->
+        <div class="bg-gradient-to-r from-amber-500/10 to-purple-500/10 border border-amber-400/20 rounded-lg p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-headline text-lg font-bold text-white flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">psychology</span>
+              GAi CEO Assistant
+            </h2>
+            <a href="ceo-dashboard.html" class="text-xs text-amber-400 hover:text-amber-300 font-bold uppercase tracking-wider">Open CEO Dashboard →</a>
+          </div>
+          <p class="text-zinc-400 text-sm mb-4">Access GAi's multi-agent AI system to automate tasks, generate content, and manage your workflows.</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <button onclick="ceoQuickAction('research')" class="p-3 bg-neutral-800/80 border border-white/10 rounded-lg hover:border-red-400/50 transition-all text-left">
+              <span class="material-symbols-outlined text-red-400">search</span>
+              <p class="text-xs text-white font-medium mt-1">Deep Research</p>
+            </button>
+            <button onclick="ceoQuickAction('content')" class="p-3 bg-neutral-800/80 border border-white/10 rounded-lg hover:border-amber-400/50 transition-all text-left">
+              <span class="material-symbols-outlined text-amber-400">edit_note</span>
+              <p class="text-xs text-white font-medium mt-1">Generate Content</p>
+            </button>
+            <button onclick="ceoQuickAction('analysis')" class="p-3 bg-neutral-800/80 border border-white/10 rounded-lg hover:border-blue-400/50 transition-all text-left">
+              <span class="material-symbols-outlined text-blue-400">analytics</span>
+              <p class="text-xs text-white font-medium mt-1">Data Analysis</p>
+            </button>
+            <button onclick="ceoQuickAction('security')" class="p-3 bg-neutral-800/80 border border-white/10 rounded-lg hover:border-green-400/50 transition-all text-left">
+              <span class="material-symbols-outlined text-green-400">security</span>
+              <p class="text-xs text-white font-medium mt-1">Security Scan</p>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Trending Services -->
+        <div>
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="font-headline text-xl font-bold uppercase tracking-tight flex items-center gap-3"><span class="w-8 h-[2px] bg-amber-400"></span>Featured Services</h2>
+            <a href="services.html" class="text-xs text-amber-400 font-bold uppercase tracking-widest hover:underline">View All</a>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="service-card bg-neutral-800 rounded-lg border border-white/5 overflow-hidden hover:border-amber-400/30 transition-all">
+              <div class="h-40 bg-gradient-to-br from-amber-400/20 to-neutral-900 relative">
+                <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent"></div>
+                <div class="absolute top-4 left-4"><span class="bg-amber-400 text-black text-[10px] font-black px-2 py-1 uppercase rounded-sm">Featured</span></div>
+                <div class="absolute bottom-4 right-4">
+                  <button class="w-8 h-8 bg-black/50 backdrop-blur rounded-full flex items-center justify-center hover:bg-amber-400 transition-all">
+                    <span class="material-symbols-outlined text-white text-sm">favorite</span>
+                  </button>
+                </div>
+              </div>
+              <div class="p-5">
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="w-8 h-8 rounded-full bg-amber-400/30 flex items-center justify-center text-xs font-bold text-amber-400">XL</div>
+                  <span class="text-xs text-zinc-500">by Xenon_77</span>
+                </div>
+                <h3 class="font-headline font-bold text-white text-lg mb-1">Deep-Mind Arbitrage</h3>
+                <p class="text-zinc-400 text-sm mb-3 line-clamp-2">High-frequency trading protocol using synthetic neural nodes.</p>
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="font-headline text-xl font-bold text-amber-400">$2.44</span>
+                    <span class="text-zinc-500 text-xs">/hr</span>
+                  </div>
+                  <button onclick="dashboardConnect(this, 'Xenon_77')" class="px-4 py-2 bg-amber-400 text-black text-xs font-bold rounded-lg hover:bg-amber-300 transition-all">Connect</button>
+                </div>
+              </div>
+            </div>
+            <div class="service-card bg-neutral-800 rounded-lg border border-white/5 overflow-hidden hover:border-purple-400/30 transition-all">
+              <div class="h-40 bg-gradient-to-br from-purple-400/20 to-neutral-900 relative">
+                <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent"></div>
+                <div class="absolute top-4 left-4"><span class="bg-purple-400 text-white text-[10px] font-black px-2 py-1 uppercase rounded-sm">VVIP</span></div>
+                <div class="absolute bottom-4 right-4">
+                  <button class="w-8 h-8 bg-black/50 backdrop-blur rounded-full flex items-center justify-center hover:bg-purple-400 transition-all">
+                    <span class="material-symbols-outlined text-white text-sm">favorite</span>
+                  </button>
+                </div>
+              </div>
+              <div class="p-5">
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="w-8 h-8 rounded-full bg-purple-400/30 flex items-center justify-center text-xs font-bold text-purple-400">OR</div>
+                  <span class="text-xs text-zinc-500">by The_Oracle</span>
+                </div>
+                <h3 class="font-headline font-bold text-white text-lg mb-1">Memory Sharding</h3>
+                <p class="text-zinc-400 text-sm mb-3 line-clamp-2">Encrypted memory fragments across the neural nexus.</p>
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="font-headline text-xl font-bold text-amber-400">$8.12</span>
+                    <span class="text-zinc-500 text-xs">/session</span>
+                  </div>
+                  <button onclick="dashboardConnect(this, 'The_Oracle')" class="px-4 py-2 bg-purple-400 text-white text-xs font-bold rounded-lg hover:bg-purple-300 transition-all">Connect</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <aside class="w-full xl:w-80 space-y-8">
+        <!-- Online Members Section -->
+        <div class="bg-neutral-900/50 rounded-lg border border-green-500/20 overflow-hidden">
+          <div class="px-4 py-3 bg-gradient-to-r from-green-500/10 to-transparent border-b border-green-500/20 flex items-center justify-between">
+            <h2 class="font-headline text-sm font-bold text-green-400 flex items-center gap-2">
+              <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              Online Members
+            </h2>
+            <span id="online-count" class="text-xs text-green-400/70 font-mono">Loading...</span>
+          </div>
+          <div id="online-members-list" class="divide-y divide-white/5">
+            <!-- Members loaded from localStorage -->
+          </div>
+          <a href="members.html" class="block px-4 py-2 text-center text-xs text-green-400 hover:text-green-300 hover:bg-green-500/5 transition-colors border-t border-green-500/10">
+            View All Online Members →
+          </a>
+        </div>
+        
+        <!-- Live Activity Feed -->
+        <div class="bg-neutral-900/50 rounded-lg border border-amber-500/20 overflow-hidden">
+          <div class="px-4 py-3 bg-gradient-to-r from-amber-500/10 to-transparent border-b border-amber-500/20 flex items-center justify-between">
+            <h2 class="font-headline text-sm font-bold text-amber-400 flex items-center gap-2">
+              <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
+              Live Activity
+            </h2>
+            <button onclick="refreshActivityFeed()" class="text-xs text-amber-400/70 hover:text-amber-400 cursor-pointer">
+              <span class="material-symbols-outlined text-sm">refresh</span>
+            </button>
+          </div>
+          <div id="activity-feed" class="max-h-80 overflow-y-auto divide-y divide-white/5">
+            <!-- Activities loaded from localStorage -->
+          </div>
+        </div>
+        
+        <!-- Active Members (Offline) -->
+        <div>
+          <h2 class="font-headline text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4 px-2 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-zinc-600 rounded-full"></span>Offline Members</h2>
+          <div class="bg-neutral-900 rounded-sm border border-white/5 divide-y divide-white/5">
+            <a href="profile.html" class="p-4 flex items-center gap-3 group cursor-pointer hover:bg-zinc-900/50 transition-colors">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-zinc-500/30 to-neutral-800 border border-zinc-600/30 flex items-center justify-center text-xs font-bold text-zinc-500">CF</div>
+              <div><p class="text-sm font-bold text-white/60">CyberForge</p><p class="text-[10px] text-zinc-600 font-bold uppercase">Developer</p></div>
+              <div class="ml-auto"><span class="w-2 h-2 bg-zinc-600 rounded-full"></span></div>
+            </a>
+            <a href="profile.html" class="p-4 flex items-center gap-3 group cursor-pointer hover:bg-zinc-900/50 transition-colors">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-zinc-500/30 to-neutral-800 border border-zinc-600/30 flex items-center justify-center text-xs font-bold text-zinc-500">TD</div>
+              <div><p class="text-sm font-bold text-white/60">TechDuke</p><p class="text-[10px] text-zinc-600 font-bold uppercase">Analyst</p></div>
+              <div class="ml-auto"><span class="w-2 h-2 bg-zinc-600 rounded-full"></span></div>
+            </a>
+          </div>
+        </div>
+        <div class="bg-neutral-800 p-6 border-t-2 border-amber-400">
+          <h2 class="font-headline text-sm font-bold uppercase tracking-widest text-white mb-4">Neural Logs</h2>
+          <div class="space-y-4">
+            <div class="flex gap-4"><div class="mt-1 w-1 h-1 rounded-full bg-amber-400 shadow-[0_0_5px_#ffc563]"></div><p class="text-xs text-zinc-400"><span class="text-white font-bold">14:22:</span> Node AH-9 link established. Protocol: EXCLUSIVES_V4</p></div>
+            <div class="flex gap-4"><div class="mt-1 w-1 h-1 rounded-full bg-zinc-700"></div><p class="text-xs text-zinc-400"><span class="text-white font-bold">12:05:</span> Biometric sync completed for System Operator.</p></div>
+            <div class="flex gap-4"><div class="mt-1 w-1 h-1 rounded-full bg-red-400"></div><p class="text-xs text-zinc-400"><span class="text-white font-bold">09:12:</span> Unauthorized query blocked in Sector 7.</p></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+  
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-black/90 backdrop-blur-2xl lg:hidden z-50 border-t border-amber-400/20">
+    <a href="#" class="flex flex-col items-center justify-center text-amber-400 bg-amber-400/5 rounded-xl py-1 px-4"><span class="material-symbols-outlined" aria-hidden="true">hub</span><span class="text-[10px] font-bold uppercase">Feed</span></a>
+    <a href="services.html" class="flex flex-col items-center justify-center text-zinc-500"><span class="material-symbols-outlined" aria-hidden="true">work</span><span class="text-[10px] font-bold uppercase">Services</span></a>
+    <a href="messenger.html" class="flex flex-col items-center justify-center text-zinc-500"><span class="material-symbols-outlined" aria-hidden="true">chat</span><span class="text-[10px] font-bold uppercase">Chat</span></a>
+    <a href="#" class="flex flex-col items-center justify-center text-zinc-500"><span class="material-symbols-outlined" aria-hidden="true">menu</span><span class="text-[10px] font-bold uppercase">Menu</span></a>
+  </nav>
+  
+  <!-- GAi AI Assistant -->
+  <div id="gai-assistant" class="fixed bottom-6 right-6 z-50">
+    <button id="gai-toggle" class="w-14 h-14 bg-amber-400 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer relative">
+      <span class="material-symbols-outlined filled text-black">chat</span>
+      <img src="https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male-1.png" class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-black" alt="">
+    </button>
+    <div id="gai-chat" class="hidden absolute bottom-16 right-0 w-80 bg-neutral-900 border border-amber-400/30 rounded-lg shadow-2xl overflow-hidden">
+      <div class="bg-amber-400 px-4 py-3 flex items-center gap-2">
+        <img src="https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male-1.png" class="w-6 h-6 rounded-full" alt="GAi">
+        <span class="font-headline font-bold text-black">GAi Assistant</span>
+        <span class="ml-auto flex items-center gap-1">
+          <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+          <span class="text-xs text-black/70">Online</span>
+        </span>
+      </div>
+      <div id="gai-messages" class="h-64 p-4 overflow-y-auto space-y-3">
+        <div class="bg-neutral-800 rounded-lg p-3">
+          <p class="text-sm text-white">Welcome back, Member. I'm <span class="text-amber-400 font-bold">GAi</span>, your personal concierge. How may I assist?</p>
+        </div>
+      </div>
+      <div class="p-3 border-t border-zinc-700">
+        <div class="flex gap-2">
+          <input type="text" id="gai-input" placeholder="Ask GAi... (Press Enter)" class="flex-1 bg-neutral-800 border border-zinc-600 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-amber-400 outline-none" onkeypress="handleGaiInput(event)">
+          <button onclick="toggleVoiceInput()" class="p-2 bg-neutral-700 hover:bg-neutral-600 rounded-lg" title="Voice">
+            <span class="material-symbols-outlined text-amber-400">mic</span>
+          </button>
+          <button onclick="submitGaiInput()" class="p-2 bg-amber-400 hover:bg-amber-300 rounded-lg">
+            <span class="material-symbols-outlined text-black">send</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="voice-indicator" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden">
+    <div class="bg-neutral-900 border border-amber-400/50 px-6 py-3 rounded-lg flex items-center gap-3">
+      <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+      <span class="text-white text-sm">Listening...</span>
+      <button onclick="stopVoiceInput()" class="text-zinc-400">✕</button>
+    </div>
+  </div>
+  
+  <script>
+    // Debug: Verify JavaScript is loading
+    console.log('Dashboard JavaScript loading...');
+    
+    // Load user data on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUserWelcome();
+      loadSidebarUser();
+    });
+    
+    function loadUserWelcome() {
+      const fullname = localStorage.getItem('gai_reg_fullname');
+      const welcomeNameEl = document.getElementById('welcome-name');
+      if (welcomeNameEl) {
+        if (fullname) {
+          welcomeNameEl.textContent = fullname;
+        } else {
+          const nickname = localStorage.getItem('gai_username');
+          welcomeNameEl.textContent = nickname || 'User';
+        }
+      }
+    }
+    
+    function loadSidebarUser() {
+      const fullname = localStorage.getItem('gai_reg_fullname');
+      const nickname = localStorage.getItem('gai_username');
+      const tier = localStorage.getItem('gai_userTier') || 'Standard';
+      
+      const sidebarName = document.querySelector('.sidebar .font-headline.font-bold.text-white.text-sm');
+      const sidebarTier = document.querySelector('.sidebar .text-\\[10px\\].text-amber-400');
+      
+      if (sidebarName) {
+        sidebarName.textContent = fullname || nickname || 'User';
+      }
+      if (sidebarTier) {
+        sidebarTier.textContent = tier;
+      }
+    }
+    
+    // Voice Input
+    let isListening = false;
+    let recognition = null;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.lang = 'en-US';
+      recognition.onresult = function(e) {
+        document.getElementById('gai-input').value = e.results[0][0].transcript;
+        stopVoiceInput();
+        submitGaiInput();
+      };
+      recognition.onend = function() { stopVoiceInput(); };
+    }
+    function toggleVoiceInput() {
+      if (!recognition) { alert('Voice not supported'); return; }
+      if (isListening) stopVoiceInput();
+      else { try { recognition.start(); isListening = true; document.getElementById('voice-indicator').classList.remove('hidden'); } catch(e) {} }
+    }
+    function stopVoiceInput() { isListening = false; if (recognition) try { recognition.stop(); } catch(e) {} document.getElementById('voice-indicator').classList.add('hidden'); }
+    
+    function handleGaiInput(e) {
+      if (e.key === 'Enter') {
+        submitGaiInput();
+      }
+    }
+    
+    function submitGaiInput() {
+      const msg = document.getElementById('gai-input').value.trim();
+      if (!msg) return;
+      
+      const gaiMessages = document.getElementById('gai-messages');
+      
+      // Add user message with typing indicator
+      const userMsg = document.createElement('div');
+      userMsg.className = 'bg-amber-400/20 rounded-lg p-3 border border-amber-400/30';
+      userMsg.innerHTML = `<p class="text-sm text-white"><span class="text-blue-400 font-bold">You:</span> ${msg}</p>`;
+      gaiMessages.appendChild(userMsg);
+      
+      document.getElementById('gai-input').value = '';
+      gaiMessages.scrollTop = gaiMessages.scrollHeight;
+      
+      // Add typing indicator
+      const typingIndicator = document.createElement('div');
+      typingIndicator.id = 'gai-typing';
+      typingIndicator.className = 'bg-neutral-800 rounded-lg p-3';
+      typingIndicator.innerHTML = `<p class="text-sm text-zinc-400"><span class="text-amber-400 font-bold">GAi:</span> <span class="animate-pulse">Thinking...</span></p>`;
+      gaiMessages.appendChild(typingIndicator);
+      gaiMessages.scrollTop = gaiMessages.scrollHeight;
+      
+      setTimeout(() => {
+        // Remove typing indicator
+        typingIndicator.remove();
+        
+        let res = "I'm here to assist with your dashboard. How can I help you today?";
+        const lower = msg.toLowerCase();
+        
+        if (lower.includes('analytics') || lower.includes('stats') || lower.includes('views')) {
+          res = "📊 Your dashboard shows 2,847 views this week (+12%). Analytics are tracking member engagement, service performance, and revenue metrics in real-time.";
+        } else if (lower.includes('service')) {
+          res = "🛠️ You have 42 active services. Visit the Services page to post new offerings or manage existing ones. Top performers are featured in the Trending section.";
+        } else if (lower.includes('upgrade') || lower.includes('tier') || lower.includes('membership')) {
+          res = "💎 Consider upgrading to Elite tier for enhanced visibility, priority support, and exclusive features. Visit the Membership page for details.";
+        } else if (lower.includes('member') || lower.includes('online') || lower.includes('connection')) {
+          res = "👥 You have 423 connections with 12 members currently online. Active members include Xenon_77, Nova_Protocol, and The_Oracle.";
+        } else if (lower.includes('ceo') || lower.includes('ai') || lower.includes('agent')) {
+          res = "🤖 GAi CEO is your AI command center! Access it to manage 7 sub-agents: OSINT, Social, Content, Trading, Data, Builder, and Security. Click 'Open CEO Dashboard' for full control.";
+        } else if (lower.includes('music')) {
+          res = "🎵 Use the Music feature (purple button) to search songs or stream live radio stations. Available on Spotify, YouTube, and Audiomack.";
+        } else if (lower.includes('message') || lower.includes('chat')) {
+          res = "💬 You have 3 new messages. Click the Chat tab or use the Messenger to connect with other members.";
+        } else if (lower.includes('security') || lower.includes('fraud')) {
+          res = "🔒 All your data is encrypted and secure. GAi's Security Agent monitors threats 24/7. Last scan: Clean.";
+        } else if (lower.includes('help')) {
+          res = "🆘 I can help with: dashboard stats, services, memberships, analytics, connections, CEO features, music, and security. Just ask!";
+        } else if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
+          res = "👋 Hello, System Operator! I'm GAi, your personal concierge. How may I assist you today?";
+        }
+        
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'bg-neutral-800 rounded-lg p-3 border border-amber-400/20';
+        aiMsg.innerHTML = `<p class="text-sm text-white"><span class="text-amber-400 font-bold">GAi:</span> ${res}</p>`;
+        gaiMessages.appendChild(aiMsg);
+        gaiMessages.scrollTop = gaiMessages.scrollHeight;
+      }, 1200);
+    }
+
+    function runDiagnostic(event) {
+      if (!event) return;
+      const btn = event.target;
+      btn.innerHTML = '<span class="material-symbols-outlined animate-spin mr-2">sync</span> Running...';
+      btn.classList.add('opacity-75');
+      
+      setTimeout(() => {
+        alert('System Diagnostic Complete:\n\n✓ Neural Network: Optimal\n✓ Biometric Sync: 99.8%\n✓ Encryption Protocols: Active\n✓ Memory Allocation: Stable\n\nAll systems operational.');
+        btn.innerHTML = 'Run Diagnostic';
+        btn.classList.remove('opacity-75');
+      }, 2000);
+    }
+
+    function viewServices() {
+      window.location.href = 'services.html';
+    }
+
+    function viewAnalytics() {
+      alert('Analytics Dashboard\n\n📊 View Stats:\n• Total Views: 2,847 (+12%)\n• Service Performance\n• Member Engagement\n• Revenue Tracking\n\nComing Soon: Full analytics panel');
+    }
+
+    function viewMessages() {
+      window.location.href = 'messenger.html';
+    }
+
+    function viewConnections() {
+      alert('Connections Manager\n\n👥 Your Network:\n• Total Connections: 423\n• Online Now: 12\n• Pending Requests: 5\n\nManage your connections from the Members section.');
+    }
+
+    function triggerBiometric() {
+      alert('Biometric Verification\n\nScanning...\n\n✓ Fingerprint pattern recognized\n✓ Neural sync active\n\nVerification complete. System secure.');
+    }
+
+    function toggleNotifications() {
+      const panel = document.getElementById('notification-panel');
+      panel.classList.toggle('hidden');
+      
+      if (!panel.classList.contains('hidden')) {
+        loadNotifications();
+        GAiNotifications.markAllAsRead();
+        updateNotificationBadge();
+      }
+    }
+    
+    function loadNotifications() {
+      const list = document.getElementById('notification-list');
+      const empty = document.getElementById('notification-empty');
+      const notifications = GAiNotifications.getAll();
+      
+      if (notifications.length === 0) {
+        empty.classList.remove('hidden');
+        list.innerHTML = '';
+        list.appendChild(empty);
+        return;
+      }
+      
+      empty.classList.add('hidden');
+      list.innerHTML = notifications.map(n => {
+        const iconMap = {
+          'success': 'check_circle',
+          'warning': 'warning',
+          'error': 'error',
+          'info': 'info',
+          'message': 'chat',
+          'system': 'settings'
+        };
+        const colorMap = {
+          'success': 'text-green-400',
+          'warning': 'text-yellow-400',
+          'error': 'text-red-400',
+          'info': 'text-blue-400',
+          'message': 'text-purple-400',
+          'system': 'text-zinc-400'
+        };
+        const timeAgo = getTimeAgo(n.created_at);
+        return `
+          <div class="p-4 border-b border-zinc-800 hover:bg-zinc-800/50 cursor-pointer notification-item" onclick="viewNotification('${n.id}', event)">
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined ${colorMap[n.type] || 'text-zinc-400'}">${iconMap[n.type] || 'notifications'}</span>
+              <div class="flex-1 min-w-0">
+                <p class="font-bold text-white text-sm">${n.title}</p>
+                <p class="text-zinc-400 text-xs mt-1">${n.message}</p>
+                <p class="text-zinc-600 text-[10px] mt-1">${timeAgo}</p>
+              </div>
+              ${!n.read ? '<span class="w-2 h-2 bg-amber-400 rounded-full flex-shrink-0 mt-1"></span>' : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function getTimeAgo(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const seconds = Math.floor((now - date) / 1000);
+      
+      if (seconds < 60) return 'Just now';
+      if (seconds < 3600) return Math.floor(seconds / 60) + ' min ago';
+      if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
+      return Math.floor(seconds / 86400) + ' days ago';
+    }
+    
+    function viewNotification(id, event) {
+      if (event) event.stopPropagation();
+      GAiNotifications.markAsRead(id);
+      loadNotifications();
+      updateNotificationBadge();
+    }
+    
+    function clearAllNotifications() {
+      GAiNotifications.clearAll();
+      loadNotifications();
+      updateNotificationBadge();
+    }
+    
+    function updateNotificationBadge() {
+      const badge = document.getElementById('notification-badge');
+      const count = GAiNotifications.getUnreadCount();
+      if (count > 0) {
+        badge.textContent = count > 9 ? '9+' : count;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+    
+    // Initialize notifications on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof GAiNotifications !== 'undefined') {
+        updateNotificationBadge();
+        // Auto-show welcome notification if logged in
+        const isLoggedIn = localStorage.getItem('gai_isLoggedIn') === 'true';
+        const username = localStorage.getItem('gai_username');
+        if (isLoggedIn && username) {
+          const notifications = GAiNotifications.getAll();
+          if (notifications.length === 0) {
+            GAiNotifications.addLogin(username);
+            updateNotificationBadge();
+          }
+        }
+      }
+    });
+
+    function showQuickActions() {
+      toggleQuickActions();
+    }
+
+    function ceoQuickAction(type) {
+      const actions = {
+        research: {
+          title: 'Deep Research',
+          desc: 'Starting research agent...',
+          agent: 'OSINT Agent'
+        },
+        content: {
+          title: 'Generate Content',
+          desc: 'Opening content generator...',
+          agent: 'Content Agent'
+        },
+        analysis: {
+          title: 'Data Analysis',
+          desc: 'Starting data analysis...',
+          agent: 'Data Analyst'
+        },
+        security: {
+          title: 'Security Scan',
+          desc: 'Running security scan...',
+          agent: 'Security Agent'
+        }
+      };
+      
+      const action = actions[type];
+      if (action) {
+        alert(`${action.title}\n\n${action.desc}\n\nThis would activate the ${action.agent} in the CEO Dashboard.\n\nTo use full AI capabilities, visit the CEO Dashboard.`);
+      }
+    }
+    
+    function dashboardConnect(btn, providerName) {
+      const originalHTML = btn.innerHTML;
+      
+      btn.disabled = true;
+      btn.classList.remove('bg-amber-400', 'hover:bg-amber-300', 'text-black', 'bg-purple-400', 'hover:bg-purple-300', 'text-white');
+      btn.classList.add('bg-green-500', 'text-white');
+      btn.innerHTML = `
+        <span class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">check_circle</span>
+          Request Sent
+        </span>
+      `;
+      
+      localStorage.setItem('service_request_sent_' + providerName, 'true');
+    }
+
+    const gaiToggle = document.getElementById('gai-toggle');
+    const gaiChat = document.getElementById('gai-chat');
+    const gaiInput = document.getElementById('gai-input');
+    const gaiMessages = document.getElementById('gai-messages');
+
+    if (gaiToggle && gaiChat) {
+      gaiToggle.addEventListener('click', () => {
+        gaiChat.classList.toggle('hidden');
+      });
+    }
+
+    if (gaiInput) {
+      gaiInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && gaiInput.value.trim()) {
+          const userMessage = gaiInput.value.toLowerCase();
+          const messageDiv = document.createElement('div');
+          messageDiv.className = 'bg-neutral-800 rounded-lg p-3';
+          messageDiv.innerHTML = '<p class="text-sm text-white"><span class="text-blue-400 font-bold">You:</span> ' + gaiInput.value + '</p>';
+          gaiMessages.appendChild(messageDiv);
+          gaiInput.value = '';
+          gaiMessages.scrollTop = gaiMessages.scrollHeight;
+          
+          setTimeout(() => {
+            let response = "I'm here to assist with your dashboard. Please elaborate on your question.";
+            
+            if (userMessage.includes('analytics') || userMessage.includes('stats') || userMessage.includes('performance')) {
+              response = "Your dashboard provides real-time insights into your services, member interactions, and platform activity. Premium members receive enhanced analytics.";
+            } else if (userMessage.includes('service') || userMessage.includes('listing')) {
+              response = "You can manage your services from the dashboard. Post new services, track performance, and monitor engagement through the Services tab.";
+            } else if (userMessage.includes('upgrade') || userMessage.includes('tier') || userMessage.includes('membership')) {
+              response = "Ready to elevate your experience? Upgrade your tier for enhanced visibility, priority support, and exclusive benefits. Visit the Membership page.";
+            } else if (userMessage.includes('security') || userMessage.includes('privacy')) {
+              response = "Your account is protected with multi-layer authentication. GAi encrypts all data at rest and in transit. Your biometric data is handled as highly restricted.";
+            } else if (userMessage.includes('message') || userMessage.includes('chat') || userMessage.includes('contact')) {
+              response = "Use the Messages tab to connect with other members. All communications are privacy-controlled and encrypted end-to-end.";
+            } else if (userMessage.includes('profile') || userMessage.includes('account')) {
+              response = "Update your profile settings, verify your identity, and manage your account preferences through your profile page.";
+            }
+            
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'bg-neutral-800 rounded-lg p-3';
+            aiDiv.innerHTML = '<p class="text-sm text-white"><span class="text-amber-400 font-bold">GAi:</span> ' + response + '</p>';
+            gaiMessages.appendChild(aiDiv);
+            gaiMessages.scrollTop = gaiMessages.scrollHeight;
+          }, 800);
+        }
+      });
+    }
+    
+    // Initialize GAi User & Location
+    document.addEventListener('DOMContentLoaded', function() {
+      GAiUser.init();
+      GAiNearby.init();
+      loadOnlineMembers();
+      
+      // YouTube search Enter key
+      const ytInput = document.getElementById('yt-search-input');
+      if (ytInput) {
+        ytInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            searchYouTube();
+          }
+        });
+      }
+    });
+    
+    // Load Online Members from localStorage and Supabase
+    async function loadOnlineMembers() {
+      let users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      const container = document.getElementById('online-members-list');
+      const countEl = document.getElementById('online-count');
+      
+      if (!container) return;
+      
+      // Try to fetch from Supabase
+      if (supabase.isConfigured) {
+        try {
+          const { data, error } = await supabase.from('users').select('*').eq('status', 'active');
+          if (!error && data && data.length > 0) {
+            // Update localStorage with latest users
+            localStorage.setItem('gai_users', JSON.stringify(data));
+            users = data;
+          }
+        } catch (err) {
+          console.warn('Failed to fetch users from Supabase:', err.message);
+        }
+      }
+      
+      // Get current logged-in user ID
+      const currentUserId = localStorage.getItem('gai_userId');
+      
+      // Default demo members to show when no users registered
+      const defaultMembers = users.length === 0 ? [
+        { id: 'GAi001001', nickname: 'Xenon_77', tier: 'VVIP', nationality: 'USA', status: 'online', initials: 'XL', color: 'amber' },
+        { id: 'GAi001002', nickname: 'Nova_Protocol', tier: 'Elite', nationality: 'UK', status: 'online', initials: 'NP', color: 'blue' },
+        { id: 'GAi001003', nickname: 'The_Oracle', tier: 'Premium', nationality: 'Japan', status: 'online', initials: 'OR', color: 'purple' },
+        { id: 'GAi001004', nickname: 'NeonViper', tier: 'Standard', nationality: 'Germany', status: 'offline', initials: 'NV', color: 'pink' },
+        { id: 'GAi001005', nickname: 'QuantumRush', tier: 'Premium', nationality: 'Australia', status: 'online', initials: 'QR', color: 'cyan' }
+      ] : [];
+      
+      // Map registered users to display format
+      const registeredUsers = users.map(u => ({
+        id: u.id || u.user_id,
+        nickname: u.nickname || u.fullname,
+        fullname: u.fullname,
+        tier: u.tier || 'Standard',
+        nationality: u.nationality || '',
+        location: u.location || '',
+        status: u.status === 'online' ? 'online' : 'active',
+        initials: (u.nickname || u.fullname || 'U').substring(0, 2).toUpperCase(),
+        color: 'amber'
+      }));
+      
+      // Combine registered users with default members (show registered first)
+      let allMembers = [...registeredUsers, ...defaultMembers.filter(dm => !users.find(u => u.id === dm.id))];
+      
+      // Filter out current user
+      allMembers = allMembers.filter(m => m.id !== currentUserId);
+      
+      // Count online members (include 'active' as online)
+      const onlineCount = allMembers.filter(m => m.status === 'online' || m.status === 'active').length;
+      if (countEl) {
+        countEl.textContent = onlineCount + ' Online';
+      }
+      
+      // Render members (show max 5)
+      const displayMembers = allMembers.slice(0, 5);
+      
+      if (displayMembers.length === 0) {
+        container.innerHTML = `
+          <div class="p-4 text-center text-zinc-500">
+            <p class="text-sm">No other members yet.</p>
+            <p class="text-xs mt-1">Share GAi Connect to grow your network!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = displayMembers.map(member => {
+        const isOnline = member.status === 'online' || member.status === 'active';
+        const tierColors = {
+          'Free': 'text-zinc-400', 'Standard': 'text-blue-400', 'Premium': 'text-amber-400',
+          'Elite': 'text-purple-400', 'VVIP': 'text-pink-400'
+        };
+        const color = member.color || 'amber';
+        const initials = member.initials || (member.nickname || 'U').substring(0, 2).toUpperCase();
+        
+        return `
+          <a href="profile.html?id=${member.id || member.user_id}" class="p-3 flex items-center gap-3 group cursor-pointer hover:bg-green-500/5 transition-colors">
+            <div class="relative">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-${color}-400/30 to-neutral-800 border border-${color}-400/30 flex items-center justify-center text-xs font-bold text-${color}-400">${initials}</div>
+              <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 ${isOnline ? 'bg-green-500' : 'bg-zinc-500'} rounded-full border-2 border-neutral-900"></span>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-bold text-white">${member.nickname}</p>
+              <p class="text-[10px] ${tierColors[member.tier] || 'text-green-400/70'}">${member.nationality || member.location || 'Member'}</p>
+            </div>
+            <span class="text-[10px] text-zinc-500">${isOnline ? 'Online' : 'Offline'}</span>
+          </a>
+        `;
+      }).join('');
+    }
+    
+    // Load Activity Feed
+    function loadActivityFeed() {
+      const container = document.getElementById('activity-feed');
+      if (!container) return;
+      
+      // Get activities from GAiUser
+      const activities = typeof GAiUser !== 'undefined' ? GAiUser.getActivities(15) : [];
+      
+      // Also check localStorage directly
+      const storedActivities = JSON.parse(localStorage.getItem('gai_activities') || '[]');
+      const allActivities = activities.length > 0 ? activities : storedActivities;
+      
+      if (allActivities.length === 0) {
+        // Add demo activities if none exist
+        const demoActivities = [
+          { id: 1, type: 'register', username: 'Xenon_77', timestamp: new Date(Date.now() - 300000).toISOString() },
+          { id: 2, type: 'login', username: 'Nova_Protocol', timestamp: new Date(Date.now() - 180000).toISOString() },
+          { id: 3, type: 'connect', username: 'The_Oracle', details: { target: 'Luna_Star' }, timestamp: new Date(Date.now() - 60000).toISOString() },
+          { id: 4, type: 'post_service', username: 'Mia_Vogue', details: { service: 'Fashion Model' }, timestamp: new Date(Date.now() - 30000).toISOString() }
+        ];
+        renderActivities(demoActivities, container);
+        return;
+      }
+      
+      renderActivities(allActivities.slice(0, 15), container);
+    }
+    
+    function renderActivities(activities, container) {
+      container.innerHTML = activities.map(activity => {
+        const icon = typeof GAiUser !== 'undefined' ? GAiUser.getActivityIcon(activity.type) : 'circle';
+        const colorClass = typeof GAiUser !== 'undefined' ? GAiUser.getActivityColor(activity.type) : 'bg-zinc-500/20 text-zinc-400';
+        const text = typeof GAiUser !== 'undefined' ? GAiUser.getActivityText(activity) : activity.type;
+        const timeAgo = formatTimeAgo(new Date(activity.timestamp));
+        
+        return `
+          <div class="p-3 flex items-start gap-3 hover:bg-white/5 transition-colors">
+            <div class="w-8 h-8 rounded-full ${colorClass} flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-sm">${icon}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-white"><span class="font-bold text-amber-400">${activity.username}</span> ${text}</p>
+              <p class="text-xs text-zinc-500 mt-0.5">${timeAgo}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function formatTimeAgo(date) {
+      const seconds = Math.floor((new Date() - date) / 1000);
+      if (seconds < 60) return 'Just now';
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      return `${days}d ago`;
+    }
+    
+    function refreshActivityFeed() {
+      loadActivityFeed();
+      loadOnlineMembers();
+    }
+    
+    // Auto-refresh activity feed every 10 seconds
+    setInterval(() => {
+      if (typeof GAiUser !== 'undefined') {
+        GAiUser.refreshOnlineStatus();
+      }
+      loadActivityFeed();
+      loadOnlineMembers();
+    }, 10000);
+    
+    // Initialize on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Sync all data from Supabase first
+      if (typeof GAiData !== 'undefined') {
+        await GAiData.syncAllData();
+      }
+      loadActivityFeed();
+      loadOnlineMembers();
+    });
+  </script>
+</body>
+</html>

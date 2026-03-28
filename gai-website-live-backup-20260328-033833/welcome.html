@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to GAi Connect | Where People Connect</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Welcome to GAi Connect - The exclusive multi-agent AI platform. Connect with verified professionals, access 7 AI agents, and experience premium networking.">
+  <meta name="keywords" content="AI platform, multi-agent, social network, verified members, premium access, GAi CEO">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Welcome to GAi Connect">
+  <meta property="og:description" content="Join the exclusive multi-agent AI platform">
+  <meta property="og:type" content="website">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+  <meta name="theme-color" content="#ffc563">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="gai-user.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ffc563',
+            'primary-dim': '#eda600',
+            'primary-fixed': '#feb300',
+            'on-primary': '#5e4000',
+            'surface-container-lowest': '#000000',
+            'surface-container-low': '#131314',
+            'surface-container': '#1a191b',
+            'surface-container-high': '#201f21',
+            'surface-container-highest': '#262627',
+            'surface-bright': '#2c2c2d',
+            'on-surface': '#ffffff',
+            'on-surface-variant': '#adaaab',
+            outline: '#767576',
+            'secondary': '#6e9bff',
+            tertiary: '#cb7bff',
+            error: '#ff7351',
+          },
+          fontFamily: {
+            headline: ['Space Grotesk', 'sans-serif'],
+            body: ['Manrope', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    :root {
+      --glow-primary: 0 0 20px rgba(255, 197, 99, 0.4), 0 0 40px rgba(255, 197, 99, 0.2);
+      --glow-secondary: 0 0 20px rgba(110, 155, 255, 0.4), 0 0 40px rgba(110, 155, 255, 0.2);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Manrope', sans-serif; background: #000000; color: #ffffff; min-height: 100vh; }
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    .material-symbols-outlined { font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; }
+    .glass-panel { background: linear-gradient(135deg, rgba(38, 38, 39, 0.6) 0%, rgba(14, 14, 15, 0.8) 100%); backdrop-filter: blur(16px); border: 1px solid rgba(255, 197, 99, 0.1); }
+    .btn-primary { background: #ffc563; color: #5e4000; font-family: 'Space Grotesk', sans-serif; font-weight: 700; padding: 12px 32px; border: none; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.1em; }
+    .btn-primary:hover { filter: brightness(1.15); box-shadow: var(--glow-primary); transform: translateY(-2px); }
+    .btn-secondary { background: transparent; color: #ffffff; font-family: 'Space Grotesk', sans-serif; font-weight: 600; padding: 12px 32px; border: 1px solid #484849; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.1em; }
+    .btn-secondary:hover { border-color: #ffc563; color: #ffc563; }
+    .input-cyber { background: #262627; border: none; border-bottom: 2px solid #484849; color: #ffffff; padding: 12px 16px; font-family: 'Manrope', sans-serif; transition: all 0.2s ease; outline: none; width: 100%; }
+    .input-cyber:focus { border-bottom-color: #ffc563; }
+    .glow-text { color: #ffc563; text-shadow: 0 0 10px #ffc563, 0 0 30px #ffc563; }
+    .service-card { transition: all 0.3s ease; }
+    .service-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(255, 197, 99, 0.1); }
+    .profile-card { transition: all 0.3s ease; }
+    .profile-card:hover { transform: scale(1.02); }
+    .music-track { transition: all 0.2s ease; }
+    .music-track:hover { background: rgba(255, 197, 99, 0.1); }
+    @keyframes pulse-glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+  </style>
+</head>
+<body class="bg-black">
+  <!-- Top Navigation -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-2xl border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="welcome.html" class="flex items-center gap-2">
+        <span class="font-headline text-2xl font-black tracking-tighter text-amber-400 glow-text">GAi Connect</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="#features" class="text-zinc-400 hover:text-amber-400 transition-colors font-headline text-sm">Explore</a>
+        <a href="services.html" class="text-zinc-400 hover:text-amber-400 transition-colors font-headline text-sm">Services</a>
+        <a href="#sponsored-members" class="gai-members-link text-zinc-400 hover:text-amber-400 transition-colors font-headline text-sm" style="display: none;">Members</a>
+        <a href="#music-section" class="text-zinc-400 hover:text-amber-400 transition-colors font-headline text-sm">Music</a>
+      </nav>
+      <div class="flex items-center gap-4">
+        <a href="auth.html" class="text-amber-400 font-headline text-sm font-bold">Login</a>
+        <a href="auth.html">
+          <button class="btn-primary text-sm py-2 px-6">Get Started</button>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-16">
+    <!-- Biometric Recommendation Banner -->
+    <div id="biometric-banner" class="hidden bg-gradient-to-r from-amber-900/50 to-yellow-900/50 border-b border-amber-500/30 px-6 py-3">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-amber-400">face</span>
+          <span class="text-amber-200 text-sm">Enhance your security! We recommend enabling Face Recognition for faster, safer login.</span>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="enableBiometric()" class="bg-amber-500 hover:bg-amber-400 text-black px-4 py-1.5 rounded text-sm font-bold">Enable Now</button>
+          <button onclick="dismissBiometricBanner()" class="text-zinc-400 hover:text-white text-sm">Dismiss</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Check if biometric is enabled and show banner
+      document.addEventListener('DOMContentLoaded', function() {
+        const biometricEnabled = localStorage.getItem('gai_biometricEnabled');
+        const isLoggedIn = localStorage.getItem('gai_isLoggedIn') === 'true';
+        
+        if (isLoggedIn && biometricEnabled !== 'true') {
+          document.getElementById('biometric-banner').classList.remove('hidden');
+        }
+      });
+      
+      function enableBiometric() {
+        window.location.href = 'profile.html?setup=biometric';
+      }
+      
+      function dismissBiometricBanner() {
+        document.getElementById('biometric-banner').classList.add('hidden');
+        localStorage.setItem('gai_biometricBannerDismissed', 'true');
+      }
+    </script>
+
+    <!-- Hero Section -->
+    <section class="relative py-16 px-6 bg-gradient-to-b from-neutral-900 to-black">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <!-- Left Content -->
+          <div class="lg:col-span-7">
+            <div class="mb-6">
+              <span class="inline-flex items-center gap-2 px-4 py-2 glass-panel border-l-2 border-amber-400">
+                <span class="material-symbols-outlined filled text-amber-400 text-sm">verified</span>
+                <span class="text-amber-400 font-headline text-xs tracking-wider">Welcome to GAi Connect Network</span>
+              </span>
+            </div>
+            <h1 class="font-headline text-4xl md:text-6xl font-black text-white leading-none mb-6">
+              Where Exclusive<br>
+              <span class="text-amber-400 glow-text italic">People Connect</span>
+            </h1>
+            <p class="text-zinc-400 text-lg mb-8 max-w-xl">
+              Join a premium community of visionaries, innovators, and leaders. Build meaningful connections, share experiences, and grow together.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 mb-12">
+              <a href="auth.html">
+                <button class="btn-primary text-lg py-4 px-10 w-full sm:w-auto">Join the Network</button>
+              </a>
+              <a href="#features">
+                <button class="btn-secondary text-lg py-4 px-10 w-full sm:w-auto">Explore Features</button>
+              </a>
+            </div>
+            <!-- Stats -->
+            <div class="flex gap-8">
+              <div><div class="font-headline text-3xl font-black text-amber-400">12K+</div><div class="text-zinc-500 text-xs uppercase">Active Members</div></div>
+              <div><div class="font-headline text-3xl font-black text-amber-400">42</div><div class="text-zinc-500 text-xs uppercase">Neural Nodes</div></div>
+              <div><div class="font-headline text-3xl font-black text-amber-400">99.9%</div><div class="text-zinc-500 text-xs uppercase">Uptime</div></div>
+            </div>
+          </div>
+
+          <!-- Right - Preview Chat Dashboard -->
+          <div class="lg:col-span-5">
+            <div class="glass-panel rounded-lg overflow-hidden border border-amber-400/20">
+              <div class="bg-amber-400 px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined filled text-black">chat</span>
+                  <span class="font-headline font-bold text-black">GAi Assistant</span>
+                </div>
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              </div>
+              <div class="p-4 h-80 overflow-y-auto space-y-4 bg-neutral-900">
+                <div class="flex gap-3">
+                  <div class="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined filled text-amber-400 text-sm">chat</span>
+                  </div>
+                  <div class="bg-neutral-800 p-3 rounded-lg rounded-tl-none">
+                    <p class="text-sm text-white">Welcome to GAi Connect! I'm your exclusive digital concierge. How may I assist you today?</p>
+                  </div>
+                </div>
+                <div class="flex gap-3 justify-end">
+                  <div class="bg-amber-400 p-3 rounded-lg rounded-tr-none">
+                    <p class="text-sm text-black">What is GAi Connect about?</p>
+                  </div>
+                </div>
+                <div class="flex gap-3">
+                  <div class="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined filled text-amber-400 text-sm">chat</span>
+                  </div>
+                  <div class="bg-neutral-800 p-3 rounded-lg rounded-tl-none">
+                    <p class="text-sm text-white">GAi Connect is a premium social platform for exclusive connections. We offer:</p>
+                    <ul class="text-xs text-zinc-400 mt-2 space-y-1">
+                      <li>• Biometric security verification</li>
+                      <li>• Private encrypted messaging</li>
+                      <li>• Exclusive service marketplace</li>
+                      <li>• Neural network connectivity</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="flex gap-3 justify-end">
+                  <div class="bg-amber-400 p-3 rounded-lg rounded-tr-none">
+                    <p class="text-sm text-black">How do I join?</p>
+                  </div>
+                </div>
+                <div class="flex gap-3">
+                  <div class="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined filled text-amber-400 text-sm">chat</span>
+                  </div>
+                   <div class="bg-neutral-800 p-3 rounded-lg rounded-tl-none">
+                    <p class="text-sm text-white">Click "Get Started" to begin your journey. You'll need an invitation code for full access.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="p-3 border-t border-zinc-700">
+                <div class="flex gap-2">
+                  <input type="text" id="preview-chat-input" placeholder="Ask GAi Connect..." class="flex-1 bg-neutral-800 border border-zinc-600 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-amber-400 outline-none" onkeypress="handlePreviewChat(event)">
+                  <button onclick="sendPreviewChat()" class="p-2 bg-amber-400 hover:bg-amber-300 rounded-lg transition-colors">
+                    <span class="material-symbols-outlined text-black">send</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service Modal -->
+  <div id="service-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeServiceModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-neutral-900 border border-amber-400/30 rounded-lg shadow-2xl overflow-hidden">
+      <div id="service-header" class="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <span id="service-category" class="text-xs text-black/70 font-bold uppercase">Trading</span>
+            <h3 id="service-title" class="font-headline text-xl font-bold text-white">Deep-Mind Arbitrage</h3>
+          </div>
+          <button onclick="closeServiceModal()" class="text-white/70 hover:text-white">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center">
+            <span id="service-provider-initials" class="font-bold text-amber-400">XL</span>
+          </div>
+          <div>
+            <p class="text-white font-bold text-sm" id="service-provider">Xenon_77</p>
+            <p class="text-zinc-500 text-xs">Service Provider</p>
+          </div>
+        </div>
+        <p id="service-description" class="text-zinc-400 text-sm mb-4">Description goes here...</p>
+        <div class="flex items-center gap-4 mb-6 text-sm">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+            <span id="service-rating" class="text-white">4.9</span>
+          </div>
+          <span class="text-zinc-600">•</span>
+          <span id="service-reviews" class="text-zinc-500">127 reviews</span>
+        </div>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span id="service-price" class="font-headline text-3xl font-bold text-amber-400">2.44 GAi</span>
+            <span id="service-price-unit" class="text-zinc-500 text-sm">/hr</span>
+          </div>
+        </div>
+        
+        <!-- Provider Contact -->
+        <div class="mb-6 p-4 bg-neutral-800 rounded-lg">
+          <h4 class="text-xs text-zinc-500 uppercase tracking-wider mb-3">Contact Provider</h4>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="messenger.html" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-amber-400 transition-colors">
+              <span class="material-symbols-outlined text-lg">chat</span>
+              <span>Message</span>
+            </a>
+            <a href="https://wa.me/1234567890" target="_blank" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-green-400 transition-colors">
+              <span class="material-symbols-outlined text-lg">call</span>
+              <span>WhatsApp</span>
+            </a>
+            <a href="tel:+1234567890" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-amber-400 transition-colors">
+              <span class="material-symbols-outlined text-lg">phone</span>
+              <span>Phone</span>
+            </a>
+            <a href="mailto:provider@gai.com" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-purple-400 transition-colors">
+              <span class="material-symbols-outlined text-lg">email</span>
+              <span>Email</span>
+            </a>
+          </div>
+        </div>
+        
+        <div class="flex gap-3">
+          <button onclick="orderService()" class="flex-1 bg-amber-400 text-black font-headline font-bold text-sm uppercase py-3 rounded-lg hover:bg-amber-300 transition-colors">
+            Order Now
+          </button>
+          <button onclick="messageServiceProvider()" class="flex-1 bg-transparent border border-amber-400 text-amber-400 font-headline font-bold text-sm uppercase py-3 rounded-lg hover:bg-amber-400/10 transition-colors">
+            Message
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+              <div class="p-3 border-t border-zinc-700">
+                <input type="text" placeholder="Ask GAi Connect..." class="w-full bg-neutral-800 border border-zinc-600 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-amber-400 outline-none">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 px-6 bg-neutral-900">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+          <h2 class="font-headline text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4">Platform Features</h2>
+          <div class="h-1 w-24 bg-amber-400 mx-auto"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="glass-panel p-8 border-l-4 border-amber-400">
+            <span class="material-symbols-outlined filled text-amber-400 text-4xl mb-4">fingerprint</span>
+            <h3 class="font-headline text-xl font-bold mb-2">Biometric Security</h3>
+            <p class="text-zinc-400 text-sm">Multi-spectral biometric verification ensures only verified biological entities access the network.</p>
+          </div>
+          <div class="glass-panel p-8 border-l-4 border-blue-400">
+            <span class="material-symbols-outlined filled text-blue-400 text-4xl mb-4">chat_bubble</span>
+            <h3 class="font-headline text-xl font-bold mb-2">Encrypted Messaging</h3>
+            <p class="text-zinc-400 text-sm">Self-destructing neural pulses with zero metadata trail. Pure, unfiltered connectivity.</p>
+          </div>
+          <div class="glass-panel p-8 border-l-4 border-purple-400">
+            <span class="material-symbols-outlined filled text-purple-400 text-4xl mb-4">work</span>
+            <h3 class="font-headline text-xl font-bold mb-2">Service Marketplace</h3>
+            <p class="text-zinc-400 text-sm">Connect with verified providers across trading, security, AI, and neural services.</p>
+          </div>
+          <div class="glass-panel p-8 border-l-4 border-pink-400">
+            <span class="material-symbols-outlined filled text-pink-400 text-4xl mb-4">psychology</span>
+            <h3 class="font-headline text-xl font-bold mb-2">GAi Memory</h3>
+            <p class="text-zinc-400 text-sm">Personalized user experience that learns your preferences and adapts to your unique digital lifestyle.</p>
+          </div>
+          <div class="glass-panel p-8 border-l-4 border-cyan-400">
+            <span class="material-symbols-outlined filled text-cyan-400 text-4xl mb-4">auto_awesome</span>
+            <h3 class="font-headline text-xl font-bold mb-2">Smart Recommendations</h3>
+            <p class="text-zinc-400 text-sm">AI-powered suggestions that connect you with relevant people, services, and opportunities.</p>
+          </div>
+          <div class="glass-panel p-8 border-l-4 border-green-400">
+            <span class="material-symbols-outlined filled text-green-400 text-4xl mb-4">smart_toy</span>
+            <h3 class="font-headline text-xl font-bold mb-2">AI Decision-Making</h3>
+            <p class="text-zinc-400 text-sm">Intelligent assistance that helps you make informed decisions across all platform interactions.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sponsored Profiles -->
+    <section id="sponsored-members" class="py-16 px-6 bg-neutral-900 nearby-content">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="font-headline text-3xl font-black text-white uppercase tracking-tighter">Sponsored Members</h2>
+            <p class="text-zinc-500 text-sm mt-1">Connect with top verified professionals</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <button onclick="toggleNearbyProfiles()" class="flex items-center gap-2 px-3 py-1.5 border border-amber-400/50 text-amber-400 text-xs font-headline uppercase rounded-sm hover:bg-amber-400/10 transition-colors">
+              <span class="material-symbols-outlined text-sm">location_on</span>
+              <span>Nearby</span>
+            </button>
+            <a href="#sponsored-members" class="text-amber-400 text-sm hover:underline">View All</a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" id="profiles-grid">
+        </div>
+      </div>
+    </section>
+
+    <!-- Sponsored Services -->
+    <section class="py-16 px-6 bg-black nearby-content">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="font-headline text-3xl font-black text-white uppercase tracking-tighter">Sponsored Services</h2>
+            <p class="text-zinc-500 text-sm mt-1">Premium verified offerings</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <button onclick="toggleNearbyServices()" class="flex items-center gap-2 px-3 py-1.5 border border-amber-400/50 text-amber-400 text-xs font-headline uppercase rounded-sm hover:bg-amber-400/10 transition-colors">
+              <span class="material-symbols-outlined text-sm">location_on</span>
+              <span>Nearby</span>
+            </button>
+            <a href="services.html" class="text-amber-400 text-sm hover:underline">Browse All</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-6 bg-gradient-to-b from-neutral-900 to-black">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="font-headline text-4xl font-black text-white uppercase mb-4">Ready to Join?</h2>
+        <p class="text-zinc-400 text-lg mb-8">Experience the future of exclusive networking.</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <input class="input-cyber max-w-xs" placeholder="Enter Email" type="email" id="welcome-email">
+          <button class="btn-primary text-lg px-10" onclick="submitEmail()">Get Started</button>
+        </div>
+        <p class="text-zinc-500 text-sm mt-4">Already have an account? <a href="auth.html" class="text-amber-400 hover:underline">Login here</a></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-neutral-900 border-t border-zinc-800 py-12 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div class="flex items-center gap-2">
+          <span class="font-headline text-xl font-black tracking-tighter text-amber-400">GAi Connect</span>
+        </div>
+        <div class="flex gap-6 text-zinc-400 text-sm">
+          <a href="#features" class="hover:text-amber-400">About</a>
+          <a href="#features" class="hover:text-amber-400">Privacy</a>
+          <a href="#features" class="hover:text-amber-400">Terms</a>
+          <a href="auth.html" class="hover:text-amber-400">Contact</a>
+        </div>
+        <div class="text-zinc-500 text-xs">© 2024 GAi Connect Hyperstructures</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Profile Modal -->
+  <div id="profile-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeProfileModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-neutral-900 border border-amber-400/30 rounded-lg shadow-2xl overflow-hidden">
+      <div class="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div id="modal-avatar" class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+            <span id="modal-initials" class="font-headline text-xl font-bold text-white">XL</span>
+          </div>
+          <div>
+            <h3 id="modal-name" class="font-headline text-xl font-bold text-white">Xenon_77</h3>
+            <span id="modal-tier" class="text-xs text-black/70 font-bold uppercase">VVIP</span>
+          </div>
+        </div>
+        <button onclick="closeProfileModal()" class="text-white/70 hover:text-white">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="flex items-center gap-2 text-zinc-400 text-sm">
+            <span class="material-symbols-outlined text-amber-400 text-sm">work</span>
+            <span id="modal-role">Trading Nodes</span>
+          </div>
+          <div class="flex items-center gap-2 text-zinc-400 text-sm">
+            <span class="material-symbols-outlined text-amber-400 text-sm">email</span>
+            <span id="modal-email">xenon@neural.mesh</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 mb-4">
+          <span id="modal-status-dot" class="w-2 h-2 bg-green-500 rounded-full"></span>
+          <span id="modal-status" class="text-sm text-zinc-400">Online</span>
+          <span class="text-zinc-600">•</span>
+          <span id="modal-activity" class="text-sm text-zinc-500">Active 2m ago</span>
+        </div>
+        
+        <!-- Contact Section -->
+        <div class="mb-6 p-4 bg-neutral-800 rounded-lg">
+          <h4 class="text-xs text-zinc-500 uppercase tracking-wider mb-3">Contact Options</h4>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="messenger.html" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-amber-400 transition-colors">
+              <span class="material-symbols-outlined text-lg">chat</span>
+              <span>Message</span>
+            </a>
+            <a href="https://wa.me/1234567890" target="_blank" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-green-400 transition-colors">
+              <span class="material-symbols-outlined text-lg">call</span>
+              <span>WhatsApp</span>
+            </a>
+            <a href="tel:+1234567890" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-amber-400 transition-colors">
+              <span class="material-symbols-outlined text-lg">phone</span>
+              <span>Phone</span>
+            </a>
+            <a href="mailto:xenon@neural.mesh" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-purple-400 transition-colors">
+              <span class="material-symbols-outlined text-lg">email</span>
+              <span>Email</span>
+            </a>
+          </div>
+          <div class="flex gap-2 mt-3 pt-3 border-t border-white/5">
+            <a href="#" class="flex-1 w-8 h-8 bg-neutral-700 flex items-center justify-center rounded-sm hover:bg-amber-400 transition-colors">
+              <span class="material-symbols-outlined text-lg">alternate_email</span>
+            </a>
+            <a href="#" class="flex-1 w-8 h-8 bg-neutral-700 flex items-center justify-center rounded-sm hover:bg-purple-500 transition-colors">
+              <span class="material-symbols-outlined text-lg">tag</span>
+            </a>
+            <a href="#" class="flex-1 w-8 h-8 bg-neutral-700 flex items-center justify-center rounded-sm hover:bg-cyan-500 transition-colors">
+              <span class="material-symbols-outlined text-lg">wifi</span>
+            </a>
+          </div>
+        </div>
+        
+        <div class="flex gap-3">
+          <button onclick="messageUser()" class="flex-1 bg-amber-400 text-black font-headline font-bold text-sm uppercase py-3 rounded-lg hover:bg-amber-300 transition-colors flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-lg">chat</span>
+            Chat
+          </button>
+          <button onclick="connectUser()" class="flex-1 bg-purple-500 text-white font-headline font-bold text-sm uppercase py-3 rounded-lg hover:bg-purple-400 transition-colors flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-lg">group_add</span>
+            Connect
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAi AI Assistant -->
+  <div id="gai-assistant" class="fixed bottom-6 right-6 z-50">
+    <button id="gai-toggle" class="w-14 h-14 bg-amber-400 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer relative">
+      <span class="material-symbols-outlined filled text-black">chat</span>
+      <img src="https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male-1.png" class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-black" alt="">
+    </button>
+    <div id="gai-chat" class="hidden absolute bottom-16 right-0 w-80 bg-neutral-900 border border-amber-400/30 rounded-lg shadow-2xl overflow-hidden">
+      <div class="bg-amber-400 px-4 py-3 flex items-center gap-2">
+        <img src="https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/male-1.png" class="w-6 h-6 rounded-full" alt="GAi">
+        <span class="font-headline font-bold text-black">GAi Assistant</span>
+        <span class="ml-auto flex items-center gap-1">
+          <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+          <span class="text-xs text-black/70">Online</span>
+        </span>
+      </div>
+      <div id="gai-messages" class="h-64 p-4 overflow-y-auto space-y-3">
+        <div class="bg-neutral-800 rounded-lg p-3">
+          <p class="text-sm text-white">Welcome! I'm <span class="text-amber-400 font-bold">GAi Connect</span>. How may I assist you?</p>
+        </div>
+      </div>
+      <div class="p-3 border-t border-zinc-700">
+        <div class="flex gap-2">
+          <input type="text" id="gai-input" placeholder="Ask GAi Connect..." class="flex-1 bg-neutral-800 border border-zinc-600 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-amber-400 outline-none">
+          <button id="gai-voice-btn" onclick="toggleVoiceInput()" class="p-2 bg-neutral-700 hover:bg-neutral-600 rounded-lg transition-colors" title="Voice Input">
+            <span class="material-symbols-outlined text-amber-400">mic</span>
+          </button>
+          <button onclick="submitGaiInput()" class="p-2 bg-amber-400 hover:bg-amber-300 rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-black">send</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voice Input Indicator -->
+  <div id="voice-indicator" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden">
+    <div class="bg-neutral-900 border border-amber-400/50 px-6 py-4 rounded-lg shadow-2xl flex items-center gap-4">
+      <div class="w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
+      <div>
+        <p class="text-white font-headline text-sm">Listening...</p>
+        <p class="text-zinc-500 text-xs">Speak now or click to stop</p>
+      </div>
+      <button onclick="stopVoiceInput()" class="text-zinc-400 hover:text-white">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Music Feature Button -->
+  <div class="fixed bottom-6 left-6 z-50">
+    <button id="music-toggle" class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer" onclick="openMusicPanel()">
+      <span class="material-symbols-outlined filled text-white">music_note</span>
+    </button>
+  </div>
+
+  <!-- Music Panel -->
+  <div id="music-panel" class="fixed bottom-20 left-6 w-[420px] max-w-[calc(100vw-3rem)] bg-neutral-900 border border-purple-500/30 rounded-lg shadow-2xl z-50 hidden">
+    <div class="bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined filled text-white">music_note</span>
+        <span class="font-headline font-bold text-white">GAi Music Hub</span>
+      </div>
+      <button onclick="closeMusicPanel()" class="text-white/80 hover:text-white">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="flex border-b border-zinc-700">
+      <button onclick="switchMusicTab('search')" id="tab-search" class="flex-1 px-4 py-3 text-sm font-headline text-purple-400 border-b-2 border-purple-400">YouTube Search</button>
+      <button onclick="switchMusicTab('radio')" id="tab-radio" class="flex-1 px-4 py-3 text-sm font-headline text-zinc-400 border-b-2 border-transparent hover:text-white">Radio Stations</button>
+    </div>
+    
+    <!-- YouTube Search Tab -->
+    <div id="panel-search" class="p-4">
+      <div class="flex gap-2 mb-3">
+        <input type="text" id="yt-search-input" placeholder="Search songs on YouTube..." class="flex-1 bg-neutral-800 border border-zinc-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-zinc-500 focus:border-purple-400 outline-none">
+        <button onclick="searchYouTube()" class="px-4 py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-400 transition-colors">
+          <span class="material-symbols-outlined text-lg">search</span>
+        </button>
+      </div>
+      
+      <!-- YouTube Player Container -->
+      <div id="yt-player-container" class="hidden mb-3">
+        <div class="relative aspect-video bg-black rounded-lg overflow-hidden">
+          <div id="yt-embed"></div>
+        </div>
+        <div class="flex items-center justify-between mt-2">
+          <p id="yt-now-playing-title" class="text-white text-sm font-bold truncate flex-1"></p>
+          <button onclick="closeYouTubePlayer()" class="ml-2 text-zinc-400 hover:text-white">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Search Results -->
+      <div id="yt-search-results" class="max-h-64 overflow-y-auto space-y-2"></div>
+    </div>
+    
+    <!-- Radio Tab -->
+    <div id="panel-radio" class="p-4 hidden">
+      <p class="text-xs text-zinc-500 uppercase mb-3">Live Radio Streams</p>
+      <div id="station-list" class="max-h-72 overflow-y-auto space-y-2"></div>
+    </div>
+    
+    <!-- Now Playing Bar -->
+    <div id="now-playing" class="p-3 border-t border-zinc-700 bg-neutral-800/50 hidden">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-purple-500/30 rounded flex items-center justify-center animate-pulse">
+          <span class="material-symbols-outlined text-purple-400">graphic_eq</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p id="playing-title" class="text-white text-sm font-bold truncate"></p>
+          <p id="playing-artist" class="text-zinc-500 text-xs truncate"></p>
+        </div>
+        <div class="flex gap-1">
+          <button onclick="togglePlayPause()" class="p-2 bg-purple-500/20 text-purple-400 rounded-lg hover:bg-purple-500/30">
+            <span class="material-symbols-outlined text-lg">pause</span>
+          </button>
+          <button onclick="stopMusic()" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30">
+            <span class="material-symbols-outlined text-lg">stop</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Debug: Verify JavaScript is loading
+    console.log('Welcome page JavaScript loading...');
+    
+    // GAi Chat Toggle
+    const gaiToggle = document.getElementById('gai-toggle');
+    const gaiChat = document.getElementById('gai-chat');
+    const gaiInput = document.getElementById('gai-input');
+
+    // Voice Input Feature
+    let isListening = false;
+    let recognition = null;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+      
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('gai-input').value = transcript;
+        stopVoiceInput();
+        submitGaiInput();
+      };
+      
+      recognition.onerror = function(event) {
+        console.log('Speech recognition error:', event.error);
+        stopVoiceInput();
+      };
+      
+      recognition.onend = function() {
+        stopVoiceInput();
+      };
+    }
+
+    function toggleVoiceInput() {
+      if (!recognition) {
+        alert('Voice input is not supported in your browser. Please type your message.');
+        return;
+      }
+      
+      if (isListening) {
+        stopVoiceInput();
+      } else {
+        try {
+          recognition.start();
+          isListening = true;
+          document.getElementById('voice-indicator').classList.remove('hidden');
+        } catch (e) {
+          console.log('Recognition start error:', e);
+        }
+      }
+    }
+
+    function stopVoiceInput() {
+      isListening = false;
+      if (recognition) {
+        try {
+          recognition.stop();
+        } catch (e) {}
+      }
+      document.getElementById('voice-indicator').classList.add('hidden');
+    }
+
+    function submitGaiInput() {
+      const message = document.getElementById('gai-input').value.trim();
+      if (!message) return;
+      
+      const gaiMessages = document.getElementById('gai-messages');
+      gaiMessages.innerHTML += `<div class="bg-neutral-800 rounded-lg p-3"><p class="text-sm text-white"><span class="text-blue-400 font-bold">You:</span> ${message}</p></div>`;
+      document.getElementById('gai-input').value = '';
+      gaiMessages.scrollTop = gaiMessages.scrollHeight;
+      
+      setTimeout(() => {
+        let response = "I'm here to help you explore GAi Connect. Visit our features or check out our sponsored members!";
+        
+        const lowerMsg = message.toLowerCase();
+        if (lowerMsg.includes('music') || lowerMsg.includes('song')) {
+          response = "Use the Music button (purple icon) to search and play songs from Spotify, YouTube, or Audiomack!";
+        } else if (lowerMsg.includes('login') || lowerMsg.includes('register')) {
+          response = "Click 'Get Started' or 'Login' to access your GAi Connect account. Registration requires an invitation code.";
+        } else if (lowerMsg.includes('member') || lowerMsg.includes('tier')) {
+          response = "GAi Connect offers Free, Professional ($19/mo), and Enterprise ($49/mo) membership tiers with different benefits.";
+        } else if (lowerMsg.includes('service') || lowerMsg.includes('marketplace')) {
+          response = "Browse our Service Marketplace to connect with verified providers in Trading, Security, and AI categories.";
+        } else if (lowerMsg.includes('help')) {
+          response = "I can help with: music requests, account info, membership plans, services, and more. Just ask!";
+        }
+        
+        gaiMessages.innerHTML += `<div class="bg-neutral-800 rounded-lg p-3"><p class="text-sm text-white"><span class="text-amber-400 font-bold">GAi Connect:</span> ${response}</p></div>`;
+        gaiMessages.scrollTop = gaiMessages.scrollHeight;
+      }, 800);
+    }
+
+    if (gaiInput) {
+      gaiInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') submitGaiInput();
+      });
+    }
+
+    // Preview Chat Functions (Hero Section)
+    function handlePreviewChat(e) {
+      if (e.key === 'Enter') {
+        sendPreviewChat();
+      }
+    }
+
+    function sendPreviewChat() {
+      const input = document.getElementById('preview-chat-input');
+      if (!input) return;
+      
+      const message = input.value.trim();
+      if (!message) return;
+      
+      // Find the messages container in the hero preview
+      const chatContainer = input.closest('.glass-panel').querySelector('.h-80');
+      if (!chatContainer) return;
+      
+      // Add user message
+      const userMsg = document.createElement('div');
+      userMsg.className = 'flex gap-3 justify-end';
+      userMsg.innerHTML = `<div class="bg-amber-400 p-3 rounded-lg rounded-tr-none"><p class="text-sm text-black">${message}</p></div>`;
+      chatContainer.appendChild(userMsg);
+      
+      input.value = '';
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      
+      // Simulate AI response
+      setTimeout(() => {
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'flex gap-3';
+        let response = "That's a great question! Join GAi Connect to get full access to my capabilities.";
+        
+        const lowerMsg = message.toLowerCase();
+        if (lowerMsg.includes('connect') || lowerMsg.includes('join')) {
+          response = "GAi Connect is a premium platform! Click 'Get Started' to join our exclusive network.";
+        } else if (lowerMsg.includes('service') || lowerMsg.includes('help')) {
+          response = "We offer Trading, Security, AI, and Neural services. Browse our marketplace for more!";
+        } else if (lowerMsg.includes('member') || lowerMsg.includes('tier')) {
+          response = "We have Free, Professional ($19/mo), and Enterprise ($49/mo) tiers. Choose what fits you best!";
+        } else if (lowerMsg.includes('music')) {
+          response = "Use our Music feature to search songs from Spotify, YouTube, and Audiomack!";
+        }
+        
+        aiMsg.innerHTML = `
+          <div class="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined filled text-amber-400 text-sm">chat</span>
+          </div>
+          <div class="bg-neutral-800 p-3 rounded-lg rounded-tl-none">
+            <p class="text-sm text-white">${response}</p>
+          </div>`;
+        chatContainer.appendChild(aiMsg);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, 1000);
+    }
+
+    // Profile Modal Functions
+    function openProfileModal(name, tier, role, email, status, activity) {
+      document.getElementById('modal-name').textContent = name;
+      document.getElementById('modal-tier').textContent = tier;
+      document.getElementById('modal-role').textContent = role;
+      document.getElementById('modal-email').textContent = email;
+      document.getElementById('modal-status').textContent = status;
+      document.getElementById('modal-activity').textContent = activity;
+      
+      const initials = name.substring(0, 2).toUpperCase();
+      document.getElementById('modal-initials').textContent = initials;
+      
+      const colors = {
+        'VVIP': 'from-amber-400 to-orange-500',
+        'Presidential': 'from-purple-400 to-pink-500',
+        'Premium': 'from-blue-400 to-cyan-500'
+      };
+      const colorClass = colors[tier] || 'from-amber-400 to-orange-500';
+      document.querySelector('#modal-avatar').className = `w-12 h-12 rounded-full bg-gradient-to-r ${colorClass} flex items-center justify-center`;
+      
+      const statusColors = { 'Online': 'bg-green-500', 'Away': 'bg-amber-500', 'Offline': 'bg-zinc-500' };
+      document.getElementById('modal-status-dot').className = `w-2 h-2 ${statusColors[status] || 'bg-green-500'} rounded-full`;
+      
+      document.getElementById('profile-modal').classList.remove('hidden');
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profile-modal').classList.add('hidden');
+    }
+
+    function messageUser() {
+      alert('Opening messenger...\n\nIn a full implementation, this would navigate to the messaging interface with this user.');
+      window.location.href = 'auth.html';
+    }
+
+    function connectUser() {
+      const name = document.getElementById('modal-name').textContent;
+      if (confirm(`Send connection request to ${name}?`)) {
+        alert(`Connection request sent to ${name}!\n\nWaiting for acceptance...`);
+        closeProfileModal();
+      }
+    }
+
+    // Nearby Features
+    let nearbyMode = false;
+    const profilesData = [
+      { name: 'Xenon_77', tier: 'VVIP', role: 'Trading Nodes', email: 'xenon@neural.mesh', status: 'Online', activity: 'Active 2m ago', lat: 48.8566, lng: 2.3522 },
+      { name: 'Nova_Protocol', tier: 'VVIP', role: 'Data Architect', email: 'nova@quantum.sys', status: 'Away', activity: 'Active 15m ago', lat: 48.8600, lng: 2.3200 },
+      { name: 'The_Oracle', tier: 'Presidential', role: 'Storage Pro', email: 'oracle@vault.tech', status: 'Offline', activity: 'Active 1h ago', lat: 48.8700, lng: 2.3400 },
+      { name: 'CyberXpert', tier: 'Premium', role: 'Neural Engineer', email: 'cyber@expert.tech', status: 'Online', activity: 'Active 5m ago', lat: 48.8500, lng: 2.3100 },
+      { name: 'Neural_Ninja', tier: 'Premium', role: 'Security Expert', email: 'ninja@neural.net', status: 'Online', activity: 'Active 10m ago', lat: 48.8650, lng: 2.3300 },
+      { name: 'DataWitch', tier: 'VVIP', role: 'AI Specialist', email: 'witch@data.tech', status: 'Online', activity: 'Active 3m ago', lat: 48.8550, lng: 2.3450 },
+      { name: 'QuantumLeap', tier: 'Premium', role: 'Quantum Dev', email: 'quantum@leap.io', status: 'Online', activity: 'Active 8m ago', lat: 48.8580, lng: 2.3380 },
+      { name: 'CryptoMancer', tier: 'Standard', role: 'Blockchain', email: 'crypto@mancer.net', status: 'Away', activity: 'Active 30m ago', lat: 48.8620, lng: 2.3250 },
+      { name: 'NeuralDream', tier: 'VVIP', role: 'ML Engineer', email: 'dream@neural.ai', status: 'Online', activity: 'Active 1m ago', lat: 48.8570, lng: 2.3420 },
+      { name: 'CyberWarden', tier: 'Presidential', role: 'Security Chief', email: 'warden@cyber.org', status: 'Online', activity: 'Active 12m ago', lat: 48.8530, lng: 2.3350 },
+      { name: 'DataStream', tier: 'Premium', role: 'Data Analyst', email: 'stream@data.tech', status: 'Offline', activity: 'Active 2h ago', lat: 48.8590, lng: 2.3280 },
+      { name: 'NeuraLink', tier: 'Standard', role: 'Neural Designer', email: 'link@neura.design', status: 'Online', activity: 'Active 4m ago', lat: 48.8540, lng: 2.3410 }
+    ];
+
+    const servicesData = [
+      { title: 'Deep-Mind Arbitrage', provider: 'Xenon_77', price: '2.44 GAi/hr', category: 'Trading', description: 'Advanced neural arbitrage using quantum-resistant algorithms.', reviews: '127 reviews', rating: '4.9', lat: 48.8566, lng: 2.3522 },
+      { title: 'Biometric Shield Pro', provider: 'Neural_Ninja', price: '1.89 GAi/hr', category: 'Security', description: 'Enterprise-grade biometric security systems.', reviews: '89 reviews', rating: '4.8', lat: 48.8650, lng: 2.3300 },
+      { title: 'Neural Network Design', provider: 'CyberXpert', price: '3.20 GAi/hr', category: 'AI/Neural', description: 'Custom neural network architecture design.', reviews: '156 reviews', rating: '5.0', lat: 48.8500, lng: 2.3100 },
+      { title: 'Quantum Encryption', provider: 'QuantumLeap', price: '2.99 GAi/hr', category: 'Security', description: 'Post-quantum encryption solutions.', reviews: '94 reviews', rating: '4.7', lat: 48.8580, lng: 2.3380 },
+      { title: 'Data Vault Premium', provider: 'The_Oracle', price: '1.50 GAi/hr', category: 'Data', description: 'Secure distributed data storage.', reviews: '203 reviews', rating: '4.9', lat: 48.8700, lng: 2.3400 },
+      { title: 'AI Consultation', provider: 'DataWitch', price: '4.00 GAi/hr', category: 'AI/Neural', description: 'Expert AI implementation guidance.', reviews: '78 reviews', rating: '4.8', lat: 48.8550, lng: 2.3450 }
+    ];
+
+    function renderProfiles(filterNearby = false) {
+      const grid = document.getElementById('profiles-grid');
+      if (!grid) return;
+      
+      let profiles = profilesData;
+      if (filterNearby && GAiUser.state.locationCoords) {
+        profiles = GAiNearby.sortByDistance(profilesData).slice(0, 6);
+      }
+      
+      grid.innerHTML = profiles.map(p => `
+        <div class="profile-card bg-neutral-800 p-4 rounded-lg text-center cursor-pointer hover:border-amber-400 border-2 border-transparent transition-all" onclick="openProfileModal('${p.name}', '${p.tier}', '${p.role}', '${p.email}', '${p.status}', '${p.activity}')">
+          <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-amber-400/30 to-purple-500/30 border-2 border-amber-400/30 flex items-center justify-center">
+            <span class="font-headline text-xl font-bold text-amber-400">${p.name.substring(0,2).toUpperCase()}</span>
+          </div>
+          <p class="font-bold text-white text-sm">${p.name}</p>
+          <p class="text-amber-400 text-xs">${p.tier}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderServices(filterNearby = false) {
+      const grid = document.getElementById('services-grid');
+      if (!grid) return;
+      
+      let services = servicesData;
+      if (filterNearby && GAiUser.state.locationCoords) {
+        services = GAiNearby.sortByDistance(servicesData).slice(0, 4);
+      }
+      
+      grid.innerHTML = services.map(s => `
+        <div class="service-card bg-neutral-800 p-5 rounded-lg border border-transparent hover:border-amber-400 cursor-pointer transition-all" onclick="openServiceModal('${s.title}', '${s.provider}', '${s.price}', '${s.category}', '${s.description}', '${s.reviews}', '${s.rating}')">
+          <div class="flex items-start justify-between mb-3">
+            <span class="px-2 py-1 bg-amber-400/20 text-amber-400 text-[10px] font-bold uppercase rounded-sm">${s.category}</span>
+            <div class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-amber-400 text-sm">star</span>
+              <span class="text-white text-sm font-bold">${s.rating}</span>
+            </div>
+          </div>
+          <h3 class="font-headline font-bold text-white mb-1">${s.title}</h3>
+          <p class="text-zinc-500 text-xs mb-3">by ${s.provider}</p>
+          <div class="flex items-center justify-between">
+            <span class="font-headline text-xl font-bold text-amber-400">${s.price.split('/')[0]}</span>
+            <span class="text-zinc-500 text-xs">${s.reviews}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleNearbyProfiles() {
+      nearbyMode = !nearbyMode;
+      renderProfiles(nearbyMode);
+      renderServices(nearbyMode);
+      
+      const btns = document.querySelectorAll('[onclick="toggleNearbyProfiles()"]');
+      btns.forEach(btn => {
+        if (nearbyMode) {
+          btn.classList.add('bg-amber-400', 'text-black');
+          btn.classList.remove('border-amber-400/50', 'text-amber-400');
+        } else {
+          btn.classList.remove('bg-amber-400', 'text-black');
+          btn.classList.add('border-amber-400/50', 'text-amber-400');
+        }
+      });
+    }
+
+    function toggleNearbyServices() {
+      nearbyMode = !nearbyMode;
+      renderProfiles(nearbyMode);
+      renderServices(nearbyMode);
+    }
+
+    // Initialize profiles on load
+    document.addEventListener('DOMContentLoaded', function() {
+      renderProfiles(false);
+      renderServices(false);
+    });
+
+    // Service Modal Functions
+    function openServiceModal(title, provider, price, category, description, reviews, rating) {
+      document.getElementById('service-title').textContent = title;
+      document.getElementById('service-provider').textContent = provider;
+      document.getElementById('service-price').textContent = price.split(' ')[0] + ' GAi';
+      document.getElementById('service-price-unit').textContent = '/' + price.split('/')[1];
+      document.getElementById('service-category').textContent = category;
+      document.getElementById('service-description').textContent = description;
+      document.getElementById('service-reviews').textContent = reviews;
+      document.getElementById('service-rating').textContent = rating;
+      document.getElementById('service-provider-initials').textContent = provider.substring(0, 2).toUpperCase();
+      
+      const colors = {
+        'Trading': 'from-amber-500 to-orange-500',
+        'Security': 'from-blue-500 to-cyan-500',
+        'AI/Neural': 'from-purple-500 to-pink-500'
+      };
+      const colorClass = colors[category] || 'from-amber-500 to-orange-500';
+      document.getElementById('service-header').className = `bg-gradient-to-r ${colorClass} px-6 py-4`;
+      
+      document.getElementById('service-modal').classList.remove('hidden');
+    }
+
+    function closeServiceModal() {
+      document.getElementById('service-modal').classList.add('hidden');
+    }
+
+    function orderService() {
+      const title = document.getElementById('service-title').textContent;
+      const provider = document.getElementById('service-provider').textContent;
+      const price = document.getElementById('service-price').textContent;
+      
+      if (confirm(`Order "${title}" from ${provider}?\n\nPrice: ${price}`)) {
+        alert(`Order placed successfully!\n\nThe service provider (${provider}) will be notified.\n\nIn a full implementation, this would process the payment and initiate the service.`);
+        closeServiceModal();
+      }
+    }
+
+    function messageServiceProvider() {
+      const provider = document.getElementById('service-provider').textContent;
+      alert(`Opening conversation with ${provider}...\n\nIn a full implementation, this would open the messenger with this provider.`);
+      window.location.href = 'auth.html';
+    }
+
+    // Music Functions
+    function playTrack(trackNum) {
+      const tracks = [
+        'Neural Resonance', 'Quantum Dreams', 'Digital Horizon', 'Synthetic Soul', 'Binary Sunset',
+        'Neural Pathways', 'Circuit Breaker', 'Data Stream', 'Hologram Heart', 'Chrome Dreams'
+      ];
+      alert(`Now Playing: ${tracks[trackNum - 1]}\n\nIn a full implementation, this would start audio playback.`);
+    }
+
+    function showAllTracks() {
+      alert('Showing all 20 tracks...\n\nFull playlist:\n1. Neural Resonance\n2. Quantum Dreams\n3. Digital Horizon\n4. Synthetic Soul\n5. Binary Sunset\n6. Neural Pathways\n7. Circuit Breaker\n8. Data Stream\n9. Hologram Heart\n10. Chrome Dreams\n11. Void Walker\n12. Neon Nights\n13. Quantum Leap\n14. Cyber City\n15. Neural Net\n16. Digital Soul\n17. System Override\n18. Time Warp\n19. Virtual Reality\n20. Future Forward');
+    }
+
+    // Profile Functions
+    function viewProfile(name) {
+      alert(`Viewing ${name}'s Profile\n\nIn a full implementation, this would navigate to their public profile page.`);
+    }
+
+    // Service Functions
+    function viewService(title, provider, price) {
+      alert(`${title}\nProvider: ${provider}\nPrice: ${price}\n\nClick "Connect" to initiate a connection request.`);
+    }
+
+    // Email Signup
+    function submitEmail() {
+      const email = document.getElementById('welcome-email').value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      if (!email) {
+        alert('Please enter your email address.');
+        return;
+      }
+      
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+      
+      alert(`Welcome to GAi!\n\nYour email (${email}) has been registered.\n\nYou'll receive an invitation code to complete your registration.`);
+      document.getElementById('welcome-email').value = '';
+    }
+
+    // Music Feature Functions
+    let selectedSongData = null;
+    let isPlaying = false;
+    let audioPlayer = null;
+    let currentStreamUrl = null;
+    let progressInterval = null;
+
+    // Sample streaming URLs (free radio stations)
+    const sampleStreams = [
+      { name: 'Lofi Hip Hop Radio', url: 'https://streams.ilovemusic.de/iloveradio17.mp3', genre: 'Lofi' },
+      { name: 'Chillhop Radio', url: 'https://streams.ilovemusic.de/iloveradio2.mp3', genre: 'Chillhop' },
+      { name: 'Electronic Dance', url: 'https://streams.ilovemusic.de/iloveradio109.mp3', genre: 'Electronic' },
+      { name: 'Hip Hop Beats', url: 'https://streams.ilovemusic.de/iloveradio16.mp3', genre: 'Hip Hop' },
+      { name: 'Jazz & Blues', url: 'https://streams.ilovemusic.de/iloveradio107.mp3', genre: 'Jazz' }
+    ];
+    let currentStreamIndex = 0;
+    let currentYouTubeId = null;
+
+    function switchMusicTab(tab) {
+      const tabSearch = document.getElementById('tab-search');
+      const tabRadio = document.getElementById('tab-radio');
+      const panelSearch = document.getElementById('panel-search');
+      const panelRadio = document.getElementById('panel-radio');
+      
+      if (tab === 'search') {
+        tabSearch.className = 'flex-1 px-4 py-3 text-sm font-headline text-purple-400 border-b-2 border-purple-400';
+        tabRadio.className = 'flex-1 px-4 py-3 text-sm font-headline text-zinc-400 border-b-2 border-transparent hover:text-white';
+        panelSearch.classList.remove('hidden');
+        panelRadio.classList.add('hidden');
+      } else {
+        tabRadio.className = 'flex-1 px-4 py-3 text-sm font-headline text-purple-400 border-b-2 border-purple-400';
+        tabSearch.className = 'flex-1 px-4 py-3 text-sm font-headline text-zinc-400 border-b-2 border-transparent hover:text-white';
+        panelRadio.classList.remove('hidden');
+        panelSearch.classList.add('hidden');
+        loadStationList();
+      }
+    }
+
+    function openMusicPanel() {
+      document.getElementById('music-panel').classList.remove('hidden');
+      loadStationList();
+    }
+
+    function closeMusicPanel() {
+      document.getElementById('music-panel').classList.add('hidden');
+    }
+
+    function loadStationList() {
+      const stationList = document.getElementById('station-list');
+      if (stationList) {
+        stationList.innerHTML = sampleStreams.map((station, index) => `
+          <div class="flex items-center gap-3 p-3 bg-neutral-800 rounded-lg cursor-pointer hover:bg-neutral-700 transition-colors" onclick="playStream(${index})">
+            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded flex items-center justify-center">
+              <span class="material-symbols-outlined filled text-white">radio</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-white text-sm font-bold">${station.name}</p>
+              <p class="text-zinc-500 text-xs">${station.genre} • Live Stream</p>
+            </div>
+            <button class="p-2 hover:bg-purple-500 rounded-full transition-colors" onclick="event.stopPropagation(); playStream(${index})">
+              <span class="material-symbols-outlined filled text-purple-400">play_arrow</span>
+            </button>
+          </div>
+        `).join('');
+      }
+    }
+
+    function searchYouTube() {
+      const query = document.getElementById('yt-search-input').value.trim();
+      if (!query) return;
+      
+      const resultsContainer = document.getElementById('yt-search-results');
+      resultsContainer.innerHTML = '<div class="text-center py-8"><span class="material-symbols-outlined text-4xl text-purple-400 animate-spin">sync</span><p class="text-zinc-400 mt-2">Searching YouTube...</p></div>';
+      
+      const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+      
+      const mockResults = [
+        { title: query + ' - Official Music Video', videoId: 'dQw4w9WgXcQ' },
+        { title: query + ' (Official Lyric Video)', videoId: 'jfKfPfyJRdk' },
+        { title: query + ' - Live Performance', videoId: 'JGwWNGJdvx8' },
+        { title: query + ' (Acoustic Version)', videoId: 'kJQP7kiw5Fk' },
+        { title: query + ' - Remix', videoId: 'fJ9rUzIMcZQ' }
+      ];
+      
+      setTimeout(() => {
+        resultsContainer.innerHTML = mockResults.map((result, i) => `
+          <div class="flex items-center gap-3 p-3 bg-neutral-800 rounded-lg cursor-pointer hover:bg-neutral-700 transition-colors group" onclick="playYouTube('${result.videoId}', '${result.title.replace(/'/g, "\\'")}')">
+            <div class="w-12 h-12 bg-neutral-700 rounded flex items-center justify-center relative">
+              <span class="material-symbols-outlined text-zinc-500">play_circle</span>
+              <div class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span class="material-symbols-outlined text-white">play_arrow</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-white text-sm font-bold truncate">${result.title}</p>
+              <p class="text-zinc-500 text-xs">YouTube</p>
+            </div>
+            <button class="p-2 bg-purple-500/20 text-purple-400 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" onclick="event.stopPropagation(); playYouTube('${result.videoId}', '${result.title.replace(/'/g, "\\'")}')">
+              <span class="material-symbols-outlined text-lg">play_arrow</span>
+            </button>
+          </div>
+        `).join('');
+        
+        resultsContainer.innerHTML += `
+          <a href="${searchUrl}" target="_blank" class="flex items-center justify-center gap-2 p-3 text-purple-400 hover:text-purple-300 text-sm">
+            <span>View more on YouTube</span>
+            <span class="material-symbols-outlined text-lg">open_in_new</span>
+          </a>
+        `;
+      }, 1000);
+    }
+
+    function playYouTube(videoId, title) {
+      currentYouTubeId = videoId;
+      
+      const playerContainer = document.getElementById('yt-player-container');
+      playerContainer.classList.remove('hidden');
+      
+      document.getElementById('yt-embed').innerHTML = `
+        <iframe 
+          class="w-full h-full"
+          src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      `;
+      
+      document.getElementById('yt-now-playing-title').textContent = title;
+      isPlaying = true;
+      showNowPlayingBar(title, 'YouTube');
+    }
+
+    function closeYouTubePlayer() {
+      document.getElementById('yt-player-container').classList.add('hidden');
+      document.getElementById('yt-embed').innerHTML = '';
+      currentYouTubeId = null;
+    }
+
+    function playStream(index) {
+      currentStreamIndex = index;
+      const station = sampleStreams[index];
+      
+      if (!audioPlayer) {
+        audioPlayer = new Audio();
+        audioPlayer.crossOrigin = 'anonymous';
+        audioPlayer.addEventListener('error', function(e) {
+          console.log('Audio error:', e);
+          alert('Unable to play stream. Trying next station...');
+          nextStream();
+        });
+        audioPlayer.addEventListener('ended', function() {
+          nextStream();
+        });
+      }
+      
+      currentStreamUrl = station.url;
+      audioPlayer.src = station.url;
+      audioPlayer.play().catch(e => {
+        console.log('Play error:', e);
+        alert('Stream playback failed. Please try again.');
+        return;
+      });
+      
+      isPlaying = true;
+      showNowPlayingBar(station.name, station.genre + ' • Live Stream');
+    }
+
+    function showNowPlayingBar(title, artist) {
+      const nowPlaying = document.getElementById('now-playing');
+      nowPlaying.classList.remove('hidden');
+      document.getElementById('playing-title').textContent = title;
+      document.getElementById('playing-artist').textContent = artist;
+      updatePlayPauseButton();
+    }
+
+    function nextStream() {
+      currentStreamIndex = (currentStreamIndex + 1) % sampleStreams.length;
+      playStream(currentStreamIndex);
+    }
+
+    function updatePlayPauseButton() {
+      const btn = document.querySelector('#now-playing button span');
+      if (btn) {
+        btn.textContent = isPlaying ? 'pause' : 'play_arrow';
+      }
+    }
+
+    function togglePlayPause() {
+      if (currentYouTubeId) {
+        const embed = document.getElementById('yt-embed');
+        const iframe = embed.querySelector('iframe');
+        if (iframe) {
+          const src = iframe.src;
+          iframe.src = src.includes('autoplay=1') ? src.replace('autoplay=1', 'autoplay=0') : src.replace('autoplay=0', 'autoplay=1');
+        }
+      } else if (audioPlayer) {
+        if (isPlaying) {
+          audioPlayer.pause();
+          isPlaying = false;
+        } else {
+          audioPlayer.play();
+          isPlaying = true;
+        }
+        updatePlayPauseButton();
+      }
+    }
+
+    function stopMusic() {
+      if (audioPlayer) {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+      }
+      closeYouTubePlayer();
+      document.getElementById('now-playing').classList.add('hidden');
+      isPlaying = false;
+      currentYouTubeId = null;
+    }
+
+    // Initialize GAi User & Location
+    document.addEventListener('DOMContentLoaded', function() {
+      GAiUser.init();
+      GAiNearby.init();
+      
+      // YouTube search Enter key
+      const ytInput = document.getElementById('yt-search-input');
+      if (ytInput) {
+        ytInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            searchYouTube();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAi Connect | Telegram Login</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="gai-telegram-auth.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Manrope', sans-serif; background: linear-gradient(135deg, #0e0e0f 0%, #1a1a1f 100%); min-height: 100vh; }
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    
+    @keyframes pulse-glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    
+    .glow-amber { text-shadow: 0 0 20px #ffc563, 0 0 40px #ffc563; }
+    
+    .cyber-grid {
+      background-image: 
+        linear-gradient(to right, rgba(255, 197, 99, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 197, 99, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    
+    .glass-panel {
+      background: rgba(26, 26, 31, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 197, 99, 0.15);
+    }
+    
+    .btn-telegram {
+      background: linear-gradient(135deg, #0088cc 0%, #0066aa 100%);
+      color: white;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-telegram:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(0, 136, 204, 0.4);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #ffc563 0%, #eda600 100%);
+      color: #000;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(255, 197, 99, 0.4);
+    }
+  </style>
+</head>
+<body class="cyber-grid flex items-center justify-center p-4">
+  <div class="w-full max-w-md">
+    <!-- Logo -->
+    <div class="text-center mb-8 animate-float">
+      <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center mb-4 shadow-lg shadow-amber-500/20">
+        <span class="text-4xl">🤖</span>
+      </div>
+      <h1 class="font-headline text-3xl font-black text-white">GAi Connect</h1>
+      <p class="text-zinc-500 mt-2">via Telegram Mini App</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="glass-panel rounded-2xl p-8 text-center" id="login-card">
+      <!-- Not in Telegram -->
+      <div id="not-telegram" class="hidden">
+        <div class="w-16 h-16 mx-auto rounded-full bg-blue-500/20 flex items-center justify-center mb-4">
+          <span class="text-3xl">📱</span>
+        </div>
+        <h2 class="font-headline text-xl font-bold text-white mb-2">Access via Telegram</h2>
+        <p class="text-zinc-400 text-sm mb-6">
+          To use GAi Connect, please open this page through the Telegram app or bot.
+        </p>
+        <a href="https://t.me/YourBotUsername" class="btn-telegram inline-flex">
+          <span>Open in Telegram</span>
+          <span>→</span>
+        </a>
+      </div>
+
+      <!-- In Telegram -->
+      <div id="in-telegram">
+        <div class="w-16 h-16 mx-auto rounded-full bg-amber-400/20 flex items-center justify-center mb-4 animate-pulse-glow">
+          <span class="text-3xl">🔐</span>
+        </div>
+        <h2 class="font-headline text-xl font-bold text-white mb-2">Welcome Back</h2>
+        <p class="text-zinc-400 text-sm mb-4" id="user-greeting">
+          Loading your profile...
+        </p>
+        
+        <!-- User Card Preview -->
+        <div class="bg-neutral-800 rounded-xl p-4 mb-6 text-left" id="user-preview">
+          <div class="flex items-center gap-3">
+            <div id="user-avatar" class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400/30 to-purple-500/30 flex items-center justify-center text-lg font-bold text-amber-400">
+              ?
+            </div>
+            <div>
+              <p id="user-name" class="font-headline font-bold text-white">...</p>
+              <p id="user-username" class="text-zinc-500 text-sm">@...</p>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="loginWithTelegram()" class="btn-telegram w-full justify-center mb-4" id="login-btn">
+          <span>🔗</span>
+          <span>Connect with Telegram</span>
+        </button>
+        
+        <button onclick="openMiniApp()" class="btn-primary w-full justify-center">
+          <span>🚀</span>
+          <span>Open Full Dashboard</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="mt-8 grid grid-cols-3 gap-4 text-center">
+      <div class="glass-panel rounded-xl p-4">
+        <div class="text-2xl mb-2">🤖</div>
+        <p class="text-xs text-zinc-500">7 AI Agents</p>
+      </div>
+      <div class="glass-panel rounded-xl p-4">
+        <div class="text-2xl mb-2">🔒</div>
+        <p class="text-xs text-zinc-500">Secure Auth</p>
+      </div>
+      <div class="glass-panel rounded-xl p-4">
+        <div class="text-2xl mb-2">⚡</div>
+        <p class="text-xs text-zinc-500">Fast Access</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-zinc-600 text-xs mt-8">
+      By connecting, you agree to our Terms of Service
+    </p>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
+    <div class="text-center">
+      <div class="w-16 h-16 mx-auto rounded-full border-4 border-amber-400 border-t-transparent animate-spin mb-4"></div>
+      <p class="text-white font-headline">Connecting...</p>
+    </div>
+  </div>
+
+  <script>
+    // Check if running in Telegram
+    const isTelegram = !!window.Telegram?.WebApp;
+    const tg = window.Telegram?.WebApp;
+
+    // Initialize
+    function init() {
+      if (isTelegram) {
+        tg.ready();
+        tg.expand();
+        
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+          document.getElementById('user-greeting').textContent = 
+            `Hi ${user.first_name}! Ready to access GAi Connect?`;
+          document.getElementById('user-name').textContent = 
+            `${user.first_name} ${user.last_name || ''}`.trim();
+          document.getElementById('user-username').textContent = 
+            user.username ? `@${user.username}` : `ID: ${user.id}`;
+          document.getElementById('user-avatar').textContent = 
+            user.first_name.charAt(0).toUpperCase();
+        }
+      } else {
+        document.getElementById('not-telegram').classList.remove('hidden');
+        document.getElementById('in-telegram').classList.add('hidden');
+      }
+    }
+
+    // Login with Telegram
+    async function loginWithTelegram() {
+      if (!isTelegram) {
+        alert('Please open this page from Telegram');
+        return;
+      }
+
+      showLoading();
+
+      try {
+        // Send auth data to server
+        const response = await fetch('/api/telegram/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            initData: tg.initData,
+            redirect: 'dashboard.html'
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Store token
+          localStorage.setItem('gai_token', data.token);
+          localStorage.setItem('gai_user', JSON.stringify(data.user));
+          
+          // Haptic feedback
+          tg.HapticFeedback?.impactOccurred('medium');
+          
+          // Redirect
+          window.location.href = data.redirect || 'dashboard.html';
+        } else {
+          throw new Error(data.error);
+        }
+      } catch (error) {
+        hideLoading();
+        alert('Login failed: ' + error.message);
+      }
+    }
+
+    // Open Mini App
+    function openMiniApp() {
+      if (isTelegram) {
+        tg.openTelegramLink('https://t.me/YourBotUsername/app');
+      } else {
+        window.location.href = 'telegram-mini-app.html';
+      }
+    }
+
+    // Loading helpers
+    function showLoading() {
+      document.getElementById('loading').classList.remove('hidden');
+    }
+    function hideLoading() {
+      document.getElementById('loading').classList.add('hidden');
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

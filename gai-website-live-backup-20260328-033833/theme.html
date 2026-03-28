@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme | GAi Connect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --theme-primary: #ffc563;
+      --theme-bg: #0a0a0a;
+      --theme-surface: #171717;
+      --theme-text: #ffffff;
+      --theme-text-muted: #a1a1aa;
+    }
+    [data-theme="dark"] {
+      --theme-primary: #ffc563;
+      --theme-bg: #0a0a0a;
+      --theme-surface: #171717;
+      --theme-text: #ffffff;
+      --theme-text-muted: #a1a1aa;
+    }
+    [data-theme="light"] {
+      --theme-primary: #d97706;
+      --theme-bg: #fafafa;
+      --theme-surface: #ffffff;
+      --theme-text: #171717;
+      --theme-text-muted: #71717a;
+    }
+    [data-theme="cyber"] {
+      --theme-primary: #00ff88;
+      --theme-bg: #001a0d;
+      --theme-surface: #002911;
+      --theme-text: #00ff88;
+      --theme-text-muted: #00cc6a;
+    }
+    [data-theme="ocean"] {
+      --theme-primary: #0ea5e9;
+      --theme-bg: #0c1929;
+      --theme-surface: #0f2942;
+      --theme-text: #38bdf8;
+      --theme-text-muted: #0ea5e9;
+    }
+    [data-theme="sunset"] {
+      --theme-primary: #f472b6;
+      --theme-bg: #1a0a14;
+      --theme-surface: #2d1020;
+      --theme-text: #f9a8d4;
+      --theme-text-muted: #f472b6;
+    }
+    
+    body { font-family: 'Manrope', sans-serif; background: var(--theme-bg); color: var(--theme-text); }
+    .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .material-symbols-outlined { font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; }
+    
+    @keyframes pulse-glow { 0%, 100% { filter: drop-shadow(0 0 8px var(--theme-primary)); } 50% { filter: drop-shadow(0 0 20px var(--theme-primary)); } }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px); }
+    .glass-panel { background: rgba(41, 37, 36, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 197, 99, 0.2); }
+    .badge { padding: 2px 8px; border-radius: 2px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .theme-card { transition: all 0.3s ease; cursor: pointer; }
+    .theme-card:hover, .theme-card.active { transform: scale(1.02); box-shadow: 0 0 30px rgba(255, 197, 99, 0.2); }
+    .sidebar-link { transition: all 0.3s ease; }
+    .sidebar-link:hover { transform: translateX(4px); }
+    .sidebar-link.active { background: rgba(255, 197, 99, 0.1); border-left-color: var(--theme-primary); color: var(--theme-primary); }
+    
+    @media (max-width: 1023px) { .sidebar { display: none; } .main-content { margin-left: 0; } }
+    @media (min-width: 1024px) { .main-content { margin-left: 16rem; } }
+  </style>
+</head>
+<body class="min-h-screen" data-theme="dark">
+  <div class="scanline-overlay"></div>
+  
+  <header class="bg-black/80 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/10 h-16 flex items-center">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between w-full">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="font-headline text-2xl font-black tracking-tighter" style="color: var(--theme-primary)">GAi Connect</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <span class="badge" style="background: var(--theme-primary); color: var(--theme-bg)">Theme Studio</span>
+        <a href="admin.html" class="text-zinc-400 hover:text-amber-400 transition-colors">
+          <span class="material-symbols-outlined">admin_panel_settings</span>
+        </a>
+        <div class="w-8 h-8 rounded-sm bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-400/30"></div>
+      </div>
+    </div>
+  </header>
+  
+  <aside class="sidebar bg-zinc-950/90 h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col justify-between py-8 pt-20 z-40 border-r border-white/5">
+    <div class="space-y-2">
+      <div class="px-6 mb-6">
+        <div class="flex items-center gap-3 p-3 bg-zinc-900/50 rounded-sm border-l-2 border-amber-400">
+          <div class="w-10 h-10 rounded-sm bg-gradient-to-br from-amber-400/30 to-amber-600/20 border border-amber-400/30 flex items-center justify-center">
+            <span class="material-symbols-outlined text-amber-400 text-lg">palette</span>
+          </div>
+          <div class="overflow-hidden">
+            <p class="font-headline font-bold text-white text-sm truncate">Theme Studio</p>
+            <p class="text-[10px] text-amber-400 uppercase tracking-widest">Customization</p>
+          </div>
+        </div>
+      </div>
+      <nav class="space-y-1">
+        <a href="dashboard.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">hub</span>
+          <span class="font-headline font-medium text-sm">Connect Feed</span>
+        </a>
+        <a href="members.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">groups</span>
+          <span class="font-headline font-medium text-sm">Online Members</span>
+        </a>
+        <a href="services.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">work</span>
+          <span class="font-headline font-medium text-sm">Services</span>
+        </a>
+        <a href="admin.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">admin_panel_settings</span>
+          <span class="font-headline font-medium text-sm">Admin</span>
+        </a>
+        <a href="tools.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">build</span>
+          <span class="font-headline font-medium text-sm">Tools</span>
+        </a>
+        <a href="theme.html" class="sidebar-link active flex items-center gap-3 px-4 py-3 border-l-4 border-transparent">
+          <span class="material-symbols-outlined filled">palette</span>
+          <span class="font-headline font-medium text-sm">Theme</span>
+        </a>
+        <a href="memory.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <span class="material-symbols-outlined filled">psychology</span>
+          <span class="font-headline font-medium text-sm">Memory</span>
+        </a>
+      </nav>
+    </div>
+    <div class="px-4 space-y-4">
+      <div class="border-t border-zinc-900 pt-4 space-y-1">
+        <a class="sidebar-link text-zinc-500 px-4 py-2 flex items-center gap-3 hover:text-white text-xs transition-colors" href="index.html">
+          <span class="material-symbols-outlined text-sm">logout</span>
+          <span>Sign Out</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+  
+  <main class="pt-16 min-h-screen main-content">
+    <div class="p-6">
+      <div class="mb-8">
+        <h1 class="font-headline text-4xl font-black uppercase tracking-tighter mb-2" style="color: var(--theme-text)">Theme Studio</h1>
+        <p class="text-zinc-400">Customize and generate themes with AI</p>
+      </div>
+      
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <!-- Theme Selection -->
+        <div class="xl:col-span-2 space-y-6">
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4">Select Theme</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div onclick="applyTheme('dark')" class="theme-card bg-black p-4 rounded-sm border-2 border-amber-400 cursor-pointer active" data-theme="dark">
+                <div class="h-20 rounded-sm mb-3 flex items-center justify-center" style="background: linear-gradient(135deg, #0a0a0a 50%, #171717 50%)">
+                  <span class="font-headline font-bold text-amber-400">Default</span>
+                </div>
+                <p class="text-xs text-center text-zinc-400">Dark Mode</p>
+              </div>
+              <div onclick="applyTheme('light')" class="theme-card bg-black p-4 rounded-sm border border-zinc-800 hover:border-amber-400 cursor-pointer" data-theme="light">
+                <div class="h-20 rounded-sm mb-3 flex items-center justify-center" style="background: linear-gradient(135deg, #fafafa 50%, #ffffff 50%)">
+                  <span class="font-headline font-bold text-amber-600">Light</span>
+                </div>
+                <p class="text-xs text-center text-zinc-400">Light Mode</p>
+              </div>
+              <div onclick="applyTheme('cyber')" class="theme-card bg-black p-4 rounded-sm border border-zinc-800 hover:border-amber-400 cursor-pointer" data-theme="cyber">
+                <div class="h-20 rounded-sm mb-3 flex items-center justify-center" style="background: linear-gradient(135deg, #001a0d 50%, #002911 50%)">
+                  <span class="font-headline font-bold text-green-400">Cyber</span>
+                </div>
+                <p class="text-xs text-center text-zinc-400">Cyber Green</p>
+              </div>
+              <div onclick="applyTheme('ocean')" class="theme-card bg-black p-4 rounded-sm border border-zinc-800 hover:border-amber-400 cursor-pointer" data-theme="ocean">
+                <div class="h-20 rounded-sm mb-3 flex items-center justify-center" style="background: linear-gradient(135deg, #0c1929 50%, #0f2942 50%)">
+                  <span class="font-headline font-bold text-blue-400">Ocean</span>
+                </div>
+                <p class="text-xs text-center text-zinc-400">Ocean Blue</p>
+              </div>
+              <div onclick="applyTheme('sunset')" class="theme-card bg-black p-4 rounded-sm border border-zinc-800 hover:border-amber-400 cursor-pointer" data-theme="sunset">
+                <div class="h-20 rounded-sm mb-3 flex items-center justify-center" style="background: linear-gradient(135deg, #1a0a14 50%, #2d1020 50%)">
+                  <span class="font-headline font-bold text-pink-400">Sunset</span>
+                </div>
+                <p class="text-xs text-center text-zinc-400">Sunset Pink</p>
+              </div>
+              <div onclick="openAIGenerator()" class="theme-card bg-black p-4 rounded-sm border border-zinc-800 hover:border-amber-400 cursor-pointer">
+                <div class="h-20 rounded-sm mb-3 flex items-center justify-center" style="background: linear-gradient(135deg, #1a1a2e 50%, #16213e 50%)">
+                  <span class="material-symbols-outlined text-4xl text-amber-400 animate-pulse-glow">auto_awesome</span>
+                </div>
+                <p class="text-xs text-center text-amber-400 font-bold">AI Generate</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- AI Generator Panel -->
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">auto_awesome</span>
+              AI Theme Generator
+            </h3>
+            <div class="space-y-4">
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Describe Your Theme</label>
+                <textarea id="ai-theme-prompt" rows="3" placeholder="e.g., Create a neon purple and black theme with cyberpunk aesthetics..." class="w-full bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-amber-400 text-white"></textarea>
+              </div>
+              <div class="flex gap-3">
+                <select class="flex-1 bg-neutral-900 border border-zinc-700 text-sm px-4 py-2 rounded-sm outline-none focus:border-amber-400 text-white">
+                  <option>GPT-4 Turbo</option>
+                  <option>Claude 3 Opus</option>
+                  <option>Llama 3 (Local)</option>
+                </select>
+                <button onclick="generateAITheme()" class="px-6 py-2 bg-amber-400 text-black font-headline font-bold text-sm uppercase tracking-widest hover:bg-amber-300 rounded-sm cursor-pointer flex items-center gap-2">
+                  <span class="material-symbols-outlined text-lg">auto_fix_high</span>
+                  Generate
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Custom Theme Editor -->
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4">Custom Theme Editor</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Primary</label>
+                <input type="color" id="color-primary" value="#ffc563" class="w-full h-10 rounded-sm cursor-pointer">
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Background</label>
+                <input type="color" id="color-bg" value="#0a0a0a" class="w-full h-10 rounded-sm cursor-pointer">
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Surface</label>
+                <input type="color" id="color-surface" value="#171717" class="w-full h-10 rounded-sm cursor-pointer">
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 uppercase tracking-wider block mb-2">Text</label>
+                <input type="color" id="color-text" value="#ffffff" class="w-full h-10 rounded-sm cursor-pointer">
+              </div>
+            </div>
+            <div class="mt-4 flex gap-3">
+              <button onclick="previewCustomTheme()" class="flex-1 py-2.5 bg-neutral-700 text-white font-headline font-bold text-sm uppercase tracking-widest hover:bg-neutral-600 rounded-sm cursor-pointer">
+                Preview
+              </button>
+              <button onclick="saveCustomTheme()" class="flex-1 py-2.5 bg-amber-400 text-black font-headline font-bold text-sm uppercase tracking-widest hover:bg-amber-300 rounded-sm cursor-pointer">
+                Save Theme
+              </button>
+              <button onclick="exportTheme()" class="px-4 py-2.5 bg-neutral-700 text-white font-headline font-bold text-sm uppercase tracking-widest hover:bg-neutral-600 rounded-sm cursor-pointer">
+                <span class="material-symbols-outlined">download</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Preview Panel -->
+        <div class="space-y-6">
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">preview</span>
+              Theme Preview
+            </h3>
+            <div id="theme-preview" class="rounded-sm p-4" style="background: var(--theme-bg); min-height: 200px;">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-sm bg-amber-400 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-black">person</span>
+                </div>
+                <div>
+                  <p class="font-bold" style="color: var(--theme-text)">John Doe</p>
+                  <p class="text-xs" style="color: var(--theme-text-muted)">Premium Member</p>
+                </div>
+              </div>
+              <button class="px-4 py-2 rounded-sm font-bold text-sm" style="background: var(--theme-primary); color: var(--theme-bg)">Primary Button</button>
+              <div class="mt-3 p-3 rounded-sm" style="background: var(--theme-surface)">
+                <p class="text-sm" style="color: var(--theme-text)">Surface card with content</p>
+                <p class="text-xs mt-1" style="color: var(--theme-text-muted)">Secondary text</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">save</span>
+              Saved Themes
+            </h3>
+            <div class="space-y-2" id="saved-themes">
+              <div class="flex items-center gap-3 p-3 bg-neutral-900 rounded-sm">
+                <div class="w-8 h-8 rounded-sm bg-gradient-to-r from-amber-400 to-orange-500"></div>
+                <div class="flex-1">
+                  <p class="text-sm text-white">Default Dark</p>
+                  <p class="text-xs text-zinc-500">Active</p>
+                </div>
+                <span class="material-symbols-outlined text-green-400">check_circle</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-neutral-800 rounded-sm border border-white/5 p-6">
+            <h3 class="font-headline text-lg font-bold text-white mb-4">Theme Settings</h3>
+            <div class="space-y-3">
+              <label class="flex items-center justify-between p-3 bg-neutral-900 rounded-sm cursor-pointer">
+                <span class="text-sm text-white">Apply to All Pages</span>
+                <input type="checkbox" checked class="w-5 h-5 accent-amber-400">
+              </label>
+              <label class="flex items-center justify-between p-3 bg-neutral-900 rounded-sm cursor-pointer">
+                <span class="text-sm text-white">Remember Selection</span>
+                <input type="checkbox" checked class="w-5 h-5 accent-amber-400">
+              </label>
+              <label class="flex items-center justify-between p-3 bg-neutral-900 rounded-sm cursor-pointer">
+                <span class="text-sm text-white">Show Theme Animations</span>
+                <input type="checkbox" checked class="w-5 h-5 accent-amber-400">
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-black/90 backdrop-blur-2xl lg:hidden z-50 border-t border-amber-400/20">
+    <a href="dashboard.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">hub</span>
+      <span class="text-[10px] font-bold uppercase">Feed</span>
+    </a>
+    <a href="services.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">work</span>
+      <span class="text-[10px] font-bold uppercase">Services</span>
+    </a>
+    <a href="admin.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span class="text-[10px] font-bold uppercase">Admin</span>
+    </a>
+    <a href="tools.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">build</span>
+      <span class="text-[10px] font-bold uppercase">Tools</span>
+    </a>
+    <a href="theme.html" class="flex flex-col items-center justify-center text-amber-400 bg-amber-400/5 rounded-xl py-1 px-4">
+      <span class="material-symbols-outlined">palette</span>
+      <span class="text-[10px] font-bold uppercase">Theme</span>
+    </a>
+    <a href="memory.html" class="flex flex-col items-center justify-center text-zinc-500">
+      <span class="material-symbols-outlined">psychology</span>
+      <span class="text-[10px] font-bold uppercase">Memory</span>
+    </a>
+  </nav>
+  
+  <script>
+    const themes = {
+      dark: { primary: '#ffc563', bg: '#0a0a0a', surface: '#171717', text: '#ffffff', textMuted: '#a1a1aa' },
+      light: { primary: '#d97706', bg: '#fafafa', surface: '#ffffff', text: '#171717', textMuted: '#71717a' },
+      cyber: { primary: '#00ff88', bg: '#001a0d', surface: '#002911', text: '#00ff88', textMuted: '#00cc6a' },
+      ocean: { primary: '#0ea5e9', bg: '#0c1929', surface: '#0f2942', text: '#38bdf8', textMuted: '#0ea5e9' },
+      sunset: { primary: '#f472b6', bg: '#1a0a14', surface: '#2d1020', text: '#f9a8d4', textMuted: '#f472b6' }
+    };
+    
+    function applyTheme(themeName) {
+      const theme = themes[themeName];
+      if (theme) {
+        document.documentElement.style.setProperty('--theme-primary', theme.primary);
+        document.documentElement.style.setProperty('--theme-bg', theme.bg);
+        document.documentElement.style.setProperty('--theme-surface', theme.surface);
+        document.documentElement.style.setProperty('--theme-text', theme.text);
+        document.documentElement.style.setProperty('--theme-text-muted', theme.textMuted);
+      }
+      document.body.setAttribute('data-theme', themeName);
+      
+      document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('active', 'border-amber-400'));
+      document.querySelector(`[data-theme="${themeName}"]`)?.classList.add('active', 'border-amber-400');
+      
+      localStorage.setItem('gai-theme', themeName);
+    }
+    
+    function previewCustomTheme() {
+      const primary = document.getElementById('color-primary').value;
+      const bg = document.getElementById('color-bg').value;
+      const surface = document.getElementById('color-surface').value;
+      const text = document.getElementById('color-text').value;
+      
+      document.documentElement.style.setProperty('--theme-primary', primary);
+      document.documentElement.style.setProperty('--theme-bg', bg);
+      document.documentElement.style.setProperty('--theme-surface', surface);
+      document.documentElement.style.setProperty('--theme-text', text);
+      document.documentElement.style.setProperty('--theme-text-muted', text);
+    }
+    
+    function saveCustomTheme() {
+      const theme = {
+        primary: document.getElementById('color-primary').value,
+        bg: document.getElementById('color-bg').value,
+        surface: document.getElementById('color-surface').value,
+        text: document.getElementById('color-text').value
+      };
+      
+      const saved = JSON.parse(localStorage.getItem('gai-custom-themes') || '[]');
+      saved.push({ name: 'Custom ' + (saved.length + 1), ...theme });
+      localStorage.setItem('gai-custom-themes', JSON.stringify(saved));
+      
+      alert('Theme saved successfully!');
+      renderSavedThemes();
+    }
+    
+    function exportTheme() {
+      const theme = {
+        name: 'Custom Theme',
+        primary: document.getElementById('color-primary').value,
+        bg: document.getElementById('color-bg').value,
+        surface: document.getElementById('color-surface').value,
+        text: document.getElementById('color-text').value
+      };
+      
+      const blob = new Blob([JSON.stringify(theme, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'gai-theme.json';
+      a.click();
+    }
+    
+    function openAIGenerator() {
+      const prompt = document.getElementById('ai-theme-prompt');
+      prompt.focus();
+      prompt.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function generateAITheme() {
+      const prompt = document.getElementById('ai-theme-prompt').value;
+      if (!prompt) {
+        alert('Please describe your theme first');
+        return;
+      }
+      
+      alert(`AI Theme Generator\n\nPrompt: ${prompt}\n\nIn production, this would use AI to generate a custom theme based on your description.\n\nGenerating theme...`);
+      
+      setTimeout(() => {
+        const colors = {
+          primary: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'),
+          bg: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'),
+          surface: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'),
+          text: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')
+        };
+        
+        document.getElementById('color-primary').value = colors.primary;
+        document.getElementById('color-bg').value = colors.bg;
+        document.getElementById('color-surface').value = colors.surface;
+        document.getElementById('color-text').value = colors.text;
+        
+        previewCustomTheme();
+        alert('AI-generated theme applied! Preview and save.');
+      }, 1500);
+    }
+    
+    function renderSavedThemes() {
+      const container = document.getElementById('saved-themes');
+      const saved = JSON.parse(localStorage.getItem('gai-custom-themes') || '[]');
+      
+      if (saved.length === 0) {
+        container.innerHTML = '<p class="text-xs text-zinc-500">No custom themes saved</p>';
+        return;
+      }
+      
+      container.innerHTML = saved.map((theme, i) => `
+        <div class="flex items-center gap-3 p-3 bg-neutral-900 rounded-sm">
+          <div class="w-8 h-8 rounded-sm" style="background: ${theme.primary}"></div>
+          <div class="flex-1">
+            <p class="text-sm text-white">${theme.name}</p>
+            <p class="text-xs text-zinc-500">Custom</p>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Load saved theme on init
+    const savedTheme = localStorage.getItem('gai-theme');
+    if (savedTheme) {
+      applyTheme(savedTheme);
+    }
+    
+    renderSavedThemes();
+  </script>
+</body>
+</html>
