@@ -97,13 +97,13 @@
       const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
       const registeredUsers = users.map(u => ({
         id: u.id || u.user_id,
-        nickname: u.nickname,
-        fullname: u.fullname || u.nickname,
+        nickname: u.nickname || u.fullname || 'User',
+        fullname: u.fullname || u.nickname || 'User',
         tier: u.tier || 'Standard',
-        status: 'online',
+        status: 'online', // All registered users are considered online
         role: u.nationality || 'Member',
-        location: u.location || 'Unknown',
-        initials: (u.nickname || 'U').substring(0, 2).toUpperCase(),
+        location: u.location || u.reg_location || 'Unknown',
+        initials: (u.nickname || u.fullname || 'U').substring(0, 2).toUpperCase(),
         color: 'amber'
       }));
       
@@ -114,6 +114,7 @@
       const filteredDefaults = defaultMembers.filter(dm => dm.id !== currentUserId && !registeredUsers.find(r => r.id === dm.id));
       const allMembers = [...registeredUsers, ...filteredDefaults];
       
+      console.log('Total members loaded:', allMembers.length, 'Registered:', registeredUsers.length);
       return allMembers;
     }
     

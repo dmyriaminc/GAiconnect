@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="supabase-client.js"></script>
+  <script src="gai-user.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <style>
     :root {
@@ -618,20 +619,22 @@
 
         users.push(newUser);
         localStorage.setItem('gai_users', JSON.stringify(users));
-
-        // Auto-login the new user
-        localStorage.setItem('gai_isLoggedIn', 'true');
+        
+        // Record registration activity
+        GAiUser.recordActivity('register', nickname);
+        
+        // Auto-login the new user with GAiUser
+        GAiUser.login(nickname, newUser.tier, newUser.verified);
+        
+        // Also set individual fields for backwards compatibility
         localStorage.setItem('gai_userId', newUser.id);
-        localStorage.setItem('gai_username', nickname);
-        localStorage.setItem('gai_userTier', newUser.tier);
         localStorage.setItem('gai_reg_fullname', fullname);
-        localStorage.setItem('gai_reg_nickname', nickname);
         localStorage.setItem('gai_reg_email', email);
         localStorage.setItem('gai_reg_dob', dob);
         localStorage.setItem('gai_reg_nationality', nationality);
         localStorage.setItem('gai_reg_location', location);
         localStorage.setItem('gai_biometricEnabled', registrationFaceDescriptor ? 'true' : 'false');
-
+        
         if (registrationFaceDescriptor) {
           alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!\n\nYour Face Recognition is now enabled for secure login.');
         } else {
@@ -987,13 +990,13 @@
         }
         
         if (user) {
-          localStorage.setItem('gai_isLoggedIn', 'true');
+          // Call GAiUser.login() to set online status
+          GAiUser.login(user.nickname, user.tier || 'Standard', user.verified || false);
+          
+          // Also set individual fields for backwards compatibility
           localStorage.setItem('gai_userId', user.id || user.user_id);
-          localStorage.setItem('gai_username', user.nickname);
-          localStorage.setItem('gai_userTier', user.tier);
           localStorage.setItem('gai_reg_fullname', user.fullname || '');
-          localStorage.setItem('gai_reg_nickname', user.nickname);
-          localStorage.setItem('gai_reg_email', user.email);
+          localStorage.setItem('gai_reg_email', user.email || '');
           localStorage.setItem('gai_reg_dob', user.dob || '');
           localStorage.setItem('gai_reg_nationality', user.nationality || '');
           localStorage.setItem('gai_reg_location', user.location || '');

@@ -325,6 +325,22 @@
           </a>
         </div>
         
+        <!-- Live Activity Feed -->
+        <div class="bg-neutral-900/50 rounded-lg border border-amber-500/20 overflow-hidden">
+          <div class="px-4 py-3 bg-gradient-to-r from-amber-500/10 to-transparent border-b border-amber-500/20 flex items-center justify-between">
+            <h2 class="font-headline text-sm font-bold text-amber-400 flex items-center gap-2">
+              <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
+              Live Activity
+            </h2>
+            <button onclick="refreshActivityFeed()" class="text-xs text-amber-400/70 hover:text-amber-400 cursor-pointer">
+              <span class="material-symbols-outlined text-sm">refresh</span>
+            </button>
+          </div>
+          <div id="activity-feed" class="max-h-80 overflow-y-auto divide-y divide-white/5">
+            <!-- Activities loaded from localStorage -->
+          </div>
+        </div>
+        
         <!-- Active Members (Offline) -->
         <div>
           <h2 class="font-headline text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4 px-2 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-zinc-600 rounded-full"></span>Offline Members</h2>
@@ -702,14 +718,27 @@
         { id: 'GAi001005', nickname: 'QuantumRush', tier: 'Premium', nationality: 'Australia', status: 'online', initials: 'QR', color: 'cyan' }
       ];
       
+      // Map registered users to display format
+      const registeredUsers = users.map(u => ({
+        id: u.id || u.user_id,
+        nickname: u.nickname || u.fullname,
+        fullname: u.fullname,
+        tier: u.tier || 'Standard',
+        nationality: u.nationality || '',
+        location: u.location || '',
+        status: u.status === 'online' ? 'online' : 'active', // Treat 'active' as online
+        initials: (u.nickname || u.fullname || 'U').substring(0, 2).toUpperCase(),
+        color: 'amber'
+      }));
+      
       // Combine registered users with default members (show registered first)
-      let allMembers = [...users, ...defaultMembers.filter(dm => !users.find(u => u.id === dm.id))];
+      let allMembers = [...registeredUsers, ...defaultMembers.filter(dm => !users.find(u => u.id === dm.id))];
       
       // Filter out current user
       allMembers = allMembers.filter(m => m.id !== currentUserId);
       
-      // Count online members
-      const onlineCount = allMembers.filter(m => m.status === 'online').length;
+      // Count online members (include 'active' as online)
+      const onlineCount = allMembers.filter(m => m.status === 'online' || m.status === 'active').length;
       if (countEl) {
         countEl.textContent = onlineCount + ' Online';
       }
@@ -728,7 +757,7 @@
       }
       
       container.innerHTML = displayMembers.map(member => {
-        const isOnline = member.status === 'online';
+        const isOnline = member.status === 'online' || member.status === 'active';
         const tierColors = {
           'Free': 'text-zinc-400', 'Standard': 'text-blue-400', 'Premium': 'text-amber-400',
           'Elite': 'text-purple-400', 'VVIP': 'text-pink-400'
@@ -751,6 +780,85 @@
         `;
       }).join('');
     }
+    
+    // Load Activity Feed
+    function loadActivityFeed() {
+      const container = document.getElementById('activity-feed');
+      if (!container) return;
+      
+      // Get activities from GAiUser
+      const activities = typeof GAiUser !== 'undefined' ? GAiUser.getActivities(15) : [];
+      
+      // Also check localStorage directly
+      const storedActivities = JSON.parse(localStorage.getItem('gai_activities') || '[]');
+      const allActivities = activities.length > 0 ? activities : storedActivities;
+      
+      if (allActivities.length === 0) {
+        // Add demo activities if none exist
+        const demoActivities = [
+          { id: 1, type: 'register', username: 'Xenon_77', timestamp: new Date(Date.now() - 300000).toISOString() },
+          { id: 2, type: 'login', username: 'Nova_Protocol', timestamp: new Date(Date.now() - 180000).toISOString() },
+          { id: 3, type: 'connect', username: 'The_Oracle', details: { target: 'Luna_Star' }, timestamp: new Date(Date.now() - 60000).toISOString() },
+          { id: 4, type: 'post_service', username: 'Mia_Vogue', details: { service: 'Fashion Model' }, timestamp: new Date(Date.now() - 30000).toISOString() }
+        ];
+        renderActivities(demoActivities, container);
+        return;
+      }
+      
+      renderActivities(allActivities.slice(0, 15), container);
+    }
+    
+    function renderActivities(activities, container) {
+      container.innerHTML = activities.map(activity => {
+        const icon = typeof GAiUser !== 'undefined' ? GAiUser.getActivityIcon(activity.type) : 'circle';
+        const colorClass = typeof GAiUser !== 'undefined' ? GAiUser.getActivityColor(activity.type) : 'bg-zinc-500/20 text-zinc-400';
+        const text = typeof GAiUser !== 'undefined' ? GAiUser.getActivityText(activity) : activity.type;
+        const timeAgo = formatTimeAgo(new Date(activity.timestamp));
+        
+        return `
+          <div class="p-3 flex items-start gap-3 hover:bg-white/5 transition-colors">
+            <div class="w-8 h-8 rounded-full ${colorClass} flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-sm">${icon}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-white"><span class="font-bold text-amber-400">${activity.username}</span> ${text}</p>
+              <p class="text-xs text-zinc-500 mt-0.5">${timeAgo}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function formatTimeAgo(date) {
+      const seconds = Math.floor((new Date() - date) / 1000);
+      if (seconds < 60) return 'Just now';
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      return `${days}d ago`;
+    }
+    
+    function refreshActivityFeed() {
+      loadActivityFeed();
+      loadOnlineMembers();
+    }
+    
+    // Auto-refresh activity feed every 10 seconds
+    setInterval(() => {
+      if (typeof GAiUser !== 'undefined') {
+        GAiUser.refreshOnlineStatus();
+      }
+      loadActivityFeed();
+      loadOnlineMembers();
+    }, 10000);
+    
+    // Initialize on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+      loadActivityFeed();
+      loadOnlineMembers();
+    });
   </script>
 </body>
 </html>

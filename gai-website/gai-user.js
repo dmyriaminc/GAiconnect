@@ -13,6 +13,73 @@ const GAiUser = {
   onlineMembers: JSON.parse(localStorage.getItem('gai_online_members') || '[]'),
   sessionTimeout: null,
 
+  // Activity Feed System
+  maxActivities: 50,
+
+  recordActivity(type, username, details = {}) {
+    const activities = JSON.parse(localStorage.getItem('gai_activities') || '[]');
+    const newActivity = {
+      id: Date.now(),
+      type: type,
+      username: username,
+      details: details,
+      timestamp: new Date().toISOString()
+    };
+    activities.unshift(newActivity);
+    if (activities.length > this.maxActivities) {
+      activities.pop();
+    }
+    localStorage.setItem('gai_activities', JSON.stringify(activities));
+    return newActivity;
+  },
+
+  getActivities(limit = 20) {
+    const activities = JSON.parse(localStorage.getItem('gai_activities') || '[]');
+    return activities.slice(0, limit);
+  },
+
+  getActivityIcon(type) {
+    const icons = {
+      'register': 'person_add',
+      'login': 'login',
+      'logout': 'logout',
+      'connect': 'handshake',
+      'post_service': 'work',
+      'profile_update': 'edit',
+      'upgrade': 'workspace_premium',
+      'verify': 'verified'
+    };
+    return icons[type] || 'circle';
+  },
+
+  getActivityColor(type) {
+    const colors = {
+      'register': 'bg-green-500/20 text-green-400',
+      'login': 'bg-blue-500/20 text-blue-400',
+      'logout': 'bg-zinc-500/20 text-zinc-400',
+      'connect': 'bg-amber-500/20 text-amber-400',
+      'post_service': 'bg-purple-500/20 text-purple-400',
+      'profile_update': 'bg-cyan-500/20 text-cyan-400',
+      'upgrade': 'bg-pink-500/20 text-pink-400',
+      'verify': 'bg-emerald-500/20 text-emerald-400'
+    };
+    return colors[type] || 'bg-zinc-500/20 text-zinc-400';
+  },
+
+  getActivityText(activity) {
+    const texts = {
+      'register': `joined GAi Connect`,
+      'login': `came online`,
+      'logout': `went offline`,
+      'connect': `connected with ${activity.details.target || 'someone'}`,
+      'post_service': `posted a new service: ${activity.details.service || 'Service'}`,
+      'profile_update': `updated their profile`,
+      'upgrade': `upgraded to ${activity.details.tier || 'Premium'}`,
+      'verify': `completed verification`
+    };
+    return texts[activity.type] || 'performed an action';
+  },
+
   setOnline() {
     if (!this.state.isLoggedIn) return;
     const username = this.state.username;
@@ -30,6 +97,9 @@ const GAiUser = {
     
     localStorage.setItem('gai_online_members', JSON.stringify(this.onlineMembers));
     
+    // Record login activity
+    this.recordActivity('login', username);
+    
     // Set inactive after 5 minutes of no activity
     this.resetInactivityTimer();
   },
@@ -43,6 +113,9 @@ const GAiUser = {
     );
     
     localStorage.setItem('gai_online_members', JSON.stringify(this.onlineMembers));
+    
+    // Record logout activity
+    this.recordActivity('logout', username);
   },
 
   resetInactivityTimer() {
