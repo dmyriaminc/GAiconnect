@@ -1135,7 +1135,16 @@
       const btn = button || event.target;
       const originalText = btn.innerHTML;
       
-      const currentUserId = localStorage.getItem('gai_userId');
+      // Check multiple possible user ID keys
+      let currentUserId = localStorage.getItem('gai_userId') || 
+                          localStorage.getItem('gai_membershipId') || 
+                          localStorage.getItem('user_id');
+      
+      // If no user logged in, show message but allow proceeding (for demo)
+      if (!currentUserId) {
+        alert('Please log in to connect with providers. Go to auth.html to login.');
+        return;
+      }
       
       btn.disabled = true;
       btn.classList.remove('bg-amber-400', 'hover:bg-amber-300', 'text-black');
