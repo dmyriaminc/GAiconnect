@@ -268,10 +268,14 @@
       </div>
       <div class="p-8">
         <div class="flex items-start gap-4 mb-6">
-          <div class="w-16 h-16 rounded-full bg-amber-400/20 border-2 border-amber-400 flex items-center justify-center text-xl font-bold text-amber-400" id="details-avatar">PR</div>
+          <div class="w-16 h-16 rounded-full bg-amber-400/20 border-2 border-amber-400 flex items-center justify-center text-xl font-bold text-amber-400 overflow-hidden cursor-pointer" id="details-avatar" onclick="viewProviderProfile()">
+            <span id="details-avatar-text">PR</span>
+            <img id="details-avatar-img" class="hidden w-full h-full object-cover" src="" alt="Provider">
+          </div>
           <div class="flex-1">
             <h2 class="font-headline text-3xl font-bold text-white mb-1" id="details-title">Service Title</h2>
-            <p class="text-zinc-400" id="details-provider">Provider Name</p>
+            <p class="text-zinc-400 cursor-pointer hover:text-amber-400" id="details-provider" onclick="viewProviderProfile()">Provider Name</p>
+            <p class="text-xs text-zinc-500 mt-1">Click to view provider profile</p>
             <div class="flex items-center gap-4 mt-2">
               <div class="flex items-center gap-1">
                 <span class="material-symbols-outlined text-amber-400 text-lg">star</span>
@@ -656,9 +660,16 @@
         const location = s.location || 'Unknown';
         const rating = s.rating || 0;
         const reviews = s.reviews || 0;
+        const providerId = s.provider_id || '';
+        
+        // Load provider photo from localStorage
+        const providerPhoto = providerId ? localStorage.getItem('gai_profilePhoto_' + providerId) : null;
+        const avatarContent = providerPhoto 
+          ? `<img src="${providerPhoto}" class="w-full h-full object-cover" alt="${provider}">`
+          : `<span>${provider.substring(0,2).toUpperCase()}</span>`;
         
         return `
-        <div class="service-card bg-neutral-800 rounded-sm overflow-hidden border border-white/5 cursor-pointer" onclick="viewServiceDetails('${title}', '${provider}', '${formatPrice(price)} ${unit}', '${description}', '${category}', ${rating}, ${reviews}, '${location}', ${s.lat || 0}, ${s.lng || 0})">
+        <div class="service-card bg-neutral-800 rounded-sm overflow-hidden border border-white/5 cursor-pointer" onclick="viewServiceDetails('${title}', '${provider}', '${formatPrice(price)} ${unit}', '${description}', '${category}', ${rating}, ${reviews}, '${location}', ${s.lat || 0}, ${s.lng || 0}, '${providerId}')">
           <div class="h-48 bg-gradient-to-br ${gradientColors[i % gradientColors.length]} relative">
             <div class="absolute top-4 left-4 flex gap-2">
               <span class="bg-gradient-to-r ${categoryColors[category] || 'from-amber-500 to-orange-500'} text-white text-[10px] font-black px-2 py-1 uppercase rounded-sm">${category}</span>
@@ -672,9 +683,9 @@
             </div>
           </div>
           <div class="p-6">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 rounded-full bg-gradient-to-br ${categoryColors[category] || 'from-amber-500 to-orange-500'} flex items-center justify-center text-xs font-bold text-white">${provider.substring(0,2).toUpperCase()}</div>
-              <div><p class="text-sm font-bold text-white">${provider}</p><p class="text-[10px] text-zinc-500 uppercase">${category}</p></div>
+            <div class="flex items-center gap-3 mb-4 cursor-pointer" onclick="event.stopPropagation(); viewServiceDetails('${title}', '${provider}', '${formatPrice(price)} ${unit}', '${description}', '${category}', ${rating}, ${reviews}, '${location}', ${s.lat || 0}, ${s.lng || 0}, '${providerId}')">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br ${categoryColors[category] || 'from-amber-500 to-orange-500'} flex items-center justify-center text-xs font-bold text-white overflow-hidden">${avatarContent}</div>
+              <div><p class="text-sm font-bold text-white hover:text-amber-400 transition-colors">${provider}</p><p class="text-[10px] text-zinc-500 uppercase">${category}</p></div>
             </div>
             <h3 class="font-headline text-xl font-bold text-white mb-2">${title}</h3>
             <p class="text-zinc-400 text-sm mb-4 line-clamp-2">${description}</p>
@@ -775,9 +786,14 @@
     }
     
     let currentServiceProvider = null;
+    let currentServiceProviderId = null;
+    let currentServiceProviderNickname = null;
     
-    function viewServiceDetails(title, provider, price, description, category, rating, reviews, location, lat, lng) {
+    function viewServiceDetails(title, provider, price, description, category, rating, reviews, location, lat, lng, providerId) {
       currentServiceProvider = provider;
+      currentServiceProviderId = providerId || null;
+      currentServiceProviderNickname = provider;
+      
       const distance = (userLat && userLng) ? `${Math.round(getDistance(userLat, userLng, lat, lng))} km away` : location;
       
       document.getElementById('details-title').textContent = title;
@@ -789,7 +805,22 @@
       document.getElementById('details-reviews').textContent = `(${reviews} reviews)`;
       document.getElementById('details-location').textContent = distance;
       document.getElementById('details-description').textContent = description;
-      document.getElementById('details-avatar').textContent = provider.substring(0,2).toUpperCase();
+      
+      // Load provider profile photo
+      const avatarText = document.getElementById('details-avatar-text');
+      const avatarImg = document.getElementById('details-avatar-img');
+      const providerPhoto = providerId ? localStorage.getItem('gai_profilePhoto_' + providerId) : localStorage.getItem('gai_profilePhoto');
+      
+      if (providerPhoto) {
+        avatarText.classList.add('hidden');
+        avatarImg.src = providerPhoto;
+        avatarImg.classList.remove('hidden');
+      } else {
+        avatarImg.classList.add('hidden');
+        avatarText.classList.remove('hidden');
+        avatarText.textContent = provider.substring(0,2).toUpperCase();
+      }
+      
       document.getElementById('details-coordinates').textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
       document.getElementById('details-map-link').href = `https://www.google.com/maps?q=${lat},${lng}`;
       
@@ -825,6 +856,14 @@
     function closeServiceDetails() {
       document.getElementById('service-details-modal').classList.add('hidden');
       document.body.style.overflow = '';
+    }
+    
+    function viewProviderProfile() {
+      if (currentServiceProviderId) {
+        window.location.href = 'profile.html?id=' + currentServiceProviderId;
+      } else if (currentServiceProviderNickname) {
+        window.location.href = 'profile.html?user=' + encodeURIComponent(currentServiceProviderNickname);
+      }
     }
     
     function connectServiceDetails() {
@@ -907,11 +946,18 @@
         return;
       }
       
+      // Get current user info
+      const currentUserId = localStorage.getItem('gai_userId');
+      const currentNickname = localStorage.getItem('gai_username') || localStorage.getItem('gai_reg_fullname') || 'User';
+      const currentFullname = localStorage.getItem('gai_reg_fullname') || currentNickname;
+      
       // Add new service to data
       const newService = {
         title: title,
         category: category,
-        provider: 'You',
+        provider: currentFullname,
+        provider_id: currentUserId,
+        provider_nickname: currentNickname,
         price: price,
         unit: unit,
         description: description,
@@ -946,7 +992,10 @@
             longitude: userLng || 0,
             rating: 5.0,
             reviews_count: 0,
-            status: 'active'
+            status: 'active',
+            provider_id: currentUserId,
+            provider_name: currentFullname,
+            provider_nickname: currentNickname
           });
           console.log('Service synced to Supabase');
         } catch (err) {
