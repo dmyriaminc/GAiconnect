@@ -92,9 +92,23 @@
       'VVIP': { bg: 'bg-pink-500/20', text: 'text-pink-400', border: 'border-pink-500/30' }
     };
     
-    function loadMembers() {
-      // Load registered users from localStorage
-      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+    async function loadMembers() {
+      // Try to fetch from Supabase first
+      let users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      
+      if (typeof supabase !== 'undefined' && supabase.isConfigured) {
+        try {
+          const { data, error } = await supabase.from('users').select('*');
+          if (!error && data && data.length > 0) {
+            users = data;
+            // Update localStorage cache
+            localStorage.setItem('gai_users', JSON.stringify(users));
+          }
+        } catch (e) {
+          console.warn('Failed to fetch users from Supabase:', e.message);
+        }
+      }
+      
       const registeredUsers = users.map(u => ({
         id: u.id || u.user_id,
         nickname: u.nickname || u.fullname || 'User',

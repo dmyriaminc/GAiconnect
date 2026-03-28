@@ -80,7 +80,7 @@
           <span class="material-symbols-outlined filled">hub</span>
           <span class="font-headline font-medium text-sm">Connect Feed</span>
         </a>
-        <a href="#" onclick="alert('Online Members coming soon')" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
+        <a href="members.html" class="sidebar-link flex items-center gap-3 px-4 py-3 border-l-4 border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-white">
           <span class="material-symbols-outlined filled">groups</span>
           <span class="font-headline font-medium text-sm">Online Members</span>
         </a>
@@ -765,6 +765,11 @@
                   <span class="material-symbols-outlined text-lg">download</span> Export Data
                 </span>
               </button>
+              <button onclick="generateDumpUsers()" class="w-full py-2.5 mt-2 bg-green-600 text-white font-headline font-bold text-sm uppercase tracking-widest hover:bg-green-500 rounded-sm cursor-pointer">
+                <span class="flex items-center justify-center gap-2">
+                  <span class="material-symbols-outlined text-lg">add</span> Generate Test Users
+                </span>
+              </button>
             </div>
           `
         },
@@ -915,7 +920,7 @@
       alert(`Search Results for "${query}"\n\nFound ${results.length} result(s):\n\n${resultText}${results.length > 10 ? '\n... and ' + (results.length - 10) + ' more' : ''}`);
     }
     
-    function runDumpUsers() {
+    async function runDumpUsers() {
       const dumpType = document.getElementById('dump-type')?.value || 'all';
       
       // Get all checkboxes for data fields
@@ -932,8 +937,21 @@
       const formatSelect = document.querySelector('#active-tool-panel select:last-of-type');
       const format = formatSelect?.value || 'JSON';
       
-      // Get users from storage
-      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      // Get users from Supabase or localStorage
+      let users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      
+      if (typeof supabase !== 'undefined' && supabase.isConfigured) {
+        try {
+          const { data, error } = await supabase.from('users').select('*');
+          if (!error && data && data.length > 0) {
+            users = data;
+            // Update localStorage cache
+            localStorage.setItem('gai_users', JSON.stringify(users));
+          }
+        } catch (e) {
+          console.warn('Failed to fetch users from Supabase:', e.message);
+        }
+      }
       
       // Filter by type
       let filteredUsers = users;
@@ -1005,6 +1023,75 @@
       }
       
       alert(`User Dump Complete!\n\nExported: ${filteredUsers.length} users\nType: ${dumpType}\nFormat: ${format}\nFields: ${selectedFields.length}\n\nFile downloaded.`);
+    }
+    
+    async function generateDumpUsers() {
+      const count = prompt('How many test users to generate?', '10');
+      if (!count || isNaN(count) || parseInt(count) < 1) return;
+      
+      const numUsers = parseInt(count);
+      const tiers = ['Free', 'Standard', 'Premium', 'Elite', 'VVIP'];
+      const nationalities = ['American', 'British', 'Canadian', 'Australian', 'German', 'French', 'Spanish', 'Italian', 'Japanese', 'Korean', 'Chinese', 'Indian', 'Brazilian', 'Mexican'];
+      const locations = ['New York', 'Los Angeles', 'London', 'Berlin', 'Tokyo', 'Paris', 'Sydney', 'Toronto', 'Mumbai', 'Shanghai', 'Seoul', 'Mexico City'];
+      
+      const firstNames = ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Cameron', 'Drew', 'Skyler', 'Reese', 'Parker', 'Dakota', 'Charlie', 'Sam', 'Jamie', 'Dylan', 'Blake', 'Hayden'];
+      const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'Thompson', 'White', 'Harris'];
+      
+      const newUsers = [];
+      
+      // Get existing users to determine starting ID
+      let users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      let startId = users.length + 1001;
+      
+      for (let i = 0; i < numUsers; i++) {
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+        const nickname = firstName + '_' + Math.floor(Math.random() * 999);
+        const tier = tiers[Math.floor(Math.random() * tiers.length)];
+        const nationality = nationalities[Math.floor(Math.random() * nationalities.length)];
+        const location = locations[Math.floor(Math.random() * locations.length)];
+        
+        const newUser = {
+          id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString() + i,
+          user_id: 'GAi' + String(startId + i).padStart(6, '0'),
+          fullname: firstName + ' ' + lastName,
+          nickname: nickname,
+          email: nickname.toLowerCase() + '@example.com',
+          password: 'b64:' + btoa('password123'),
+          tier: tier,
+          nationality: nationality,
+          location: location,
+          bio: 'Generated test user',
+          verified: Math.random() > 0.5,
+          status: 'active',
+          created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        
+        newUsers.push(newUser);
+        
+        // Add to local array
+        users.push(newUser);
+        
+        // Save to Supabase if configured
+        if (typeof supabase !== 'undefined' && supabase.isConfigured) {
+          try {
+            await supabase.from('users').insert(newUser);
+          } catch (e) {
+            console.warn('Failed to create user in Supabase:', e.message);
+          }
+        }
+      }
+      
+      // Update localStorage
+      localStorage.setItem('gai_users', JSON.stringify(users));
+      
+      alert(`Successfully generated ${numUsers} test users!\n\nUsers added:\n${newUsers.map(u => '• ' + u.nickname + ' (' + u.tier + ')').join('\n')}\n\nTotal users now: ${users.length}`);
+      
+      // Track in memory
+      if (typeof MemorySystem !== 'undefined') {
+        MemorySystem.trackActivity('tools', `Generated ${numUsers} test users`);
+      }
     }
     
     function runPhotoGenerator() {

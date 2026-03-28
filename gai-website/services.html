@@ -884,6 +884,28 @@
       servicesData.unshift(newService);
       renderServices(currentFilter);
       
+      // Sync to Supabase
+      if (supabase.isConfigured) {
+        try {
+          await supabase.from('services').insert({
+            title: title,
+            category: category,
+            description: description,
+            price: price,
+            price_unit: unit,
+            location: location || 'Location not specified',
+            latitude: userLat || 0,
+            longitude: userLng || 0,
+            rating: 5.0,
+            reviews_count: 0,
+            status: 'active'
+          });
+          console.log('Service synced to Supabase');
+        } catch (err) {
+          console.warn('Failed to sync service to Supabase:', err.message);
+        }
+      }
+      
       alert(`Service "${title}" posted successfully!\n\nCategory: ${category}\nPrice: ${price} ${unit}\nLocation: ${location}\n\nYour service is now visible in the marketplace.`);
       closePostModal();
     }
@@ -1098,6 +1120,26 @@
       
       alert(`Service "${title}" posted successfully!\n\nCategory: ${category}\n\nYour service is now visible in the marketplace.`);
       closePostModal();
+      
+      // Sync to Supabase
+      if (supabase.isConfigured) {
+        try {
+          await supabase.from('services').insert({
+            title: title,
+            category: category,
+            description: description,
+            price: 0,
+            price_unit: 'fixed',
+            location: '',
+            rating: 5.0,
+            reviews_count: 0,
+            status: 'active'
+          });
+          console.log('Service synced to Supabase');
+        } catch (err) {
+          console.warn('Failed to sync service to Supabase:', err.message);
+        }
+      }
     }
 
     // Voice Input

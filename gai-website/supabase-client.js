@@ -397,25 +397,41 @@ const GAiData = {
         const users = await this.getUsers();
         const normalizedId = identifier.toUpperCase();
         
+        // Normalize membership ID - handle formats like "GAi000001", "GAI000001", "000001"
+        let normalizedMemberId = normalizedId;
+        if (!normalizedId.startsWith('GAI') && /^\d+$/.test(identifier)) {
+            normalizedMemberId = 'GAI' + String(identifier).padStart(6, '0');
+        }
+        
         const user = users.find(u => 
+            // Match by id (UUID)
             u.id === identifier || 
             u.id?.toLowerCase() === normalizedId.toLowerCase() ||
+            // Match by user_id (membership ID like GAi000001)
+            u.user_id === identifier ||
+            u.user_id?.toUpperCase() === normalizedId ||
+            u.user_id?.toUpperCase() === normalizedMemberId ||
+            // Match by email
             u.email === identifier || 
             u.email?.toLowerCase() === identifier.toLowerCase() ||
+            // Match by nickname
             u.nickname === identifier ||
-            u.nickname?.toLowerCase() === identifier.toLowerCase() ||
-            u.user_id === identifier ||
-            u.user_id?.toUpperCase() === normalizedId
+            u.nickname?.toLowerCase() === identifier.toLowerCase()
         );
 
         if (!user) return null;
         
         // If password provided, verify it
         if (password && user.password) {
-            // Simple comparison (use bcrypt in production)
-            const storedPassword = user.password.includes('b64:') 
-                ? atob(user.password.replace('b64:', '')) 
-                : user.password;
+            // Handle base64 encoded passwords
+            let storedPassword = user.password;
+            if (user.password.includes('b64:')) {
+                try {
+                    storedPassword = atob(user.password.replace('b64:', ''));
+                } catch (e) {
+                    storedPassword = user.password.replace('b64:', '');
+                }
+            }
             if (storedPassword !== password) return null;
         }
 

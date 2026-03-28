@@ -568,8 +568,10 @@
       document.getElementById('profile-edit-modal').classList.remove('flex');
     }
     
-    function saveProfileChanges(event) {
+    async function saveProfileChanges(event) {
       event.preventDefault();
+      
+      const userId = localStorage.getItem('gai_userId');
       
       localStorage.setItem('gai_reg_fullname', document.getElementById('edit-fullname').value);
       localStorage.setItem('gai_username', document.getElementById('edit-nickname').value);
@@ -583,6 +585,31 @@
       localStorage.setItem('gai_twitter', document.getElementById('edit-twitter').value);
       localStorage.setItem('gai_instagram', document.getElementById('edit-instagram').value);
       localStorage.setItem('gai_linkedin', document.getElementById('edit-linkedin').value);
+      
+      // Sync to Supabase
+      if (supabase && supabase.isConfigured && userId) {
+        try {
+          const updates = {
+            fullname: document.getElementById('edit-fullname').value,
+            nickname: document.getElementById('edit-nickname').value,
+            location: document.getElementById('edit-location').value,
+            nationality: document.getElementById('edit-nationality').value,
+            dob: document.getElementById('edit-dob').value,
+            bio: document.getElementById('edit-bio')?.value || '',
+            updated_at: new Date().toISOString()
+          };
+          
+          // Update user in Supabase
+          const { error } = await supabase.from('users').update(updates).eq('id', userId);
+          if (error) {
+            console.warn('Failed to update profile in Supabase:', error.message);
+          } else {
+            console.log('Profile synced to Supabase');
+          }
+        } catch (e) {
+          console.warn('Profile sync error:', e.message);
+        }
+      }
       
       // Update profile display
       loadUserProfile();

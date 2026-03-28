@@ -107,6 +107,41 @@
   </header>
 
   <main class="pt-16">
+    <!-- Biometric Recommendation Banner -->
+    <div id="biometric-banner" class="hidden bg-gradient-to-r from-amber-900/50 to-yellow-900/50 border-b border-amber-500/30 px-6 py-3">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-amber-400">face</span>
+          <span class="text-amber-200 text-sm">Enhance your security! We recommend enabling Face Recognition for faster, safer login.</span>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="enableBiometric()" class="bg-amber-500 hover:bg-amber-400 text-black px-4 py-1.5 rounded text-sm font-bold">Enable Now</button>
+          <button onclick="dismissBiometricBanner()" class="text-zinc-400 hover:text-white text-sm">Dismiss</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Check if biometric is enabled and show banner
+      document.addEventListener('DOMContentLoaded', function() {
+        const biometricEnabled = localStorage.getItem('gai_biometricEnabled');
+        const isLoggedIn = localStorage.getItem('gai_isLoggedIn') === 'true';
+        
+        if (isLoggedIn && biometricEnabled !== 'true') {
+          document.getElementById('biometric-banner').classList.remove('hidden');
+        }
+      });
+      
+      function enableBiometric() {
+        window.location.href = 'profile.html?setup=biometric';
+      }
+      
+      function dismissBiometricBanner() {
+        document.getElementById('biometric-banner').classList.add('hidden');
+        localStorage.setItem('gai_biometricBannerDismissed', 'true');
+      }
+    </script>
+
     <!-- Hero Section -->
     <section class="relative py-16 px-6 bg-gradient-to-b from-neutral-900 to-black">
       <div class="max-w-7xl mx-auto">

@@ -307,10 +307,39 @@
       loadMessages(userId);
     }
     
-    function loadMessages(withUserId) {
-      const allMessages = JSON.parse(localStorage.getItem('gai_messages') || '{}');
+    async function loadMessages(withUserId) {
+      let allMessages = JSON.parse(localStorage.getItem('gai_messages') || '{}');
       const conversationKey = [currentUserId, withUserId].sort().join('_');
-      const messages = allMessages[conversationKey] || [];
+      let messages = allMessages[conversationKey] || [];
+      
+      // Try to fetch from Supabase
+      if (supabase.isConfigured) {
+        try {
+          const { data, error } = await supabase.from('messages').select('*').or(`sender_id.eq.${currentUserId},receiver_id.eq.${currentUserId}`);
+          if (!error && data && data.length > 0) {
+            // Merge with local messages (avoid duplicates)
+            const existingTimestamps = new Set(messages.map(m => m.timestamp));
+            const newMessages = data.filter(m => 
+              (m.sender_id === currentUserId || m.receiver_id === currentUserId) &&
+              (m.sender_id === withUserId || m.receiver_id === withUserId) &&
+              !existingTimestamps.has(m.created_at)
+            ).map(m => ({
+              from: m.sender_id,
+              to: m.receiver_id,
+              text: m.content,
+              timestamp: new Date(m.created_at).getTime()
+            }));
+            
+            if (newMessages.length > 0) {
+              messages = [...messages, ...newMessages].sort((a, b) => a.timestamp - b.timestamp);
+              allMessages[conversationKey] = messages;
+              localStorage.setItem('gai_messages', JSON.stringify(allMessages));
+            }
+          }
+        } catch (err) {
+          console.warn('Failed to fetch messages from Supabase:', err.message);
+        }
+      }
       
       if (messages.length === 0) {
         messagesContainer.innerHTML = `
@@ -377,6 +406,21 @@
       });
       
       localStorage.setItem('gai_messages', JSON.stringify(allMessages));
+      
+      // Sync to Supabase
+      if (supabase.isConfigured && currentUserId && currentChatUser.id) {
+        try {
+          await supabase.from('messages').insert({
+            sender_id: currentUserId,
+            receiver_id: currentChatUser.id,
+            content: message,
+            read: false
+          });
+          console.log('Message synced to Supabase');
+        } catch (err) {
+          console.warn('Failed to sync message:', err.message);
+        }
+      }
       
       // Add message to UI
       const messageDiv = document.createElement('div');

@@ -698,25 +698,39 @@
       }
     });
     
-    // Load Online Members from localStorage
-    function loadOnlineMembers() {
-      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+    // Load Online Members from localStorage and Supabase
+    async function loadOnlineMembers() {
+      let users = JSON.parse(localStorage.getItem('gai_users') || '[]');
       const container = document.getElementById('online-members-list');
       const countEl = document.getElementById('online-count');
       
       if (!container) return;
       
+      // Try to fetch from Supabase
+      if (supabase.isConfigured) {
+        try {
+          const { data, error } = await supabase.from('users').select('*').eq('status', 'active');
+          if (!error && data && data.length > 0) {
+            // Update localStorage with latest users
+            localStorage.setItem('gai_users', JSON.stringify(data));
+            users = data;
+          }
+        } catch (err) {
+          console.warn('Failed to fetch users from Supabase:', err.message);
+        }
+      }
+      
       // Get current logged-in user ID
       const currentUserId = localStorage.getItem('gai_userId');
       
       // Default demo members to show when no users registered
-      const defaultMembers = [
+      const defaultMembers = users.length === 0 ? [
         { id: 'GAi001001', nickname: 'Xenon_77', tier: 'VVIP', nationality: 'USA', status: 'online', initials: 'XL', color: 'amber' },
         { id: 'GAi001002', nickname: 'Nova_Protocol', tier: 'Elite', nationality: 'UK', status: 'online', initials: 'NP', color: 'blue' },
         { id: 'GAi001003', nickname: 'The_Oracle', tier: 'Premium', nationality: 'Japan', status: 'online', initials: 'OR', color: 'purple' },
         { id: 'GAi001004', nickname: 'NeonViper', tier: 'Standard', nationality: 'Germany', status: 'offline', initials: 'NV', color: 'pink' },
         { id: 'GAi001005', nickname: 'QuantumRush', tier: 'Premium', nationality: 'Australia', status: 'online', initials: 'QR', color: 'cyan' }
-      ];
+      ] : [];
       
       // Map registered users to display format
       const registeredUsers = users.map(u => ({
@@ -726,7 +740,7 @@
         tier: u.tier || 'Standard',
         nationality: u.nationality || '',
         location: u.location || '',
-        status: u.status === 'online' ? 'online' : 'active', // Treat 'active' as online
+        status: u.status === 'online' ? 'online' : 'active',
         initials: (u.nickname || u.fullname || 'U').substring(0, 2).toUpperCase(),
         color: 'amber'
       }));

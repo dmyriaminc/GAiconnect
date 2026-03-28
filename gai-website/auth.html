@@ -133,9 +133,12 @@
               <label class="font-headline text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Membership ID</label>
               <input type="text" class="input-cyber" placeholder="GAiXXXXXX" id="member-id">
             </div>
-            <div>
+            <div class="relative">
               <label class="font-headline text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Password</label>
-              <input type="password" class="input-cyber" placeholder="********" id="password">
+              <input type="password" class="input-cyber pr-10" placeholder="********" id="password">
+              <button type="button" onclick="togglePassword('password', this)" class="absolute right-3 top-[34px] text-zinc-500 hover:text-amber-400">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
             </div>
             <button class="btn-primary w-full" onclick="manualLogin()">Login</button>
           </div>
@@ -230,9 +233,12 @@
           <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Email *</label>
           <input type="email" id="reg-email" required class="input-cyber" placeholder="email@example.com">
         </div>
-        <div>
+        <div class="relative">
           <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Password *</label>
-          <input type="password" id="reg-password" required minlength="6" class="input-cyber" placeholder="Min 6 characters">
+          <input type="password" id="reg-password" required minlength="6" class="input-cyber pr-10" placeholder="Min 6 characters">
+          <button type="button" onclick="togglePassword('reg-password', this)" class="absolute right-3 top-[34px] text-zinc-500 hover:text-amber-400">
+            <span class="material-symbols-outlined">visibility</span>
+          </button>
         </div>
         <div>
           <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Date of Birth</label>
@@ -303,9 +309,12 @@
           <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Admin Username</label>
           <input type="text" id="admin-username" required class="input-cyber" placeholder="admin">
         </div>
-        <div>
+        <div class="relative">
           <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Admin Password</label>
-          <input type="password" id="admin-password" required class="input-cyber" placeholder="********">
+          <input type="password" id="admin-password" required class="input-cyber pr-10" placeholder="********">
+          <button type="button" onclick="togglePassword('admin-password', this)" class="absolute right-3 top-[34px] text-zinc-500 hover:text-amber-400">
+            <span class="material-symbols-outlined">visibility</span>
+          </button>
         </div>
         <div class="pt-2">
           <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition-colors">Login as Admin</button>
@@ -359,6 +368,20 @@
     
     // Start face recognition initialization
     initFaceAPI();
+
+    // Password toggle function
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('.material-symbols-outlined');
+      
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    }
 
     // Registration functions
     function showRegistrationForm() {
@@ -606,19 +629,24 @@
           return;
         }
 
+        // Generate membership ID
+        const membershipId = 'GAi' + String(users.length + 1001).padStart(6, '0');
+        
         // Create new user
         newUser = {
-          id: 'GAi' + String(users.length + 1001).padStart(6, '0'),
+          id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+          user_id: membershipId,
           fullname,
           nickname,
           email,
-          password: 'b64:' + btoa(password),
+          password: password, // Store as-is for localStorage login
           dob,
           nationality,
           location,
           tier: 'Standard',
           verified: false,
-          createdAt: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
           status: 'active',
           faceDescriptor: registrationFaceDescriptor ? Array.from(registrationFaceDescriptor) : null,
           biometricEnabled: !!registrationFaceDescriptor
@@ -635,6 +663,7 @@
         
         // Also set individual fields for backwards compatibility
         localStorage.setItem('gai_userId', newUser.id);
+        localStorage.setItem('gai_membershipId', membershipId);
         localStorage.setItem('gai_reg_fullname', fullname);
         localStorage.setItem('gai_reg_email', email);
         localStorage.setItem('gai_reg_dob', dob);
@@ -642,10 +671,13 @@
         localStorage.setItem('gai_reg_location', location);
         localStorage.setItem('gai_biometricEnabled', registrationFaceDescriptor ? 'true' : 'false');
         
+        // Show success message with membership ID
+        const loginInfo = '\n\nYour Membership ID: ' + membershipId + '\nUse this ID to login with your password.';
+        
         if (registrationFaceDescriptor) {
-          alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!\n\nYour Face Recognition is now enabled for secure login.');
+          alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!' + loginInfo + '\n\nYour Face Recognition is now enabled for secure login.');
         } else {
-          alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!\n\nYou can enable Face Recognition later from your profile settings.');
+          alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!' + loginInfo + '\n\nYou can enable Face Recognition later from your profile settings.');
         }
         window.location.href = 'dashboard.html';
         
