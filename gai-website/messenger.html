@@ -213,34 +213,8 @@
     </div>
   </div>
 
-  <!-- Music Feature Button -->
-  <div class="fixed bottom-6 left-6 z-50">
-    <button class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer" onclick="openMusicPanel()">
-      <span class="material-symbols-outlined text-white filled">music_note</span>
-    </button>
-  </div>
+  <!-- Music Panel Removed -->
 
-  <!-- Music Panel -->
-  <div id="music-panel" class="fixed bottom-20 left-6 w-80 max-w-[calc(100vw-3rem)] bg-neutral-900 border border-purple-500/30 rounded-lg shadow-2xl z-50 hidden">
-    <div class="bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-2 flex justify-between items-center">
-      <span class="font-headline font-bold text-white text-sm">Music Request</span>
-      <button onclick="closeMusicPanel()" class="text-white/80">✕</button>
-    </div>
-    <div class="p-3">
-      <input type="text" id="song-title" placeholder="Song Title" class="w-full bg-neutral-800 border border-zinc-600 rounded px-2 py-1.5 text-sm text-white mb-2">
-      <input type="text" id="artist-name" placeholder="Artist" class="w-full bg-neutral-800 border border-zinc-600 rounded px-2 py-1.5 text-sm text-white mb-2">
-      <button onclick="searchSong()" class="w-full bg-purple-500 text-white text-sm uppercase py-1.5 rounded">Search</button>
-    </div>
-    <div id="search-results" class="p-2 max-h-32 overflow-y-auto hidden">
-      <div id="results-list"></div>
-    </div>
-    <div id="selected-song" class="p-2 border-t border-zinc-700 hidden">
-      <p id="selected-title" class="text-white text-sm font-bold"></p>
-      <p id="selected-artist" class="text-zinc-500 text-xs"></p>
-      <button onclick="confirmPlay()" class="w-full bg-green-500 text-white text-xs uppercase py-1 mt-2 rounded">Play</button>
-    </div>
-  </div>
-  
   <script>
     const messageInput = document.getElementById('message-input');
     const sendBtn = document.getElementById('send-btn');
@@ -382,7 +356,7 @@
       }
     }
 
-    function sendMessage() {
+    async function sendMessage() {
       const message = messageInput.value.trim();
       if (!message) return;
       if (!currentChatUser) {
@@ -634,45 +608,6 @@
     const gaiChat = document.getElementById('gai-chat');
     const gaiInput = document.getElementById('gai-input');
     const gaiMessages = document.getElementById('gai-messages');
-
-    // Music Feature
-    let selectedSongData = null;
-
-    function openMusicPanel() { document.getElementById('music-panel').classList.remove('hidden'); }
-    function closeMusicPanel() { document.getElementById('music-panel').classList.add('hidden'); }
-
-    function searchSong() {
-      const title = document.getElementById('song-title').value.trim();
-      const artist = document.getElementById('artist-name').value.trim();
-      if (!title) { alert('Enter song title'); return; }
-      const searchQuery = title + ' ' + artist;
-      document.getElementById('results-list').innerHTML = '<div class="text-zinc-400 text-xs">Searching...</div>';
-      document.getElementById('search-results').classList.remove('hidden');
-      setTimeout(() => {
-        const results = [
-          { title: title, artist: artist || 'Unknown', url: 'https://open.spotify.com/search/' + encodeURIComponent(searchQuery) },
-          { title: title + ' Video', artist: artist || 'Unknown', url: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery) },
-        ];
-        document.getElementById('results-list').innerHTML = results.map((r, i) => `<div class="p-1.5 bg-neutral-800 rounded cursor-pointer hover:bg-neutral-700" onclick="selectSong(${i})"><p class="text-white text-xs">${r.title}</p><p class="text-zinc-500 text-[10px]">${r.artist}</p></div>`).join('');
-        window.searchResultsData = results;
-      }, 800);
-    }
-
-    function selectSong(i) {
-      selectedSongData = window.searchResultsData[i];
-      document.getElementById('selected-title').textContent = selectedSongData.title;
-      document.getElementById('selected-artist').textContent = selectedSongData.artist;
-      document.getElementById('search-results').classList.add('hidden');
-      document.getElementById('selected-song').classList.remove('hidden');
-    }
-
-    function confirmPlay() {
-      if (!selectedSongData) return;
-      if (confirm('Play "' + selectedSongData.title + '"?')) {
-        window.open(selectedSongData.url, '_blank');
-        alert('Opening ' + selectedSongData.title + '...');
-      }
-    }
 
     if (gaiToggle && gaiChat) {
       gaiToggle.addEventListener('click', () => {
