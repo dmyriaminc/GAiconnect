@@ -868,7 +868,7 @@
       document.getElementById('video-placeholder').classList.remove('hidden');
     }
     
-    function submitService(e) {
+    async function submitService(e) {
       e.preventDefault();
       const title = document.getElementById('service-title').value.trim();
       const category = document.getElementById('service-category').value;
@@ -1122,7 +1122,7 @@
       document.getElementById('service-description').value = '';
     }
 
-    function submitService(e) {
+    async function submitService(e) {
       e.preventDefault();
       const title = document.getElementById('service-title').value.trim();
       const category = document.getElementById('service-category').value;
