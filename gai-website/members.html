@@ -175,12 +175,12 @@
       }).join('');
     }
     
-    function filterMembers() {
+    async function filterMembers() {
       const search = document.getElementById('search-members').value.toLowerCase();
       const tierFilter = document.getElementById('filter-tier').value;
       const statusFilter = document.getElementById('filter-status').value;
       
-      const members = loadMembers();
+      const members = await loadMembers();
       const filtered = members.filter(m => {
         const matchesSearch = !search || 
           m.nickname.toLowerCase().includes(search) ||
@@ -208,8 +208,8 @@
     document.getElementById('filter-tier').addEventListener('change', filterMembers);
     document.getElementById('filter-status').addEventListener('change', filterMembers);
     
-    document.addEventListener('DOMContentLoaded', function() {
-      const members = loadMembers();
+    document.addEventListener('DOMContentLoaded', async function() {
+      const members = await loadMembers();
       renderMembers(members);
     });
   </script>

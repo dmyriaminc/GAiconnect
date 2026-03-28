@@ -177,6 +177,17 @@ class GAiSupabase {
                         resolve({ 
                             data: r.data, 
                             error: r.error,
+                            // Add chainable methods
+                            eq: (column, value) => {
+                                const eqPromise = self.request('GET', `/rest/v1/${table}?select=${columns}&${column}=eq.${value}`);
+                                return new Promise((res) => {
+                                    eqPromise.then(rp => {
+                                        res({ data: rp.data, error: rp.error });
+                                    }).catch(err => {
+                                        res({ data: null, error: err });
+                                    });
+                                });
+                            },
                             // Add array methods for convenience
                             then: (onFulfilled, onRejected) => Promise.resolve({ data: r.data, error: r.error }).then(onFulfilled, onRejected),
                             catch: (onRejected) => Promise.resolve({ data: r.data, error: r.error }).catch(onRejected),
