@@ -1870,3 +1870,52 @@ document.addEventListener('DOMContentLoaded', function() {
         GAiEventSystem.subscribeToRealtime(userId);
     }
 });
+
+// ============================================
+// GLOBAL TOAST NOTIFICATION SYSTEM
+// ============================================
+
+function showToast(message, type = 'info', duration = 3000) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'fixed bottom-6 right-6 z-50 flex flex-col gap-3';
+        document.body.appendChild(container);
+    }
+    
+    const icons = {
+        success: 'check_circle',
+        error: 'error',
+        warning: 'warning',
+        info: 'info'
+    };
+    
+    const colors = {
+        success: 'bg-green-500/20 border-green-500 text-green-400',
+        error: 'bg-red-500/20 border-red-500 text-red-400',
+        warning: 'bg-yellow-500/20 border-yellow-500 text-yellow-400',
+        info: 'bg-blue-500/20 border-blue-500 text-blue-400'
+    };
+    
+    const toast = document.createElement('div');
+    toast.className = `${colors[type]} border px-4 py-3 rounded-lg flex items-center gap-3 shadow-lg animate-[slideIn_0.3s_ease] min-w-[280px] max-w-md`;
+    toast.innerHTML = `
+        <span class="material-symbols-outlined">${icons[type]}</span>
+        <span class="text-sm font-medium flex-1">${message}</span>
+        <button onclick="this.parentElement.remove()" class="hover:opacity-70">
+            <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
+// Make showToast globally available
+window.showToast = showToast;

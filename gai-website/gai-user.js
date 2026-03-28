@@ -16,7 +16,7 @@ const GAiUser = {
   // Activity Feed System
   maxActivities: 50,
 
-  recordActivity(type, username, details = {}) {
+  async recordActivity(type, username, details = {}) {
     const activities = JSON.parse(localStorage.getItem('gai_activities') || '[]');
     const newActivity = {
       id: Date.now(),
@@ -30,11 +30,76 @@ const GAiUser = {
       activities.pop();
     }
     localStorage.setItem('gai_activities', JSON.stringify(activities));
+    
+    // Sync to Supabase if available
+    try {
+      const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+      const userId = localStorage.getItem('gai_userId');
+      
+      if (userId) {
+        await fetch(`${SUPABASE_URL}/rest/v1/activities`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            activity_type: type,
+            username: username,
+            details: details,
+            created_at: new Date().toISOString()
+          })
+        });
+      }
+    } catch (e) {
+      console.warn('Failed to sync activity to Supabase:', e.message);
+    }
+    
     return newActivity;
   },
 
-  getActivities(limit = 20) {
-    const activities = JSON.parse(localStorage.getItem('gai_activities') || '[]');
+  async getActivities(limit = 20) {
+    let activities = JSON.parse(localStorage.getItem('gai_activities') || '[]');
+    
+    // Try to load from Supabase
+    try {
+      const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
+      const userId = localStorage.getItem('gai_userId');
+      
+      if (userId) {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/activities?order=created_at.desc&limit=${limit}`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+        if (response.ok) {
+          const supabaseActivities = await response.json();
+          if (supabaseActivities && supabaseActivities.length > 0) {
+            const supabaseFormatted = supabaseActivities.map(a => ({
+              id: a.id,
+              type: a.activity_type,
+              username: a.username,
+              details: a.details,
+              timestamp: a.created_at
+            }));
+            // Merge with local, avoiding duplicates
+            const localIds = new Set(activities.map(a => a.id));
+            const newFromSupabase = supabaseFormatted.filter(a => !localIds.has(a.id));
+            activities = [...activities, ...newFromSupabase].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, limit);
+            localStorage.setItem('gai_activities', JSON.stringify(activities));
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load activities from Supabase:', e.message);
+    }
+    
     return activities.slice(0, limit);
   },
 
