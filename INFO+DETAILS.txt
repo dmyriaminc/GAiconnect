@@ -1,1 +1,27 @@
+
+
+
+
+Modify:
+
+1.  Landing page: Make Auth.html the default landing page.
+
+2. Biometric: modify and install a validator for the Biometric to validate the face recognition, and know if the face match the existing user's, or tell the user to create a new account. Also strictly a must for a new registered user to enable their Face Recognition to login their account in the future, and for returning or existing user's login with their biometric.
+
+3. Messenger: Also check the messenger page in both Mobile and Desktop view, there's an issue chatting other member's.
+
+4. GAi CEO Dashboard: There should be an output to get all the results of the task, project or activities being processed by the Agents.
+
+
+
+
+
+
+
+
+
+
+
+
+
 https://api.netlify.com/build_hooks/69c674592985e04a1016a37b

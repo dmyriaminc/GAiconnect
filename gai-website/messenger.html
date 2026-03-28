@@ -63,43 +63,32 @@
         </div>
       </div>
       <div class="flex-1 overflow-y-auto p-2">
-        <p class="px-3 py-2 text-[10px] text-zinc-500 uppercase tracking-widest font-headline">Contacts</p>
-        <div class="contact-item active p-3 flex items-center gap-3 cursor-pointer rounded-sm" onclick="switchContact('Xenon_77', 'XL', 'amber', 'VVIP')">
-          <div class="relative">
-            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400/30 to-neutral-800 border border-amber-400/30 flex items-center justify-center text-sm font-bold text-amber-400">XL</div>
-            <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between"><p class="font-bold text-white text-sm truncate">Xenon_77</p><span class="text-[10px] text-zinc-500">2m</span></div>
-            <p class="text-xs text-zinc-500 truncate">Neural link established...</p>
-          </div>
-          <span class="bg-amber-400 text-black text-[8px] font-black px-2 py-0.5 uppercase rounded-sm">VVIP</span>
-        </div>
-        <div class="contact-item p-3 flex items-center gap-3 cursor-pointer rounded-sm" onclick="switchContact('Nova_Protocol', 'NP', 'blue', 'VVIP')">
-          <div class="relative">
-            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400/30 to-neutral-800 border border-blue-400/30 flex items-center justify-center text-sm font-bold text-blue-400">NP</div>
-            <span class="absolute bottom-0 right-0 w-3 h-3 bg-amber-400 rounded-full border-2 border-neutral-900"></span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between"><p class="font-bold text-white text-sm truncate">Nova_Protocol</p><span class="text-[10px] text-zinc-500">15m</span></div>
-            <p class="text-xs text-zinc-500 truncate">Encryption layer deployed...</p>
-          </div>
-          <span class="bg-blue-400 text-black text-[8px] font-black px-2 py-0.5 uppercase rounded-sm">VVIP</span>
-        </div>
-        <div class="contact-item p-3 flex items-center gap-3 cursor-pointer rounded-sm" onclick="switchContact('The_Oracle', 'OR', 'purple', 'PRES')">
-          <div class="relative">
-            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400/30 to-neutral-800 border border-purple-400/30 flex items-center justify-center text-sm font-bold text-purple-400">OR</div>
-            <span class="absolute bottom-0 right-0 w-3 h-3 bg-blue-400 rounded-full border-2 border-neutral-900"></span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between"><p class="font-bold text-white text-sm truncate">The_Oracle</p><span class="text-[10px] text-zinc-500">1h</span></div>
-            <p class="text-xs text-zinc-500 truncate">Storage access confirmed...</p>
-          </div>
-          <span class="bg-purple-400 text-white text-[8px] font-black px-2 py-0.5 uppercase rounded-sm">PRES</span>
+        <p class="px-3 py-2 text-[10px] text-zinc-500 uppercase tracking-widest font-headline">Members</p>
+        <div id="members-list">
+          <!-- Members loaded dynamically -->
         </div>
       </div>
       <div class="p-4 border-t border-white/5">
-        <button class="btn-primary w-full flex items-center justify-center gap-2 text-sm" onclick="addNewContact()"><span class="material-symbols-outlined filled" aria-hidden="true">person_add</span> Add Contact</button>
+        <button class="btn-primary w-full flex items-center justify-center gap-2 text-sm" onclick="openMemberSearch()"><span class="material-symbols-outlined filled" aria-hidden="true">person_add</span> Connect with Member</button>
+      </div>
+      
+      <!-- Member Search Modal -->
+      <div id="member-search-modal" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-headline text-xl font-bold text-amber-400">Find Members</h3>
+            <button onclick="closeMemberSearch()" class="text-zinc-400 hover:text-white">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="relative mb-4">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">search</span>
+            <input type="text" id="member-search-input" class="input-cyber pl-10" placeholder="Search by name or nickname..." oninput="searchMembers()">
+          </div>
+          <div id="member-search-results" class="max-h-64 overflow-y-auto space-y-2">
+            <!-- Results loaded dynamically -->
+          </div>
+        </div>
       </div>
     </aside>
     
@@ -246,74 +235,214 @@
     const messageInput = document.getElementById('message-input');
     const sendBtn = document.getElementById('send-btn');
     const messagesContainer = document.getElementById('messages-container');
-
-    function switchContact(name, initials, color, badge) {
-      document.querySelectorAll('.contact-item').forEach(item => item.classList.remove('active'));
-      event.currentTarget.classList.add('active');
-
-      const colors = {
-        amber: { bg: 'from-amber-400/30', text: 'text-amber-400', badge: 'bg-amber-400 text-black', status: 'bg-green-500', statusText: 'Online' },
-        blue: { bg: 'from-blue-400/30', text: 'text-blue-400', badge: 'bg-blue-400 text-black', status: 'bg-amber-400', statusText: 'Away' },
-        purple: { bg: 'from-purple-400/30', text: 'text-purple-400', badge: 'bg-purple-400 text-white', status: 'bg-blue-400', statusText: 'Offline' }
-      };
-
-      const c = colors[color];
-
-      document.getElementById('chat-avatar').textContent = initials;
-      document.getElementById('chat-avatar').className = `w-12 h-12 rounded-full bg-gradient-to-br ${c.bg} to-neutral-800 border border-${color}-400/30 flex items-center justify-center text-sm font-bold ${c.text}`;
-      document.getElementById('chat-name').textContent = name;
-      document.getElementById('chat-badge').textContent = badge;
-      document.getElementById('chat-badge').className = `${c.badge} text-[8px] font-black px-2 py-0.5 uppercase rounded-sm`;
-      document.getElementById('chat-status-dot').className = `w-1.5 h-1.5 ${c.status} rounded-full`;
-      document.getElementById('chat-status').textContent = c.statusText;
-      document.getElementById('chat-status').className = `text-xs ${c.status === 'bg-green-500' ? 'text-green-500' : 'text-amber-400'}`;
-
-      messagesContainer.innerHTML = `
-        <div class="flex items-center gap-4">
-          <div class="flex-1 h-px bg-zinc-700/30"></div>
-          <span class="text-[10px] text-zinc-500 uppercase tracking-widest font-headline">Conversation with ${name}</span>
-          <div class="flex-1 h-px bg-zinc-700/30"></div>
-        </div>
-        <div class="flex gap-3">
-          <div class="w-8 h-8 rounded-sm bg-neutral-800 flex items-center justify-center text-xs font-bold ${c.text} flex-shrink-0">${initials}</div>
-          <div class="chat-bubble received bg-neutral-700 p-4">
-            <p class="text-sm text-white mb-2">Neural link established with ${name}. Secure channel ready.</p>
-            <div class="flex items-center gap-2"><span class="text-[10px] text-zinc-500">Now</span><span class="material-symbols-outlined ${c.text} text-xs filled">done_all</span></div>
+    const membersList = document.getElementById('members-list');
+    
+    let currentChatUser = null;
+    let currentUserId = localStorage.getItem('gai_userId') || 'demo';
+    
+    // Initialize members list
+    function loadMembers() {
+      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      const currentUser = localStorage.getItem('gai_username');
+      
+      // Filter out current user
+      const otherUsers = users.filter(u => u.nickname !== currentUser);
+      
+      if (otherUsers.length === 0) {
+        membersList.innerHTML = `
+          <div class="p-4 text-center">
+            <span class="material-symbols-outlined text-4xl text-zinc-600 mb-2">group_off</span>
+            <p class="text-zinc-500 text-sm">No other members yet</p>
+            <p class="text-zinc-600 text-xs mt-1">Connect with other members to start chatting</p>
           </div>
-        </div>
-      `;
+        `;
+        return;
+      }
+      
+      membersList.innerHTML = otherUsers.map((user, index) => {
+        const initials = user.nickname.substring(0, 2).toUpperCase();
+        const colors = ['amber', 'blue', 'purple', 'green', 'red'];
+        const color = colors[index % colors.length];
+        const badge = user.tier || 'Standard';
+        
+        return `
+          <div class="contact-item p-3 flex items-center gap-3 cursor-pointer rounded-sm" onclick="openChat('${user.id}', '${user.nickname}', '${initials}', '${color}', '${badge}')" data-user-id="${user.id}">
+            <div class="relative">
+              <div class="w-12 h-12 rounded-full bg-gradient-to-br from-${color}-400/30 to-neutral-800 border border-${color}-400/30 flex items-center justify-center text-sm font-bold text-${color}-400">${initials}</div>
+              <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between"><p class="font-bold text-white text-sm truncate">${user.nickname}</p></div>
+              <p class="text-xs text-zinc-500 truncate">${user.tier || 'Standard'} Member</p>
+            </div>
+            <span class="bg-${color}-400 text-black text-[8px] font-black px-2 py-0.5 uppercase rounded-sm">${badge}</span>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function openChat(userId, nickname, initials, color, badge) {
+      currentChatUser = { id: userId, nickname, initials, color, badge };
+      
+      // Update header
+      document.getElementById('chat-avatar').textContent = initials;
+      document.getElementById('chat-avatar').className = `w-12 h-12 rounded-full bg-gradient-to-br from-${color}-400/30 to-neutral-800 border border-${color}-400/30 flex items-center justify-center text-sm font-bold text-${color}-400`;
+      document.getElementById('chat-name').textContent = nickname;
+      document.getElementById('chat-badge').textContent = badge;
+      document.getElementById('chat-badge').className = `bg-${color}-400 text-black text-[8px] font-black px-2 py-0.5 uppercase rounded-sm`;
+      document.getElementById('chat-status').textContent = 'Online';
+      document.getElementById('chat-status').className = 'text-xs text-green-500';
+      
+      // Load messages for this chat
+      loadMessages(userId);
+    }
+    
+    function loadMessages(withUserId) {
+      const allMessages = JSON.parse(localStorage.getItem('gai_messages') || '{}');
+      const conversationKey = [currentUserId, withUserId].sort().join('_');
+      const messages = allMessages[conversationKey] || [];
+      
+      if (messages.length === 0) {
+        messagesContainer.innerHTML = `
+          <div class="flex items-center gap-4">
+            <div class="flex-1 h-px bg-zinc-700/30"></div>
+            <span class="text-[10px] text-zinc-500 uppercase tracking-widest font-headline">Start a conversation</span>
+            <div class="flex-1 h-px bg-zinc-700/30"></div>
+          </div>
+          <div class="text-center py-8">
+            <span class="material-symbols-outlined text-4xl text-zinc-600 mb-2">chat</span>
+            <p class="text-zinc-500 text-sm">No messages yet</p>
+            <p class="text-zinc-600 text-xs mt-1">Send the first message to start the conversation</p>
+          </div>
+        `;
+      } else {
+        messagesContainer.innerHTML = `
+          <div class="flex items-center gap-4">
+            <div class="flex-1 h-px bg-zinc-700/30"></div>
+            <span class="text-[10px] text-zinc-500 uppercase tracking-widest font-headline">Messages</span>
+            <div class="flex-1 h-px bg-zinc-700/30"></div>
+          </div>
+          ${messages.map(msg => {
+            const isSent = msg.from === currentUserId;
+            const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const color = currentChatUser ? currentChatUser.color : 'amber';
+            const initials = isSent ? 'ME' : (currentChatUser ? currentChatUser.initials : '??');
+            
+            return `
+              <div class="flex gap-3 ${isSent ? 'justify-end' : ''}">
+                <div class="w-8 h-8 rounded-sm bg-neutral-800 flex items-center justify-center text-xs font-bold text-${isSent ? 'amber' : color}-400 flex-shrink-0">${initials}</div>
+                <div class="chat-bubble ${isSent ? 'sent' : 'received'} bg-${isSent ? 'amber-400' : 'neutral-700'} p-4">
+                  <p class="text-sm ${isSent ? 'text-black' : 'text-white'} mb-1">${msg.text}</p>
+                  <div class="flex items-center justify-end gap-2"><span class="text-[10px] ${isSent ? 'text-black/70' : 'text-zinc-500'}">${time}</span></div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        `;
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
     }
 
     function sendMessage() {
       const message = messageInput.value.trim();
       if (!message) return;
+      if (!currentChatUser) {
+        alert('Please select a member to chat with first.');
+        return;
+      }
 
+      const timestamp = Date.now();
+      const allMessages = JSON.parse(localStorage.getItem('gai_messages') || '{}');
+      const conversationKey = [currentUserId, currentChatUser.id].sort().join('_');
+      
+      if (!allMessages[conversationKey]) {
+        allMessages[conversationKey] = [];
+      }
+      
+      allMessages[conversationKey].push({
+        from: currentUserId,
+        to: currentChatUser.id,
+        text: message,
+        timestamp: timestamp
+      });
+      
+      localStorage.setItem('gai_messages', JSON.stringify(allMessages));
+      
+      // Add message to UI
       const messageDiv = document.createElement('div');
       messageDiv.className = 'flex gap-3 justify-end';
       messageDiv.innerHTML = `
         <div class="chat-bubble sent bg-amber-400 p-4">
-          <p class="text-sm text-black mb-2">${message}</p>
+          <p class="text-sm text-black mb-1">${message}</p>
           <div class="flex items-center justify-end gap-2"><span class="text-[10px] text-black/70">Now</span><span class="material-symbols-outlined text-black text-xs filled">done_all</span></div>
         </div>
       `;
       messagesContainer.appendChild(messageDiv);
       messageInput.value = '';
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
 
-      setTimeout(() => {
-        const replyDiv = document.createElement('div');
-        replyDiv.className = 'flex gap-3';
-        replyDiv.innerHTML = `
-          <div class="w-8 h-8 rounded-sm bg-neutral-800 flex items-center justify-center text-xs font-bold text-amber-400 flex-shrink-0">XL</div>
-          <div class="chat-bubble received bg-neutral-700 p-4">
-            <p class="text-sm text-white mb-2">Neural link received. Processing query...</p>
-            <div class="flex items-center gap-2"><span class="text-[10px] text-zinc-500">Now</span><span class="material-symbols-outlined text-amber-400 text-xs filled">done_all</span></div>
+    function openMemberSearch() {
+      document.getElementById('member-search-modal').classList.remove('hidden');
+      loadMembers();
+    }
+    
+    function closeMemberSearch() {
+      document.getElementById('member-search-modal').classList.add('hidden');
+    }
+    
+    function searchMembers() {
+      const query = document.getElementById('member-search-input').value.toLowerCase();
+      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      const currentUser = localStorage.getItem('gai_username');
+      const filtered = users.filter(u => 
+        u.nickname !== currentUser && 
+        (u.nickname.toLowerCase().includes(query) || 
+         (u.fullname && u.fullname.toLowerCase().includes(query)))
+      );
+      
+      const resultsDiv = document.getElementById('member-search-results');
+      if (filtered.length === 0) {
+        resultsDiv.innerHTML = '<p class="text-zinc-500 text-center py-4">No members found</p>';
+        return;
+      }
+      
+      resultsDiv.innerHTML = filtered.map(user => {
+        const initials = user.nickname.substring(0, 2).toUpperCase();
+        return `
+          <div class="p-3 bg-neutral-800 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-neutral-700" onclick="selectMember('${user.id}', '${user.nickname}')">
+            <div class="w-10 h-10 rounded-full bg-amber-400/30 flex items-center justify-center text-sm font-bold text-amber-400">${initials}</div>
+            <div class="flex-1">
+              <p class="text-white font-medium">${user.nickname}</p>
+              <p class="text-zinc-500 text-xs">${user.tier || 'Standard'} Member</p>
+            </div>
           </div>
         `;
-        messagesContainer.appendChild(replyDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }, 1000);
+      }).join('');
     }
+    
+    function selectMember(userId, nickname) {
+      closeMemberSearch();
+      // Find the member in the list and click it
+      const memberElement = document.querySelector(`[data-user-id="${userId}"]`);
+      if (memberElement) {
+        memberElement.click();
+      } else {
+        // Load members first, then select
+        loadMembers();
+        setTimeout(() => {
+          const el = document.querySelector(`[data-user-id="${userId}"]`);
+          if (el) el.click();
+        }, 100);
+      }
+    }
+    
+    function switchContact(name, initials, color, badge, userId) {
+      openChat(userId, name, initials, color, badge);
+    }
+
+    // Load members on page load
+    loadMembers();
 
     if (messageInput) {
       messageInput.addEventListener('keypress', (e) => {
@@ -380,7 +509,7 @@
     }
     
     function addNewContact() {
-      alert('Add New Contact\n\nEnter the GAi username or ID of the person you want to connect with.');
+      openMemberSearch();
     }
     
     function submitGaiInputMessenger() {

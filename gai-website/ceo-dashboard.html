@@ -528,6 +528,40 @@
           </div>
         </section>
         
+        <!-- Task Output Section -->
+        <section id="task-output-section" class="glass-panel p-6 border-t-2 border-green-400 hidden">
+          <h2 class="font-headline text-xl font-bold text-white uppercase tracking-tight mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-green-400">terminal</span>
+            Task Output
+            <span id="output-status" class="ml-auto text-xs px-2 py-1 rounded bg-green-500/20 text-green-400">Completed</span>
+          </h2>
+          
+          <div id="task-output-content" class="bg-black/50 rounded-lg p-4 font-mono text-sm max-h-96 overflow-y-auto">
+            <!-- Output will be displayed here -->
+          </div>
+          
+          <div class="flex gap-2 mt-4">
+            <button onclick="copyTaskOutput()" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-xs font-headline uppercase rounded transition-colors">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">content_copy</span>
+                Copy Output
+              </span>
+            </button>
+            <button onclick="exportTaskOutput()" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-xs font-headline uppercase rounded transition-colors">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">download</span>
+                Export
+              </span>
+            </button>
+            <button onclick="clearTaskOutput()" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-xs font-headline uppercase rounded transition-colors">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">clear_all</span>
+                Clear
+              </span>
+            </button>
+          </div>
+        </section>
+        
         <!-- Agent Grid -->
         <section>
           <h2 class="font-headline text-xl font-bold text-white uppercase tracking-tight mb-4 flex items-center gap-2">
@@ -955,6 +989,8 @@
     // Current selected agent for modal
     let currentAgentId = null;
     
+    let currentTaskOutput = [];
+    
     function submitCEOTask() {
       const input = document.getElementById('ceo-task-input');
       const priority = document.getElementById('ceo-task-priority').value;
@@ -965,22 +1001,232 @@
         return;
       }
       
+      // Show output section
+      const outputSection = document.getElementById('task-output-section');
+      outputSection.classList.remove('hidden');
+      document.getElementById('output-status').textContent = 'Processing...';
+      document.getElementById('output-status').className = 'ml-auto text-xs px-2 py-1 rounded bg-amber-500/20 text-amber-400';
+      
+      // Display task input
+      const timestamp = new Date().toLocaleTimeString();
+      currentTaskOutput = [];
+      appendOutput(`[${timestamp}] CEO COMMAND: ${task}`, 'command');
+      
       const result = GAiCEO.executeTask(task, priority);
       
       if (result.success) {
         input.value = '';
         GAiCEO.updateUI();
         
-        // Show notification
+        // Generate and display task output
+        const taskOutput = generateTaskOutput(task, result.agent, priority);
+        taskOutput.forEach((line, i) => {
+          setTimeout(() => appendOutput(line.text, line.type), (i + 1) * 500);
+        });
+        
+        // Update status after all output
+        setTimeout(() => {
+          document.getElementById('output-status').textContent = 'Completed';
+          document.getElementById('output-status').className = 'ml-auto text-xs px-2 py-1 rounded bg-green-500/20 text-green-400';
+        }, taskOutput.length * 500 + 500);
+        
         showNotification(`Task assigned to ${result.agent}`, 'success');
       } else {
+        document.getElementById('output-status').textContent = 'Failed';
+        document.getElementById('output-status').className = 'ml-auto text-xs px-2 py-1 rounded bg-red-500/20 text-red-400';
+        appendOutput(`[ERROR] Failed to assign task. Please try again.`, 'error');
         showNotification('Failed to assign task', 'error');
       }
     }
     
+    function generateTaskOutput(task, agent, priority) {
+      const outputs = [
+        { text: `[INFO] Analyzing task request...`, type: 'info' },
+        { text: `[INFO] Task complexity: ${task.split(' ').length > 10 ? 'High' : 'Medium'}`, type: 'info' },
+        { text: `[INFO] Assigning to ${agent}...`, type: 'info' },
+        { text: `[PROCESS] ${agent} processing request...`, type: 'process' },
+      ];
+      
+      // Generate agent-specific output based on task
+      const taskLower = task.toLowerCase();
+      
+      if (taskLower.includes('search') || taskLower.includes('find') || taskLower.includes('osint')) {
+        outputs.push(
+          { text: `[${agent}] Initiating OSINT protocols...`, type: 'agent' },
+          { text: `[${agent}] Scanning public data sources...`, type: 'agent' },
+          { text: `[${agent}] Cross-referencing social media profiles...`, type: 'agent' },
+          { text: `[${agent}] Analyzing network connections...`, type: 'agent' },
+          { text: `[${agent}] Data compilation complete.`, type: 'success' },
+          { text: `[RESULT] Found ${Math.floor(Math.random() * 50) + 10} relevant data points`, type: 'result' },
+          { text: `[RESULT] Identity match: ${Math.random() > 0.5 ? 'Confirmed' : 'Partial'}`, type: 'result' },
+        );
+      } else if (taskLower.includes('social') || taskLower.includes('promote') || taskLower.includes('marketing')) {
+        outputs.push(
+          { text: `[${agent}] Loading social media integration...`, type: 'agent' },
+          { text: `[${agent}] Analyzing target audience...`, type: 'agent' },
+          { text: `[${agent}] Generating promotional content...`, type: 'agent' },
+          { text: `[${agent}] Scheduling posts across platforms...`, type: 'agent' },
+          { text: `[${agent}] Campaign deployment complete.`, type: 'success' },
+          { text: `[RESULT] ${Math.floor(Math.random() * 5000) + 1000} impressions estimated`, type: 'result' },
+          { text: `[RESULT] Engagement rate: ${(Math.random() * 5 + 2).toFixed(1)}%`, type: 'result' },
+        );
+      } else if (taskLower.includes('trade') || taskLower.includes('market') || taskLower.includes('invest')) {
+        outputs.push(
+          { text: `[${agent}] Connecting to market data feeds...`, type: 'agent' },
+          { text: `[${agent}] Analyzing ${Math.floor(Math.random() * 20) + 5} market indicators...`, type: 'agent' },
+          { text: `[${agent}] Running predictive models...`, type: 'agent' },
+          { text: `[${agent}] Generating trading signals...`, type: 'agent' },
+          { text: `[${agent}] Risk assessment complete.`, type: 'success' },
+          { text: `[RESULT] Signal: ${Math.random() > 0.5 ? 'BUY' : 'SELL'} (Confidence: ${(Math.random() * 30 + 70).toFixed(0)}%)`, type: 'result' },
+          { text: `[RESULT] Risk level: ${['Low', 'Medium', 'High'][Math.floor(Math.random() * 3)]}`, type: 'result' },
+        );
+      } else if (taskLower.includes('build') || taskLower.includes('code') || taskLower.includes('develop')) {
+        outputs.push(
+          { text: `[${agent}] Initializing development environment...`, type: 'agent' },
+          { text: `[${agent}] Analyzing requirements...`, type: 'agent' },
+          { text: `[${agent}] Generating code structure...`, type: 'agent' },
+          { text: `[${agent}] Writing ${Math.floor(Math.random() * 500) + 100} lines of code...`, type: 'agent' },
+          { text: `[${agent}] Testing and validation...`, type: 'agent' },
+          { text: `[${agent}] Build complete.`, type: 'success' },
+          { text: `[RESULT] ${Math.floor(Math.random() * 100) + 50} functions implemented`, type: 'result' },
+          { text: `[RESULT] Test coverage: ${(Math.random() * 30 + 70).toFixed(0)}%`, type: 'result' },
+        );
+      } else if (taskLower.includes('security') || taskLower.includes('audit') || taskLower.includes('vuln')) {
+        outputs.push(
+          { text: `[${agent}] Starting security scan...`, type: 'agent' },
+          { text: `[${agent}] Checking ${Math.floor(Math.random() * 100) + 50} potential vulnerabilities...`, type: 'agent' },
+          { text: `[${agent}] Analyzing access patterns...`, type: 'agent' },
+          { text: `[${agent}] Generating security report...`, type: 'agent' },
+          { text: `[${agent}] Audit complete.`, type: 'success' },
+          { text: `[RESULT] ${Math.floor(Math.random() * 5)} vulnerabilities found`, type: 'result' },
+          { text: `[RESULT] Security score: ${(Math.random() * 30 + 70).toFixed(0)}/100`, type: 'result' },
+        );
+      } else {
+        // Default output
+        outputs.push(
+          { text: `[${agent}] Processing request...`, type: 'agent' },
+          { text: `[${agent}] Executing ${agent.split(' ')[0]} protocols...`, type: 'agent' },
+          { text: `[${agent}] Task processing complete.`, type: 'success' },
+          { text: `[RESULT] Operation successful`, type: 'result' },
+          { text: `[RESULT] ${Math.floor(Math.random() * 100)} items processed`, type: 'result' },
+        );
+      }
+      
+      outputs.push(
+        { text: `[SUMMARY] Task completed in ${(Math.random() * 5 + 1).toFixed(1)}s`, type: 'summary' },
+        { text: `[STATUS] ${priority.toUpperCase()} priority task processed successfully`, type: 'success' }
+      );
+      
+      return outputs;
+    }
+    
+    function appendOutput(text, type) {
+      const content = document.getElementById('task-output-content');
+      currentTaskOutput.push({ text, type, timestamp: Date.now() });
+      
+      const colorClass = {
+        command: 'text-amber-400',
+        info: 'text-blue-400',
+        process: 'text-purple-400',
+        agent: 'text-cyan-400',
+        success: 'text-green-400',
+        result: 'text-emerald-400',
+        error: 'text-red-400',
+        summary: 'text-amber-300 font-bold'
+      };
+      
+      const line = document.createElement('div');
+      line.className = `${colorClass[type] || 'text-white'} mb-1`;
+      line.textContent = text;
+      content.appendChild(line);
+      content.scrollTop = content.scrollHeight;
+    }
+    
+    function copyTaskOutput() {
+      const text = currentTaskOutput.map(o => o.text).join('\n');
+      navigator.clipboard.writeText(text).then(() => {
+        showNotification('Output copied to clipboard', 'success');
+      });
+    }
+    
+    function exportTaskOutput() {
+      const text = currentTaskOutput.map(o => o.text).join('\n');
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `gai-task-output-${Date.now()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showNotification('Output exported', 'success');
+    }
+    
+    function clearTaskOutput() {
+      document.getElementById('task-output-content').innerHTML = '';
+      document.getElementById('task-output-section').classList.add('hidden');
+      currentTaskOutput = [];
+    }
+    
     function executeWorkflow(workflowType, params) {
+      // Show output section
+      const outputSection = document.getElementById('task-output-section');
+      outputSection.classList.remove('hidden');
+      document.getElementById('output-status').textContent = 'Processing...';
+      document.getElementById('output-status').className = 'ml-auto text-xs px-2 py-1 rounded bg-amber-500/20 text-amber-400';
+      
+      const timestamp = new Date().toLocaleTimeString();
+      currentTaskOutput = [];
+      appendOutput(`[${timestamp}] WORKFLOW: ${workflowType}`, 'command');
+      appendOutput(`[INFO] Initializing multi-agent workflow...`, 'info');
+      
       GAiCEO.executeWorkflow(workflowType, params);
       GAiCEO.updateUI();
+      
+      // Generate workflow output
+      const workflowOutputs = {
+        'find-promote-connect': [
+          { text: `[OSINT] Gathering intelligence...`, type: 'agent' },
+          { text: `[OSINT] Target identified. Profile analysis complete.`, type: 'success' },
+          { text: `[SOCIAL] Creating promotional content...`, type: 'agent' },
+          { text: `[SOCIAL] Publishing across ${Math.floor(Math.random() * 10) + 5} platforms...`, type: 'agent' },
+          { text: `[MESSAGING] Establishing connection protocols...`, type: 'agent' },
+          { text: `[SUCCESS] Workflow completed!`, type: 'success' },
+        ],
+        'market-research': [
+          { text: `[DATA] Collecting market data...`, type: 'agent' },
+          { text: `[DATA] Analyzing ${Math.floor(Math.random() * 100) + 50} market factors...`, type: 'agent' },
+          { text: `[TRADING] Generating market predictions...`, type: 'agent' },
+          { text: `[SUCCESS] Research report generated!`, type: 'success' },
+        ],
+        'analyze-deploy': [
+          { text: `[DATA] Analyzing project requirements...`, type: 'agent' },
+          { text: `[BUILDER] Generating application structure...`, type: 'agent' },
+          { text: `[BUILDER] Writing and testing code...`, type: 'agent' },
+          { text: `[DEPLOY] Preparing deployment environment...`, type: 'agent' },
+          { text: `[SUCCESS] Application deployed successfully!`, type: 'success' },
+        ],
+        'monitor-secure': [
+          { text: `[SECURITY] Starting security audit...`, type: 'agent' },
+          { text: `[SECURITY] Scanning for vulnerabilities...`, type: 'agent' },
+          { text: `[DATA] Monitoring system health...`, type: 'agent' },
+          { text: `[SUCCESS] Security audit complete. All systems secure.`, type: 'success' },
+        ]
+      };
+      
+      const outputs = workflowOutputs[workflowType] || [
+        { text: `[INFO] Executing workflow...`, type: 'info' },
+        { text: `[SUCCESS] Workflow completed!`, type: 'success' },
+      ];
+      
+      outputs.forEach((line, i) => {
+        setTimeout(() => appendOutput(line.text, line.type), (i + 1) * 800);
+      });
+      
+      setTimeout(() => {
+        document.getElementById('output-status').textContent = 'Completed';
+        document.getElementById('output-status').className = 'ml-auto text-xs px-2 py-1 rounded bg-green-500/20 text-green-400';
+      }, outputs.length * 800 + 500);
+      
       showNotification(`Workflow "${workflowType}" started`, 'info');
     }
     

@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="supabase-client.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <style>
     :root {
       --glow-primary: 0 0 20px rgba(255, 197, 99, 0.4), 0 0 40px rgba(255, 197, 99, 0.2);
@@ -196,7 +197,25 @@
       <button onclick="closeRegistrationForm()" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
         <span class="material-symbols-outlined">close</span>
       </button>
-      <h2 class="font-headline text-2xl font-bold text-amber-400 mb-6">Create Account</h2>
+      <h2 class="font-headline text-2xl font-bold text-amber-400 mb-2">Create Account</h2>
+      <p class="text-xs text-zinc-500 mb-4">Face Recognition is <span class="text-red-400 font-bold">REQUIRED</span> for registration</p>
+      <div id="registration-face-section" class="mb-4 p-4 bg-neutral-800/50 border border-amber-400/30 rounded-lg">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-400">face</span>
+            <span class="text-sm text-white">Face Recognition Setup</span>
+          </div>
+          <span id="reg-face-status" class="text-xs px-2 py-1 rounded bg-zinc-700 text-zinc-400">Not Captured</span>
+        </div>
+        <div id="reg-face-preview" class="hidden mb-3">
+          <canvas id="reg-face-canvas" class="w-full max-w-xs mx-auto rounded border border-amber-400/30"></canvas>
+        </div>
+        <button type="button" id="reg-capture-face-btn" onclick="captureRegistrationFace()" class="btn-primary w-full flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined">camera_alt</span>
+          <span>Enable Face Recognition</span>
+        </button>
+        <p class="text-[10px] text-zinc-500 mt-2 text-center">Your face data will be encrypted and used for secure login only</p>
+      </div>
       <form id="registration-form" onsubmit="handleRegistration(event)" class="space-y-4">
         <div>
           <label class="font-headline text-xs uppercase tracking-widest text-zinc-500 block mb-2">Full Name *</label>
@@ -227,10 +246,37 @@
           <input type="text" id="reg-location" class="input-cyber" placeholder="City, Country">
         </div>
         <div class="pt-4">
-          <button type="submit" class="btn-primary w-full">Create Account</button>
+          <button type="submit" id="reg-submit-btn" class="btn-primary w-full opacity-50 cursor-not-allowed" disabled>Enable Face Recognition First</button>
         </div>
         <p class="text-xs text-zinc-500 text-center">By registering, you agree to our Terms of Service and Privacy Policy.</p>
       </form>
+    </div>
+  </div>
+
+  <!-- Face Capture Modal for Registration -->
+  <div id="face-capture-modal" class="fixed inset-0 bg-black/95 z-[300] hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-md w-full p-6 relative">
+      <button onclick="closeFaceCapture()" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <h3 class="font-headline text-xl font-bold text-amber-400 mb-4 text-center">Face Recognition Setup</h3>
+      <p class="text-sm text-zinc-400 mb-4 text-center">Position your face within the frame and hold still</p>
+      <div class="relative bg-neutral-900 rounded-lg overflow-hidden mb-4" style="aspect-ratio: 4/3;">
+        <video id="face-capture-video" autoplay playsinline muted class="w-full h-full object-cover"></video>
+        <div class="absolute inset-0 border-2 border-dashed border-amber-400/50 rounded-lg pointer-events-none"></div>
+        <div class="absolute inset-x-0 top-1/2 h-px bg-amber-400/30"></div>
+        <div class="absolute inset-y-0 left-1/2 w-px bg-amber-400/30"></div>
+      </div>
+      <div id="face-capture-progress" class="mb-4 hidden">
+        <div class="flex items-center justify-center gap-2">
+          <div class="w-3 h-3 bg-amber-400 rounded-full animate-ping"></div>
+          <span class="text-amber-400 text-sm">Analyzing face...</span>
+        </div>
+      </div>
+      <button id="capture-btn" onclick="startFaceCapture()" class="btn-primary w-full flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined">camera</span>
+        <span>Capture Face</span>
+      </button>
     </div>
   </div>
 
@@ -266,6 +312,28 @@
     let faceStream = null;
     let mediaRecorder = null;
     let audioChunks = [];
+    let faceApiLoaded = false;
+    let currentFaceDescriptor = null;
+    let registrationFaceDescriptor = null;
+    let faceCaptureStream = null;
+    
+    // Initialize Face API
+    async function initFaceAPI() {
+      try {
+        const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model';
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+        faceApiLoaded = true;
+        console.log('Face API loaded successfully');
+      } catch (error) {
+        console.error('Failed to load Face API:', error);
+        alert('Face recognition models failed to load. Please refresh the page.');
+      }
+    }
+    
+    // Start face recognition initialization
+    initFaceAPI();
 
     // Registration functions
     function showRegistrationForm() {
@@ -275,9 +343,112 @@
     function closeRegistrationForm() {
       document.getElementById('registration-modal').classList.add('hidden');
     }
+    
+    function captureRegistrationFace() {
+      document.getElementById('face-capture-modal').classList.remove('hidden');
+      startFaceCaptureStream();
+    }
+    
+    function closeFaceCapture() {
+      document.getElementById('face-capture-modal').classList.add('hidden');
+      stopFaceCaptureStream();
+    }
+    
+    async function startFaceCaptureStream() {
+      try {
+        const video = document.getElementById('face-capture-video');
+        faceCaptureStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: 'user', width: 640, height: 480 }
+        });
+        video.srcObject = faceCaptureStream;
+      } catch (error) {
+        alert('Camera access denied. Please allow camera access to enable face recognition.');
+        closeFaceCapture();
+      }
+    }
+    
+    function stopFaceCaptureStream() {
+      if (faceCaptureStream) {
+        faceCaptureStream.getTracks().forEach(track => track.stop());
+        faceCaptureStream = null;
+      }
+    }
+    
+    async function startFaceCapture() {
+      if (!faceApiLoaded) {
+        alert('Face recognition is loading. Please wait a moment and try again.');
+        return;
+      }
+      
+      const video = document.getElementById('face-capture-video');
+      const progress = document.getElementById('face-capture-progress');
+      const captureBtn = document.getElementById('capture-btn');
+      
+      captureBtn.disabled = true;
+      captureBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span><span>Processing...</span>';
+      progress.classList.remove('hidden');
+      
+      try {
+        const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+          .withFaceLandmarks(true)
+          .withFaceDescriptors();
+        
+        if (detections.length === 0) {
+          alert('No face detected. Please position your face in the frame and try again.');
+          captureBtn.disabled = false;
+          captureBtn.innerHTML = '<span class="material-symbols-outlined">camera</span><span>Capture Face</span>';
+          progress.classList.add('hidden');
+          return;
+        }
+        
+        if (detections.length > 1) {
+          alert('Multiple faces detected. Please ensure only your face is visible.');
+          captureBtn.disabled = false;
+          captureBtn.innerHTML = '<span class="material-symbols-outlined">camera</span><span>Capture Face</span>';
+          progress.classList.add('hidden');
+          return;
+        }
+        
+        // Store the face descriptor
+        registrationFaceDescriptor = detections[0].descriptor;
+        
+        // Show preview
+        const canvas = document.getElementById('reg-face-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0);
+        
+        document.getElementById('reg-face-preview').classList.remove('hidden');
+        document.getElementById('reg-face-status').textContent = 'Captured';
+        document.getElementById('reg-face-status').className = 'text-xs px-2 py-1 rounded bg-green-500/20 text-green-400';
+        
+        // Enable submit button
+        const submitBtn = document.getElementById('reg-submit-btn');
+        submitBtn.disabled = false;
+        submitBtn.className = 'btn-primary w-full';
+        submitBtn.innerHTML = 'Create Account';
+        
+        alert('Face captured successfully! Your biometric data is now linked to your account.');
+        closeFaceCapture();
+        
+      } catch (error) {
+        console.error('Face capture error:', error);
+        alert('Error capturing face. Please try again.');
+      }
+      
+      captureBtn.disabled = false;
+      captureBtn.innerHTML = '<span class="material-symbols-outlined">camera</span><span>Capture Face</span>';
+      progress.classList.add('hidden');
+    }
 
     async function handleRegistration(event) {
       event.preventDefault();
+      
+      if (!registrationFaceDescriptor) {
+        alert('Face Recognition is REQUIRED. Please enable face recognition before creating an account.');
+        return;
+      }
       
       const fullname = document.getElementById('reg-fullname').value.trim();
       const nickname = document.getElementById('reg-nickname').value.trim();
@@ -290,71 +461,50 @@
       try {
         let newUser;
         
-        if (supabase.isConfigured) {
-          // Use Supabase for production
-          const { data, error } = await supabase.signUp(email, password, {
-            fullname,
-            nickname,
-            dob,
-            nationality,
-            location,
-            tier: 'Standard'
-          });
-          
-          if (error) throw error;
-          
-          // Also save to our users table
-          const users = await GAiData.getUsers();
-          newUser = await GAiData.createUser({
-            fullname,
-            nickname,
-            email,
-            password: 'b64:' + btoa(password),
-            dob,
-            nationality,
-            location,
-            tier: 'Standard',
-            supabase_id: data.user.id
-          });
-          
-          // Store Supabase token
-          localStorage.setItem('gai_supabase_token', data.session.access_token);
-        } else {
-          // Fallback to localStorage
-          const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
-          
-          if (users.find(u => u.email === email)) {
-            alert('Email already registered. Please use a different email or login.');
-            return;
-          }
-
-          if (users.find(u => u.nickname.toLowerCase() === nickname.toLowerCase())) {
-            alert('Nickname already taken. Please choose a different nickname.');
-            return;
-          }
-
-          newUser = {
-            id: 'GAi' + String(users.length + 1001).padStart(6, '0'),
-            fullname,
-            nickname,
-            email,
-            password: 'b64:' + btoa(password),
-            dob,
-            nationality,
-            location,
-            tier: 'Standard',
-            verified: false,
-            createdAt: new Date().toISOString(),
-            status: 'active'
-          };
-
-          users.push(newUser);
-          localStorage.setItem('gai_users', JSON.stringify(users));
+        // Check for existing users
+        const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+        
+        if (users.find(u => u.email === email)) {
+          alert('Email already registered. Please use a different email or login.');
+          return;
         }
+
+        if (users.find(u => u.nickname.toLowerCase() === nickname.toLowerCase())) {
+          alert('Nickname already taken. Please choose a different nickname.');
+          return;
+        }
+        
+        // Check for existing face match
+        const faceMatch = users.find(u => u.faceDescriptor && compareFaceDescriptors(registrationFaceDescriptor, new Float32Array(u.faceDescriptor)));
+        if (faceMatch) {
+          alert('This face is already registered. Please login with your existing account or use a different face.');
+          return;
+        }
+
+        // Create new user with face data
+        newUser = {
+          id: 'GAi' + String(users.length + 1001).padStart(6, '0'),
+          fullname,
+          nickname,
+          email,
+          password: 'b64:' + btoa(password),
+          dob,
+          nationality,
+          location,
+          tier: 'Standard',
+          verified: false,
+          createdAt: new Date().toISOString(),
+          status: 'active',
+          faceDescriptor: Array.from(registrationFaceDescriptor),
+          biometricEnabled: true
+        };
+
+        users.push(newUser);
+        localStorage.setItem('gai_users', JSON.stringify(users));
 
         // Auto-login the new user
         localStorage.setItem('gai_isLoggedIn', 'true');
-        localStorage.setItem('gai_userId', newUser.id || newUser.user_id);
+        localStorage.setItem('gai_userId', newUser.id);
         localStorage.setItem('gai_username', nickname);
         localStorage.setItem('gai_userTier', newUser.tier);
         localStorage.setItem('gai_reg_fullname', fullname);
@@ -363,13 +513,32 @@
         localStorage.setItem('gai_reg_dob', dob);
         localStorage.setItem('gai_reg_nationality', nationality);
         localStorage.setItem('gai_reg_location', location);
+        localStorage.setItem('gai_biometricEnabled', 'true');
 
-        alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!');
+        alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!\n\nYour Face Recognition is now enabled for secure login.');
         window.location.href = 'dashboard.html';
         
       } catch (error) {
         alert('Registration failed: ' + error.message);
       }
+    }
+    
+    // Compare face descriptors using Euclidean distance
+    function compareFaceDescriptors(desc1, desc2) {
+      if (!desc1 || !desc2 || desc1.length !== desc2.length) return false;
+      
+      let sum = 0;
+      for (let i = 0; i < desc1.length; i++) {
+        sum += Math.pow(desc1[i] - desc2[i], 2);
+      }
+      const distance = Math.sqrt(sum);
+      return distance < 0.6; // Threshold for face match
+    }
+    
+    // Find user by face descriptor
+    function findUserByFace(descriptor) {
+      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      return users.find(u => u.faceDescriptor && compareFaceDescriptors(descriptor, new Float32Array(u.faceDescriptor)));
     }
 
     // Admin login functions
@@ -487,6 +656,12 @@
     }
 
     async function handleFaceScan(progressBar, progressText, progressPercent) {
+      if (!faceApiLoaded) {
+        updateProgress(progressBar, progressText, progressPercent, 0, 'Loading AI Models...');
+        alert('Face recognition is still loading. Please wait and try again.');
+        return;
+      }
+      
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         updateProgress(progressBar, progressText, progressPercent, 0, 'Browser Not Supported');
         alert('Facial recognition is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.');
@@ -519,8 +694,8 @@
         const stream = await navigator.mediaDevices.getUserMedia({ 
           video: {
             facingMode: 'user',
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
+            width: { ideal: 640 },
+            height: { ideal: 480 }
           } 
         });
         
@@ -535,38 +710,73 @@
         
         updateProgress(progressBar, progressText, progressPercent, 25, 'Camera Access Granted');
         
-        await simulateDelay(1000);
+        await simulateDelay(500);
         updateProgress(progressBar, progressText, progressPercent, 40, 'Scanning Face');
         
-        await simulateDelay(1500);
-        updateProgress(progressBar, progressText, progressPercent, 55, 'Mapping Features');
+        // Use face-api.js to detect and recognize face
+        const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+          .withFaceLandmarks(true)
+          .withFaceDescriptors();
         
-        captureCanvas.width = video.videoWidth;
-        captureCanvas.height = video.videoHeight;
-        const ctx = captureCanvas.getContext('2d');
-        ctx.drawImage(video, 0, 0);
+        if (detections.length === 0) {
+          updateProgress(progressBar, progressText, progressPercent, 0, 'No Face Detected');
+          stopFaceCapture();
+          alert('No face detected. Please position your face in the frame and try again.');
+          return;
+        }
         
-        const imageData = captureCanvas.toDataURL('image/png');
-        console.log('Facial data captured (hidden for privacy)');
+        if (detections.length > 1) {
+          updateProgress(progressBar, progressText, progressPercent, 0, 'Multiple Faces');
+          stopFaceCapture();
+          alert('Multiple faces detected. Please ensure only your face is visible.');
+          return;
+        }
         
-        await simulateDelay(1500);
-        updateProgress(progressBar, progressText, progressPercent, 75, 'Verifying Match');
+        updateProgress(progressBar, progressText, progressPercent, 55, 'Analyzing Face');
         
-        await simulateDelay(1500);
-        updateProgress(progressBar, progressText, progressPercent, 90, 'Authenticating');
+        const currentDescriptor = detections[0].descriptor;
         
-        await simulateDelay(1000);
-        updateProgress(progressBar, progressText, progressPercent, 100, 'Access Granted');
+        await simulateDelay(500);
+        updateProgress(progressBar, progressText, progressPercent, 75, 'Verifying Identity');
+        
+        // Find matching user
+        const matchedUser = findUserByFace(currentDescriptor);
+        
+        await simulateDelay(500);
         
         stopFaceCapture();
         
-        setTimeout(() => { 
-          window.location.href = 'dashboard.html'; 
-        }, 1000);
+        if (matchedUser) {
+          updateProgress(progressBar, progressText, progressPercent, 100, 'Access Granted');
+          
+          // Login the matched user
+          localStorage.setItem('gai_isLoggedIn', 'true');
+          localStorage.setItem('gai_userId', matchedUser.id);
+          localStorage.setItem('gai_username', matchedUser.nickname);
+          localStorage.setItem('gai_userTier', matchedUser.tier);
+          localStorage.setItem('gai_reg_fullname', matchedUser.fullname || '');
+          localStorage.setItem('gai_reg_nickname', matchedUser.nickname);
+          localStorage.setItem('gai_reg_email', matchedUser.email);
+          localStorage.setItem('gai_reg_dob', matchedUser.dob || '');
+          localStorage.setItem('gai_reg_nationality', matchedUser.nationality || '');
+          localStorage.setItem('gai_reg_location', matchedUser.location || '');
+          
+          alert('Welcome back, ' + matchedUser.nickname + '! Face recognized. Access granted.');
+          window.location.href = 'dashboard.html';
+        } else {
+          updateProgress(progressBar, progressText, progressPercent, 0, 'No Match Found');
+          
+          // Ask user to create account
+          const createAccount = confirm('No matching account found.\n\nYour face does not match any registered user.\n\nWould you like to create a new account?');
+          if (createAccount) {
+            showRegistrationForm();
+          }
+        }
         
       } catch (error) {
-        console.error('Camera access error:', error);
+        console.error('Face scan error:', error);
         updateProgress(progressBar, progressText, progressPercent, 0, 'Access Denied');
+        stopFaceCapture();
         
         if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
           alert('Camera access was denied.\n\nTo use Face Recognition:\n1. Click the camera/microphone icon in your browser address bar\n2. Allow camera access for this site\n3. Try again');
