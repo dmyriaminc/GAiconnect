@@ -582,7 +582,71 @@ const GAiData = {
     }
 };
 
+// ============================================
+// NOTIFICATION SYSTEM
+// ============================================
+const GAiNotifications = {
+    maxNotifications: 50,
+    
+    getAll() {
+        return JSON.parse(localStorage.getItem('gai_notifications') || '[]');
+    },
+    
+    getUnread() {
+        return this.getAll().filter(n => !n.read);
+    },
+    
+    getUnreadCount() {
+        return this.getUnread().length;
+    },
+    
+    add(type, title, message, data = {}) {
+        const notifications = this.getAll();
+        const newNotification = {
+            id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+            type: type,
+            title: title,
+            message: message,
+            data: data,
+            read: false,
+            created_at: new Date().toISOString()
+        };
+        notifications.unshift(newNotification);
+        if (notifications.length > this.maxNotifications) notifications.pop();
+        localStorage.setItem('gai_notifications', JSON.stringify(notifications));
+        window.dispatchEvent(new CustomEvent('gai-notification', { detail: newNotification }));
+        return newNotification;
+    },
+    
+    markAsRead(id) {
+        const notifications = this.getAll();
+        const idx = notifications.findIndex(n => n.id === id);
+        if (idx !== -1) { notifications[idx].read = true; localStorage.setItem('gai_notifications', JSON.stringify(notifications)); }
+    },
+    
+    markAllAsRead() {
+        const notifications = this.getAll();
+        notifications.forEach(n => n.read = true);
+        localStorage.setItem('gai_notifications', JSON.stringify(notifications));
+    },
+    
+    delete(id) {
+        localStorage.setItem('gai_notifications', JSON.stringify(this.getAll().filter(n => n.id !== id)));
+    },
+    
+    clearAll() {
+        localStorage.setItem('gai_notifications', JSON.stringify([]));
+    },
+    
+    addWelcome(username) { return this.add('success', 'Welcome to GAi Connect!', `Welcome, ${username}! Complete your profile to connect with others.`); },
+    addLogin(username) { return this.add('info', 'Login Successful', `Welcome back, ${username}! You are now connected to the GAi network.`); },
+    addMessage(sender, preview) { return this.add('message', `New message from ${sender}`, preview.substring(0, 100)); },
+    addConnectionRequest(name) { return this.add('info', 'New Connection', `${name} wants to connect with you.`); },
+    addServiceRequest(service, provider) { return this.add('warning', 'New Service Request', `New request for "${service}" from ${provider}.`); }
+};
+
 // Export for use
 window.GAiSupabase = GAiSupabase;
 window.supabase = supabase;
 window.GAiData = GAiData;
+window.GAiNotifications = GAiNotifications;

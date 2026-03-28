@@ -679,6 +679,11 @@
         } else {
           alert('Account created successfully! Welcome to GAi Connect, ' + nickname + '!' + loginInfo + '\n\nYou can enable Face Recognition later from your profile settings.');
         }
+        
+        // Add welcome notification
+        if (typeof GAiNotifications !== 'undefined') {
+          GAiNotifications.addWelcome(nickname);
+        }
         window.location.href = 'dashboard.html';
         
       } catch (error) {
@@ -1042,6 +1047,11 @@
           localStorage.setItem('gai_reg_location', user.location || '');
           
           alert('Login successful! Welcome back, ' + user.nickname + '!');
+          
+          // Add login notification
+          if (typeof GAiNotifications !== 'undefined') {
+            GAiNotifications.addLogin(user.nickname);
+          }
           window.location.href = 'dashboard.html';
         } else {
           alert('Invalid credentials. Please check your Membership ID/Email and Password.');

@@ -1,0 +1,22 @@
+1. Create a Notification System (supabase-client.js)
+- Add GAiNotifications object to store and manage notifications in localStorage
+- Functions: addNotification(), getNotifications(), markAsRead(), clearAll()
+2. Add Notification UI (dashboard.html)
+- Create a notification dropdown/panel HTML
+- Style it with glass-panel design matching the theme
+- Show unread count badge
+3. Update toggleNotifications() function
+- Replace alert() with the new notification panel
+- Load notifications from localStorage
+- Display in a proper dropdown
+4. Add notification triggers
+- When user registers → add welcome notification
+- When user receives message → add message notification  
+- When user logs in → add login notification
+5. Test and deploy
+---
+Do you want me to implement this plan? This will create a proper notification system that:
+- Shows real notifications in a dropdown panel (not browser alerts)
+- Persists in localStorage
+- Shows unread count on the bell icon
+- Can be triggered by various events (messages, logins, etc.)
