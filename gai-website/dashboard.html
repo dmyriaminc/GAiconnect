@@ -636,7 +636,7 @@
         };
         const timeAgo = getTimeAgo(n.created_at);
         return `
-          <div class="p-4 border-b border-zinc-800 hover:bg-zinc-800/50 cursor-pointer notification-item" onclick="viewNotification('${n.id}')">
+          <div class="p-4 border-b border-zinc-800 hover:bg-zinc-800/50 cursor-pointer notification-item" onclick="viewNotification('${n.id}', event)">
             <div class="flex items-start gap-3">
               <span class="material-symbols-outlined ${colorMap[n.type] || 'text-zinc-400'}">${iconMap[n.type] || 'notifications'}</span>
               <div class="flex-1 min-w-0">
@@ -662,7 +662,8 @@
       return Math.floor(seconds / 86400) + ' days ago';
     }
     
-    function viewNotification(id) {
+    function viewNotification(id, event) {
+      if (event) event.stopPropagation();
       GAiNotifications.markAsRead(id);
       loadNotifications();
       updateNotificationBadge();
