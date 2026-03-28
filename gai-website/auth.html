@@ -351,16 +351,19 @@
       console.log('Supabase isConfigured:', supabase?.isConfigured);
       console.log('===========================');
       
-      // Test Supabase connection
-      if (supabase && supabase.isConfigured) {
-        supabase.from('users').select('id').limit(1).then(result => {
-          if (result.error) {
-            console.error('Supabase connection test FAILED:', result.error.message);
-          } else {
-            console.log('Supabase connection test SUCCESS');
-          }
-        });
-      }
+      // Test Supabase connection using direct fetch
+      const testUrl = 'https://pumfhtsdpevfxxycnjot.supabase.co/rest/v1/users?select=id&limit=1';
+      fetch(testUrl, {
+        headers: {
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU'
+        }
+      }).then(r => {
+        if (r.ok) console.log('Supabase connection test SUCCESS');
+        else console.error('Supabase connection test FAILED:', r.status);
+      }).catch(e => {
+        console.error('Supabase connection test FAILED:', e.message);
+      });
     });
     
     // Initialize Face API
@@ -686,8 +689,23 @@
         const SUPABASE_URL = 'https://pumfhtsdpevfxxycnjot.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bWZodHNkcGV2Znh4eWNuam90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1OTc4MjEsImV4cCI6MjA5MDE3MzgyMX0.jKtkO_yAJKI6v2uAEYyonOGqxyNmDpXbYVvCUUqGvIU';
         
-        const userForSupabase = { ...newUser };
-        delete userForSupabase.faceDescriptor;
+        // Only send fields that exist in Supabase
+        const userForSupabase = {
+          id: newUser.id,
+          user_id: newUser.user_id,
+          fullname: newUser.fullname,
+          nickname: newUser.nickname,
+          email: newUser.email,
+          password: newUser.password,
+          tier: newUser.tier || 'Standard',
+          nationality: newUser.nationality || '',
+          location: newUser.location || '',
+          bio: newUser.bio || '',
+          verified: newUser.verified || false,
+          status: 'active',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
         
         console.log('=== SUPABASE SYNC ===');
         console.log('Inserting user to Supabase...');
