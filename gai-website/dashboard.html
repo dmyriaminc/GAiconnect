@@ -164,12 +164,24 @@
               <span class="material-symbols-outlined text-pink-400 text-lg">workspace_premium</span>
               <span class="text-sm text-white">Upgrade Membership</span>
             </a>
+            <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors text-left">
+              <span class="material-symbols-outlined text-red-400 text-lg">logout</span>
+              <span class="text-sm text-red-400">Logout</span>
+            </button>
           </div>
         </div>
       </div>
     </div>
     
     <script>
+      function handleLogout() {
+        if (typeof GAiUser !== 'undefined') {
+          GAiUser.logout();
+        }
+        localStorage.clear();
+        window.location.href = 'auth.html';
+      }
+      
       function toggleQuickActions() {
         const menu = document.getElementById('quick-actions-menu');
         menu.classList.toggle('hidden');

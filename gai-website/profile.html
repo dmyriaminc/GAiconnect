@@ -952,14 +952,98 @@
       });
     });
     
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
       GAiUser.init();
       GAiNearby.init();
-      loadUserProfile();
+      
+      // Check if viewing another user's profile
+      const urlParams = new URLSearchParams(window.location.search);
+      const viewUserId = urlParams.get('id');
+      
+      if (viewUserId) {
+        // Load other user's profile
+        await loadOtherUserProfile(viewUserId);
+      } else {
+        loadUserProfile();
+      }
+      
       loadProfilePhoto();
       loadContactInfo();
     });
-
+    
+    async function loadOtherUserProfile(userId) {
+      // Hide edit buttons when viewing other users
+      const editButtons = document.querySelectorAll('[onclick="openEditProfile()"]');
+      editButtons.forEach(btn => btn.classList.add('hidden'));
+      
+      const editModalBtn = document.querySelectorAll('[onclick*="edit"]');
+      editModalBtn.forEach(btn => btn.classList.add('hidden'));
+      
+      // Try to find user from localStorage or Supabase
+      let user = null;
+      
+      // Check localStorage first
+      const users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      user = users.find(u => u.id === userId || u.user_id === userId);
+      
+      if (!user && supabase && supabase.isConfigured) {
+        try {
+          const result = await supabase.from('users').select('*');
+          const allUsers = result.data || [];
+          user = allUsers.find(u => u.id === userId || u.user_id === userId);
+        } catch (e) {
+          console.warn('Failed to load user from Supabase:', e);
+        }
+      }
+      
+      if (user) {
+        // Populate profile with user's data
+        const displayNameEl = document.getElementById('profile-display-name');
+        const avatarEl = document.getElementById('profile-avatar');
+        const tierBadgeEl = document.getElementById('profile-tier-badge');
+        const locationEl = document.getElementById('profile-location');
+        const idEl = document.getElementById('profile-id');
+        
+        displayNameEl.textContent = user.nickname || user.fullname || 'User';
+        const initials = (user.nickname || user.fullname || 'U').substring(0, 2).toUpperCase();
+        avatarEl.querySelector('span').textContent = initials;
+        
+        tierBadgeEl.textContent = user.tier || 'Standard';
+        
+        if (user.location) {
+          locationEl.textContent = user.location;
+        }
+        
+        if (user.user_id) {
+          idEl.textContent = user.user_id;
+        }
+        
+        // Add "Connect" button
+        const profileActions = document.querySelector('.profile-actions');
+        if (profileActions) {
+          profileActions.innerHTML = `
+            <button onclick="connectWithProfileUser('${user.id}')" class="flex-1 py-3 bg-amber-400 text-black font-bold rounded-sm hover:bg-amber-300 transition-colors">
+              Connect
+            </button>
+          `;
+        }
+        
+        // Hide verified badge if not verified
+        if (!user.verified) {
+          const verifiedBadgeEl = document.getElementById('profile-verified-badge');
+          if (verifiedBadgeEl) verifiedBadgeEl.classList.add('hidden');
+        }
+      } else {
+        alert('User not found');
+        window.location.href = 'members.html';
+      }
+    }
+    
+    function connectWithProfileUser(userId) {
+      localStorage.setItem('connection_request_' + userId, 'true');
+      alert('Connection request sent!\n\nWaiting for acceptance...');
+    }
+    
     function loadUserProfile() {
       const profile = GAiUser.getProfile();
       const displayName = GAiUser.getDisplayName();
