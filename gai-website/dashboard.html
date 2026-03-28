@@ -121,12 +121,52 @@
         </div>
       </div>
       <div class="flex items-center gap-4">
-        <button onclick="showQuickActions()" class="flex items-center gap-2 px-3 py-1.5 bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs font-bold rounded-lg hover:bg-amber-400/20 transition-all">
+        <button onclick="toggleQuickActions()" class="flex items-center gap-2 px-3 py-1.5 bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs font-bold rounded-lg hover:bg-amber-400/20 transition-all relative">
           <span class="material-symbols-outlined text-sm">bolt</span>
           Quick Actions
+          <span class="material-symbols-outlined text-sm">expand_more</span>
         </button>
+        <div id="quick-actions-menu" class="hidden absolute top-full right-0 mt-2 w-56 bg-neutral-800 border border-amber-400/30 rounded-lg shadow-2xl z-50 overflow-hidden">
+          <div class="p-3 border-b border-white/10">
+            <p class="text-xs text-zinc-400">Quick Actions</p>
+          </div>
+          <div class="py-2">
+            <a href="services.html?action=new" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+              <span class="material-symbols-outlined text-amber-400 text-lg">add_circle</span>
+              <span class="text-sm text-white">Post New Service</span>
+            </a>
+            <a href="ceo-dashboard.html" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+              <span class="material-symbols-outlined text-purple-400 text-lg">psychology</span>
+              <span class="text-sm text-white">GAi CEO Dashboard</span>
+            </a>
+            <a href="messenger.html" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+              <span class="material-symbols-outlined text-blue-400 text-lg">chat</span>
+              <span class="text-sm text-white">Open Messenger</span>
+            </a>
+            <a href="profile.html" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+              <span class="material-symbols-outlined text-green-400 text-lg">person</span>
+              <span class="text-sm text-white">Edit Profile</span>
+            </a>
+            <a href="subscription.html" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+              <span class="material-symbols-outlined text-pink-400 text-lg">workspace_premium</span>
+              <span class="text-sm text-white">Upgrade Membership</span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
+    
+    <script>
+      function toggleQuickActions() {
+        const menu = document.getElementById('quick-actions-menu');
+        menu.classList.toggle('hidden');
+      }
+      document.addEventListener('click', function(e) {
+        const menu = document.getElementById('quick-actions-menu');
+        const btn = e.target.closest('button[onclick="toggleQuickActions()"]');
+        if (!btn && menu) { menu.classList.add('hidden'); }
+      });
+    </script>
     
     <!-- Stats Cards -->
     <section class="mb-8 grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -626,16 +666,7 @@
     }
 
     function showQuickActions() {
-      const actions = `
-Quick Actions Menu:
-1. Post New Service
-2. View Analytics
-3. Open Messenger
-4. GAi CEO Dashboard
-5. Settings
-6. Help & Support
-      `;
-      alert(actions);
+      toggleQuickActions();
     }
 
     function ceoQuickAction(type) {
